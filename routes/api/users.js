@@ -3,6 +3,8 @@ const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const config = require("config");
 
 const User = require("../../models/User");
 
@@ -12,7 +14,8 @@ const User = require("../../models/User");
 router.post(
   "/",
   [
-    check("name", "Name is required").not().isEmpty(),
+    check("first_name", "Name is required").not().isEmpty(),
+    check("last_name", "Name is required").not().isEmpty(),
     check("email", "Please provide a valid email address").isEmail(),
     check(
       "password",
@@ -25,7 +28,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password } = req.body;
+    const { first_name, last_name, email, password } = req.body;
 
     try {
       let user = await User.findOne({ email });
@@ -39,7 +42,8 @@ router.post(
       const avatar = gravatar.url(email, { s: "200", r: "pg", d: "mm" });
 
       user = new User({
-        name,
+        first_name,
+        last_name,
         email,
         avatar,
         password,
@@ -51,7 +55,21 @@ router.post(
 
       await user.save();
 
-      res.send("User registered");
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+
+      jwt.sign(
+        payload,
+        config.get("jwtSecret"),
+        { expiresIn: 360000 },
+        (err, token) => {
+          if (err) throw err;
+          res.json({ token });
+        }
+      );
     } catch (err) {
       console.error(err.message);
       return res.status(500).send("Server error");
