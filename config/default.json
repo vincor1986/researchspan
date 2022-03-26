@@ -1,0 +1,3 @@
+{
+    "mongoURI": "mongodb+srv://vincor1:vincor1@db.inael.mongodb.net/researchspan?retryWrites=true&w=majority"
+}
