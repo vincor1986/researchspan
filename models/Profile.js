@@ -6,16 +6,13 @@ const ProfileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
-  title: {
-    type: String,
-  },
-  org: {
+  organisation: {
     type: String,
   },
   department: {
     type: String,
   },
-  degree: {
+  position: {
     type: String,
   },
   location: {
@@ -24,7 +21,7 @@ const ProfileSchema = new mongoose.Schema({
   bio: {
     type: String,
   },
-  specialisms: {
+  interests: {
     type: [String],
   },
   publications: [
