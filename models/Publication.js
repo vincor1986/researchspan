@@ -23,7 +23,7 @@ const PublicationSchema = new mongoose.Schema({
   keywords: {
     type: [String],
   },
-  colleagues: {
+  coauthors: {
     type: [String],
   },
   connectedUsers: {
