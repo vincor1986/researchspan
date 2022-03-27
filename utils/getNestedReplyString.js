@@ -23,7 +23,7 @@ const getNestedReplyString = (head, postId) => {
   }
 
   if (!postFound) return false;
-  const middle = indexes.map((el) => `.responses[${el}]`);
+  const middle = indexes.map((index) => `.responses[${index}]`);
   return "head" + middle.join("") + ".responses.push(newPost);";
 };
 

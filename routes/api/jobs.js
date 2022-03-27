@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Vacancy = require("../../models/Vacancy");
-const config = require("config");
-const jwt = require("jsonwebtoken");
 const auth = require("../../middleware/auth");
+const getAuthUserId = require("../../utils/getAuthUserId");
 
 // @route   GET api/jobs/
 // @desc    Test route
@@ -22,9 +21,7 @@ router.get("/", async (req, res) => {
 // @access  Public
 router.post("/vacancies", auth, async (req, res) => {
   try {
-    const token = req.header("x-auth-token");
-    const decoded = jwt.verify(token, config.get("jwtSecret"));
-    const user = decoded.user.id;
+    const user = getAuthUserId(req);
 
     const {
       organisation,
