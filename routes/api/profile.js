@@ -89,7 +89,7 @@ router.get("/:id/publications", async (req, res) => {
   try {
     const user = req.params.id;
 
-    const publications = await Publication.find({ connectedUser: user });
+    const publications = await Publication.find({ connectedUsers: user });
 
     if (!publications) {
       return res
@@ -98,26 +98,6 @@ router.get("/:id/publications", async (req, res) => {
     }
 
     res.json({ publications });
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server error");
-  }
-});
-
-// @route   GET api/publications/:id
-// @desc    Get a single publication
-// @access  Public
-router.get("/publications/:id", async (req, res) => {
-  try {
-    const publication = await Publication.findById(req.params.id);
-
-    if (!publication) {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: "No publication found" }] });
-    }
-
-    res.json({ publication });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
@@ -134,6 +114,9 @@ router.post("/:id/publications", auth, async (req, res) => {
     let {
       title,
       type,
+      field,
+      subcategories,
+      keywords,
       journal,
       issue,
       colleagues,
@@ -150,6 +133,9 @@ router.post("/:id/publications", auth, async (req, res) => {
       user: userId,
       title,
       type,
+      field,
+      subcategories,
+      keywords,
       journal,
       issue,
       colleagues,
@@ -161,6 +147,12 @@ router.post("/:id/publications", auth, async (req, res) => {
     });
 
     await publication.save();
+
+    connectedUsers.forEach(async (connectedUserId) => {
+      let userEntry = await User.findById(connectedUserId);
+      userEntry.pub_id_array.push(publication._id.toString());
+      await userEntry.save();
+    });
 
     res.json({ publication });
   } catch (err) {

@@ -23,28 +23,6 @@ const ProfileSchema = new mongoose.Schema({
   interests: {
     type: [String],
   },
-  publications: [
-    {
-      title: {
-        type: String,
-        required: true,
-      },
-      type: {
-        type: String,
-        required: true,
-      },
-      colleagues: {
-        type: [String],
-      },
-      link: {
-        type: String,
-      },
-      date: {
-        type: Date,
-        required: true,
-      },
-    },
-  ],
   social: {
     linkedin: {
       type: String,

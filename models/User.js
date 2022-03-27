@@ -21,6 +21,14 @@ const UserSchema = new mongoose.Schema({
   avatar: {
     type: String,
   },
+  pub_id_array: {
+    type: [
+      {
+        type: String,
+      },
+    ],
+    default: [],
+  },
   date: {
     type: Date,
     default: Date.now,

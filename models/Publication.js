@@ -13,6 +13,16 @@ const PublicationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  field: {
+    type: String,
+    required: true,
+  },
+  subcategories: {
+    type: [String],
+  },
+  keywords: {
+    type: [String],
+  },
   colleagues: {
     type: [String],
   },
