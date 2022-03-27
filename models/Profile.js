@@ -1,4 +1,3 @@
-const { numberParser } = require("config/parser");
 const mongoose = require("mongoose");
 
 const ProfileSchema = new mongoose.Schema({

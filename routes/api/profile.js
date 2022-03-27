@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Profile = require("../../models/Profile");
+const Publication = require("../../models/Publication");
 const User = require("../../models/User");
 const auth = require("../../middleware/auth");
 
@@ -9,15 +10,23 @@ const auth = require("../../middleware/auth");
 // @access  Public
 router.get("/:id", async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user: req.params.id });
+    const user = req.params.id;
+
+    const profile = await Profile.findOne({ user });
 
     if (!profile) {
       return res.status(400).json({ errors: [{ msg: "No profile found" }] });
     }
 
-    const { first_name, last_name } = await User.findById(req.params.id);
+    const { first_name, last_name } = await User.findById(user);
 
-    res.json({ ...profile._doc, first_name, last_name });
+    let publications = await Publication.find({ connectedUsers: user });
+
+    if (!publications) {
+      publications = [];
+    }
+
+    res.json({ ...profile._doc, first_name, last_name, publications });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
@@ -28,10 +37,10 @@ router.get("/:id", async (req, res) => {
 // @desc    Create user profile
 // @access  Private
 router.post("/:id", auth, async (req, res) => {
-  const userId = req.params.id;
+  const user = req.params.id;
 
   try {
-    let profile = await Profile.findOne({ user: userId });
+    let profile = await Profile.findOne({ user });
 
     if (profile) {
       return res
@@ -46,27 +55,114 @@ router.post("/:id", auth, async (req, res) => {
       location,
       bio,
       interests,
-      publications,
       social,
     } = req.body;
 
     profile = new Profile({
-      user: userId,
+      user,
       organisation,
       department,
       position,
       location,
       bio,
       interests,
-      publications,
       social,
     });
 
     await profile.save();
 
-    const { first_name, last_name } = await User.findById(req.params.id);
+    const { first_name, last_name } = await User.findById(user);
 
-    res.json({ ...profile._doc, first_name, last_name });
+    let publications = await Publication.find({ connectedUsers: user });
+
+    res.json({ ...profile._doc, first_name, last_name, publications });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server error");
+  }
+});
+
+// @route   GET api/profile/:id/publications
+// @desc    Get all publications from a user
+// @access  Public
+router.get("/:id/publications", async (req, res) => {
+  try {
+    const user = req.params.id;
+
+    const publications = await Publication.find({ connectedUser: user });
+
+    if (!publications) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "No publications were found" }] });
+    }
+
+    res.json({ publications });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server error");
+  }
+});
+
+// @route   GET api/publications/:id
+// @desc    Get a single publication
+// @access  Public
+router.get("/publications/:id", async (req, res) => {
+  try {
+    const publication = await Publication.findById(req.params.id);
+
+    if (!publication) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "No publication found" }] });
+    }
+
+    res.json({ publication });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server error");
+  }
+});
+
+// @route   POST api/profile/:id/publications
+// @desc    Create publication entry
+// @access  Private
+router.post("/:id/publications", auth, async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    let {
+      title,
+      type,
+      journal,
+      issue,
+      colleagues,
+      connectedUsers,
+      DOI,
+      PMID,
+      link,
+      date,
+    } = req.body;
+
+    connectedUsers.unshift(userId);
+
+    let publication = new Publication({
+      user: userId,
+      title,
+      type,
+      journal,
+      issue,
+      colleagues,
+      connectedUsers,
+      DOI,
+      PMID,
+      link,
+      date,
+    });
+
+    await publication.save();
+
+    res.json({ publication });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
