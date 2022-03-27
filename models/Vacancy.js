@@ -23,7 +23,14 @@ const VacancySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  location: {
+    type: String,
+    required: true,
+  },
   salary: {
+    type: String,
+  },
+  salary_currency: {
     type: String,
   },
   salary_period: {
@@ -46,6 +53,10 @@ const VacancySchema = new mongoose.Schema({
   },
   attachment_links: {
     type: [String],
+  },
+  date: {
+    type: Date,
+    default: Date.now,
   },
 });
 

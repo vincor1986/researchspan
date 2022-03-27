@@ -98,6 +98,7 @@ router.post("/:head/:id", auth, async (req, res) => {
 
     const newPost = new Post({
       user,
+      head: headId,
       format,
       keywords: [],
       main,
@@ -169,6 +170,47 @@ router.put("/:id", auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
+  }
+});
+
+// @route   DELETE api/discuss/:head/:id
+// @desc    Delete posts
+// @access  Private
+router.delete("/:head/:id", async (req, res) => {
+  try {
+    const headId = req.params.head;
+    const postId = req.params.id;
+    const authUserId = getAuthUserId(req);
+
+    const head = await Post.findById(headId);
+
+    if (headId === postId) {
+      if (authUserId !== head.user.toString()) {
+        return res.status(401).json({
+          errors: [{ msg: "You are not authorised to delete this post" }],
+        });
+      }
+
+      await Post.findByIdAndDelete(headId);
+
+      return res.json({ msg: "Post deleted" });
+    } else {
+      const [postUser, delCommand] = getNestedReplyString(head, postId, true);
+      if (postUser !== authUserId) {
+        return res.status(401).json({
+          errors: [{ msg: "You are not authorised to delete this post" }],
+        });
+      }
+
+      eval(delCommand);
+      head.markModified("responses");
+      await head.save();
+
+      return res.json({ msg: "Post deleted" });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Server Error");
   }
 });
 

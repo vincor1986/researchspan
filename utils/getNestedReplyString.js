@@ -1,4 +1,6 @@
-const getNestedReplyString = (head, postId) => {
+const Post = require("../models/Post");
+
+const getNestedReplyString = (head, postId, del = false) => {
   let indexes = [],
     postFound = false;
   const recursivelyFindPost = (current) => {
@@ -23,8 +25,20 @@ const getNestedReplyString = (head, postId) => {
   }
 
   if (!postFound) return false;
-  const middle = indexes.map((index) => `.responses[${index}]`);
-  return "head" + middle.join("") + ".responses.push(newPost);";
+  let middle = indexes.map((index) => `.responses[${index}]`);
+  const idCommand = "head" + middle.join("") + ".user.toString()";
+  const delId = eval(idCommand);
+
+  del && middle.pop();
+
+  return del
+    ? [
+        delId,
+        "head" +
+          middle.join("") +
+          `.responses.splice(${indexes[indexes.length - 1]}, 1);`,
+      ]
+    : "head" + middle.join("") + ".responses.push(newPost);";
 };
 
 module.exports = getNestedReplyString;
