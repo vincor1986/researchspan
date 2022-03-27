@@ -4,6 +4,7 @@ const Profile = require("../../models/Profile");
 const Publication = require("../../models/Publication");
 const User = require("../../models/User");
 const auth = require("../../middleware/auth");
+const getAuthUserId = require("../../utils/getAuthUserId");
 
 // @route   GET api/profile/:id
 // @desc    Get user profile
@@ -68,6 +69,88 @@ router.post("/:id", auth, async (req, res) => {
       interests,
       social,
     });
+
+    await profile.save();
+
+    const { first_name, last_name } = await User.findById(user);
+
+    let publications = await Publication.find({ connectedUsers: user });
+
+    res.json({ ...profile._doc, first_name, last_name, publications });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server error");
+  }
+});
+
+// @route   PUT api/profile/:id
+// @desc    Update user profile
+// @access  Private
+router.put("/:id", auth, async (req, res) => {
+  const user = req.params.id;
+
+  const authUserId = getAuthUserId(req);
+
+  if (authUserId !== user) {
+    res
+      .status(401)
+      .json({
+        errors: [{ msg: "You are not authorised to make these changes" }],
+      });
+  }
+
+  try {
+    let profile = await Profile.findOne({ user });
+
+    if (!profile) {
+      return res.status(400).json({
+        errors: [{ msg: "A profile doesn't yet exist for this user" }],
+      });
+    }
+
+    const {
+      organisation,
+      department,
+      position,
+      location,
+      bio,
+      interests,
+      social,
+    } = req.body;
+
+    if (organisation && organisation !== profile.organisation) {
+      profile.organisation = organisation;
+    }
+    if (department && department !== profile.department) {
+      profile.department = department;
+    }
+    if (position && position !== profile.position) {
+      profile.position = position;
+    }
+    if (location && location !== profile.location) {
+      profile.location = location;
+    }
+    if (bio && bio !== profile.bio) {
+      profile.bio = bio;
+    }
+    if (interests && interests.toString() !== profile.interests.toString()) {
+      profile.interests = interests;
+    }
+    if (social.linkedin && social.linkedin !== profile.social.linkedin) {
+      profile.social.linkedin = social.linkedin;
+    }
+    if (
+      social.researchgate &&
+      social.researchgate !== profile.social.researchgate
+    ) {
+      profile.social.researchgate = social.researchgate;
+    }
+    if (social.facebook && social.facebook !== profile.social.facebook) {
+      profile.social.facebook = social.facebook;
+    }
+    if (social.twitter && social.twitter !== profile.social.twitter) {
+      profile.social.twitter = social.twitter;
+    }
 
     await profile.save();
 
