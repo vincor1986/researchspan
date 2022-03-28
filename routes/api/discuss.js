@@ -7,6 +7,23 @@ const config = require("config");
 const getNestedReplyString = require("../../utils/getNestedReplyString");
 const getAuthUserId = require("../../utils/getAuthUserId");
 
+// @route   GET api/discuss/:id
+// @desc    Get post by id
+// @access  Public
+router.get("/:id", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
+    }
+
+    return res.json({ data: post });
+  } catch (err) {
+    return res.status(500).send("Server Error");
+  }
+});
+
 // @route   GET api/discuss/questions
 // @desc    Get all question posts
 // @access  Public
@@ -135,6 +152,12 @@ router.put("/:id", auth, async (req, res) => {
     const user = getAuthUserId(req);
     const post = await Post.findById(req.params.id);
 
+    if (!post) {
+      return res
+        .status(401)
+        .json({ errors: [{ msg: "Requested post cannot be found" }] });
+    }
+
     if (user !== post.user.toString()) {
       return res.status(401).json({
         errors: [{ msg: "You are not authorised to edit this post" }],
@@ -183,6 +206,12 @@ router.delete("/:head/:id", async (req, res) => {
     const authUserId = getAuthUserId(req);
 
     const head = await Post.findById(headId);
+
+    if (!head) {
+      return res
+        .status(401)
+        .json({ errors: [{ msg: "Requested post cannot be found" }] });
+    }
 
     if (headId === postId) {
       if (authUserId !== head.user.toString()) {

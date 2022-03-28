@@ -12,6 +12,104 @@ const getAuthUserId = require("../../utils/getAuthUserId");
 const Profile = require("../../models/Profile");
 const Publication = require("../../models/Publication");
 
+// @route   GET api/users/
+// @desc    Get users by search
+// @access  Public
+router.get("/", async (req, res) => {
+  if (!req.query.search) {
+    const allUsers = await User.find();
+    if (!allUsers) {
+      return res.status(500).json({
+        errors: [{ msg: "Something went wrong. Please try again in a while" }],
+      });
+    }
+    return res.json({ data: allUsers });
+  }
+
+  const query = req.query.search.split(" ").map((val) => val.toLowerCase());
+
+  let data = [];
+  const userSearchKeys = ["first_name", "last_name"],
+    profileSearchKeys = [
+      "organisation",
+      "department",
+      "position",
+      "location",
+      "interests",
+    ],
+    pubSearchKeys = ["title", "field", "subcategories", "keywords"];
+
+  // Search for loop over each search term
+  for (let i = 0; i < query.length; i++) {
+    const keyword = new RegExp(query[i], "gi");
+
+    // Publication search
+    for (let j = 0; j < pubSearchKeys.length; j++) {
+      const key = pubSearchKeys[j];
+      const entryArray = await Publication.find({ [key]: keyword });
+      if (entryArray.length === 0) continue;
+
+      const users = [];
+      for (let k = 0; k < entryArray.length; k++) {
+        const pub = entryArray[k];
+        for (let l = 0; l < pub.connectedUsers.length; l++) {
+          users.push(await User.findById(pub.connectedUsers[l].toString()));
+        }
+      }
+
+      users.forEach((entry) => {
+        if (
+          !data[0] ||
+          data.filter((obj) => obj._id.toString() === entry.id.toString())
+            .length === 0
+        ) {
+          data.push(entry);
+        }
+      });
+    }
+
+    // User search
+    for (let j = 0; j < userSearchKeys.length; j++) {
+      const key = userSearchKeys[j];
+      const entryArray = await User.find({ [key]: keyword });
+      if (entryArray.length === 0) continue;
+      entryArray.forEach((entry) => {
+        if (
+          !data[0] ||
+          data.filter((obj) => obj._id.toString() === entry.id.toString())
+            .length === 0
+        ) {
+          data.push(entry);
+        }
+      });
+    }
+
+    // Profile search
+    for (let j = 0; j < profileSearchKeys.length; j++) {
+      const key = profileSearchKeys[j];
+      const entryArray = await Profile.find({ [key]: keyword });
+      if (entryArray.length === 0) continue;
+
+      const users = [];
+      for (let k = 0; k < entryArray.length; k++) {
+        users.push(await User.findById(entryArray[k].user.toString()));
+      }
+
+      users.forEach((entry) => {
+        if (
+          !data[0] ||
+          data.filter((obj) => obj._id.toString() === entry.id.toString())
+            .length === 0
+        ) {
+          data.push(entry);
+        }
+      });
+    }
+  }
+
+  res.json({ data });
+});
+
 // @route   POST api/users
 // @desc    Register user
 // @access  Public

@@ -27,7 +27,9 @@ router.get("/:id", async (req, res) => {
       publications = [];
     }
 
-    res.json({ ...profile._doc, first_name, last_name, publications });
+    res.json({
+      data: { ...profile._doc, first_name, last_name, publications },
+    });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
@@ -76,7 +78,9 @@ router.post("/:id", auth, async (req, res) => {
 
     let publications = await Publication.find({ connectedUsers: user });
 
-    res.json({ ...profile._doc, first_name, last_name, publications });
+    res.json({
+      data: { ...profile._doc, first_name, last_name, publications },
+    });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
@@ -92,11 +96,9 @@ router.put("/:id", auth, async (req, res) => {
   const authUserId = getAuthUserId(req);
 
   if (authUserId !== user) {
-    res
-      .status(401)
-      .json({
-        errors: [{ msg: "You are not authorised to make these changes" }],
-      });
+    res.status(401).json({
+      errors: [{ msg: "You are not authorised to make these changes" }],
+    });
   }
 
   try {
@@ -158,7 +160,9 @@ router.put("/:id", auth, async (req, res) => {
 
     let publications = await Publication.find({ connectedUsers: user });
 
-    res.json({ ...profile._doc, first_name, last_name, publications });
+    res.json({
+      data: { ...profile._doc, first_name, last_name, publications },
+    });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
@@ -180,7 +184,7 @@ router.get("/:id/publications", async (req, res) => {
         .json({ errors: [{ msg: "No publications were found" }] });
     }
 
-    res.json({ publications });
+    res.json({ data: publications });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
@@ -237,7 +241,7 @@ router.post("/:id/publications", auth, async (req, res) => {
       await userEntry.save();
     });
 
-    res.json({ publication });
+    res.json({ data: publication });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");

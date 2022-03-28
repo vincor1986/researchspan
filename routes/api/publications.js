@@ -43,7 +43,7 @@ router.get("/", async (req, res) => {
 });
 
 // @route   GET api/publications/:id
-// @desc    Get a single publication
+// @desc    Get a single publication by id
 // @access  Public
 router.get("/:id", async (req, res) => {
   try {

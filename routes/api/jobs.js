@@ -16,6 +16,23 @@ router.get("/", async (req, res) => {
   }
 });
 
+// @route   GET api/jobs/vacancies/:id
+// @desc    Get vacancy listing by id
+// @access  Public
+router.get("/vacancies/:id", async (req, res) => {
+  try {
+    const vacancy = await Vacancy.findById(req.params.id);
+
+    if (!vacancy) {
+      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
+    }
+
+    return res.json({ data: vacancy });
+  } catch (err) {
+    return res.status(500).send("Server Error");
+  }
+});
+
 // @route   POST api/jobs/vacancies
 // @desc    Create job vacancy listing
 // @access  Private
@@ -68,7 +85,7 @@ router.post("/vacancies", auth, async (req, res) => {
 
     await vacancy.save();
 
-    return res.json({ vacancy });
+    return res.json({ data: vacancy });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
@@ -173,7 +190,7 @@ router.put("/vacancies/:id", auth, async (req, res) => {
 
     await vacancy.save();
 
-    return res.json({ vacancy });
+    return res.json({ data: vacancy });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
