@@ -189,7 +189,7 @@ router.post("/:head/:id", auth, async (req, res) => {
 });
 
 // @route   PUT api/discuss/:id
-// @desc    Update an existing discussion or question post
+// @desc    Update / edit an existing discussion or question post
 // @access  Private
 router.put("/:id", auth, async (req, res) => {
   try {
@@ -212,6 +212,7 @@ router.put("/:id", auth, async (req, res) => {
       post.format = format;
     }
     if (
+      keywords &&
       keywords.length > 0 &&
       keywords.toString() !== post.keywords.toString()
     ) {
