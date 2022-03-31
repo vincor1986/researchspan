@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const Post = require("../../models/Post");
+const Notification = require("../../models/Notification");
 const jwt = require("jsonwebtoken");
 const auth = require("../../middleware/auth");
 const config = require("config");
-const getNestedReplyString = require("../../utils/getNestedReplyString");
+const getReplyCommand = require("../../utils/getReplyCommand");
 const getAuthUserId = require("../../utils/getAuthUserId");
+const User = require("../../models/User");
 
 // @route   GET api/discuss/:id
 // @desc    Get post by id
@@ -65,9 +67,27 @@ router.post("/", auth, async (req, res) => {
 
     const { format, keywords, main, context, date } = req.body;
 
+    const { first_name, last_name, avatar, organisation, position, location } =
+      await User.findById(user);
+
+    if (!first_name) {
+      return res.status(404).json({
+        errors: [
+          { msg: "Something went wrong. Please try again in a short while." },
+        ],
+      });
+    }
+
     const newPost = new Post({
       user,
+      first_name,
+      last_name,
+      avatar,
+      organisation,
+      position,
+      location,
       format,
+      replyData: [{}],
       keywords,
       main,
       context,
@@ -90,12 +110,14 @@ router.post("/", auth, async (req, res) => {
 });
 
 // @route   POST api/discuss/:head/:id
-// @desc    Reply to a question, discussion or reply post
+// @desc    Reply to a question, discussion or reply
 // @access  Private
 router.post("/:head/:id", auth, async (req, res) => {
   try {
     const postId = req.params.id;
     const headId = req.params.head;
+
+    const user = getAuthUserId(req);
 
     const head = await Post.findById(req.params.head);
 
@@ -105,22 +127,27 @@ router.post("/:head/:id", auth, async (req, res) => {
       });
     }
 
-    const commandString = getNestedReplyString(head, postId);
+    const { first_name, last_name, avatar, organisation, position, location } =
+      await User.findById(user);
 
-    if (!commandString) {
+    if (!first_name) {
       return res.status(400).json({
-        errors: [{ msg: "Cannot reply to post, post does not exist" }],
+        errors: [
+          { msg: "Something went wrong, please try again in a short while" },
+        ],
       });
     }
-
-    const token = req.header("x-auth-token");
-    const decoded = jwt.verify(token, config.get("jwtSecret"));
-    const user = decoded.user.id;
 
     const { format, main, date } = req.body;
 
     const newPost = new Post({
       user,
+      first_name,
+      last_name,
+      avatar,
+      organisation,
+      position,
+      location,
       head: headId,
       format,
       keywords: [],
@@ -134,13 +161,18 @@ router.post("/:head/:id", auth, async (req, res) => {
     });
 
     if (headId === postId) {
+      head.replyData[0][newPost._id] = [[head.responses.length], 0];
       head.responses.push(newPost);
     } else {
-      console.log(commandString);
+      const [targetIndexArray, replyCount] = head.replyData[0][postId];
+      head.replyData[0][newPost._id] = [[...targetIndexArray, replyCount], 0];
+      head.replyData[0][postId][1] = replyCount + 1;
+      const commandString = getReplyCommand(targetIndexArray);
       eval(commandString);
     }
 
     head.markModified("responses");
+    head.markModified("replyData");
     await head.save();
 
     return res.json({ data: head });

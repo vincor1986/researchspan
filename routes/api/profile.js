@@ -11,25 +11,27 @@ const getAuthUserId = require("../../utils/getAuthUserId");
 // @access  Public
 router.get("/:id", async (req, res) => {
   try {
-    const user = req.params.id;
+    const userId = req.params.id;
 
-    const profile = await Profile.findOne({ user });
+    const profile = await Profile.findOne({ user: userId });
 
     if (!profile) {
       return res.status(400).json({ errors: [{ msg: "No profile found" }] });
     }
 
-    const { first_name, last_name } = await User.findById(user);
+    const { first_name, last_name, pub_id_array, avatar } = await User.findById(
+      userId
+    );
 
-    let publications = await Publication.find({ connectedUsers: user });
+    let publications = [];
 
-    if (!publications) {
-      publications = [];
+    for (let i = 0; i < pub_id_array.length; i++) {
+      const pubId = pub_id_array[i];
+      const newPublication = await Publication.findById(pubId);
+      publications.push(newPublication);
     }
 
-    res.json({
-      data: { ...profile._doc, first_name, last_name, publications },
-    });
+    res.json({ ...profile._doc, first_name, last_name, publications, avatar });
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {
@@ -43,10 +45,10 @@ router.get("/:id", async (req, res) => {
 // @desc    Create user profile
 // @access  Private
 router.post("/:id", auth, async (req, res) => {
-  const user = req.params.id;
+  const userId = req.params.id;
 
   try {
-    let profile = await Profile.findOne({ user });
+    let profile = await Profile.findOne({ user: userId });
 
     if (profile) {
       return res
@@ -65,7 +67,7 @@ router.post("/:id", auth, async (req, res) => {
     } = req.body;
 
     profile = new Profile({
-      user,
+      user: userId,
       organisation,
       department,
       position,
@@ -75,14 +77,40 @@ router.post("/:id", auth, async (req, res) => {
       social,
     });
 
+    let user = await User.findById(userId);
+
+    if (organisation) {
+      user.organisation = organisation;
+    }
+    if (department) {
+      user.department = department;
+    }
+    if (position) {
+      user.position = position;
+    }
+    if (location) {
+      user.location = location;
+    }
+
+    user.profileId = profile._id;
+
+    let publications = [];
+
+    for (let i = 0; i < user.pub_id_array.length; i++) {
+      const pubId = user.pub_id_array[i];
+      const newPublication = await Publication.findById(pubId);
+      publications.push(newPublication);
+    }
+
     await profile.save();
-
-    const { first_name, last_name } = await User.findById(user);
-
-    let publications = await Publication.find({ connectedUsers: user });
+    await user.save();
 
     res.json({
-      data: { ...profile._doc, first_name, last_name, publications },
+      ...profile._doc,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      publications: publications,
+      avatar: user.avatar,
     });
   } catch (err) {
     console.error(err.message);
@@ -97,18 +125,18 @@ router.post("/:id", auth, async (req, res) => {
 // @desc    Update user profile
 // @access  Private
 router.put("/:id", auth, async (req, res) => {
-  const user = req.params.id;
+  const userId = req.params.id;
 
   const authUserId = getAuthUserId(req);
 
-  if (authUserId !== user) {
+  if (authUserId !== userId) {
     res.status(401).json({
       errors: [{ msg: "You are not authorised to make these changes" }],
     });
   }
 
   try {
-    let profile = await Profile.findOne({ user });
+    let profile = await Profile.findOne({ user: userId });
 
     if (!profile) {
       return res.status(400).json({
@@ -160,14 +188,40 @@ router.put("/:id", auth, async (req, res) => {
       profile.social.twitter = social.twitter;
     }
 
+    let user = await User.findById(userId);
+
+    if (organisation && organisation !== user.organisation) {
+      user.organisation = organisation;
+    }
+    if (department && department !== user.department) {
+      user.department = department;
+    }
+    if (position && position !== user.position) {
+      user.position = position;
+    }
+    if (location && location !== user.location) {
+      user.location = location;
+    }
+
     await profile.save();
+    await user.save();
 
-    const { first_name, last_name } = await User.findById(user);
+    let publications = [];
 
-    let publications = await Publication.find({ connectedUsers: user });
+    for (let i = 0; i < pub_id_array.length; i++) {
+      const pubId = pub_id_array[i];
+      const newPublication = await Publication.findById(pubId);
+      publications.push(newPublication);
+    }
 
     res.json({
-      data: { ...profile._doc, first_name, last_name, publications },
+      data: {
+        ...profile._doc,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        publications,
+        avatar: user.avatar,
+      },
     });
   } catch (err) {
     console.error(err.message);
@@ -183,13 +237,21 @@ router.put("/:id", auth, async (req, res) => {
 // @access  Public
 router.get("/:id/publications", async (req, res) => {
   try {
-    const user = req.params.id;
+    const userId = req.params.id;
 
-    const publications = await Publication.find({ connectedUsers: user });
+    const { pub_id_array } = await User.findById(userId);
+
+    let publications = [];
+
+    for (let i = 0; i < pub_id_array.length; i++) {
+      const pubId = pub_id_array[i];
+      const newPublication = await Publication.findById(pubId);
+      publications.push(newPublication);
+    }
 
     if (!publications) {
       return res
-        .status(400)
+        .status(404)
         .json({ errors: [{ msg: "No publications were found" }] });
     }
 
@@ -208,6 +270,7 @@ router.get("/:id/publications", async (req, res) => {
 // @access  Private
 router.post("/:id/publications", auth, async (req, res) => {
   const userId = req.params.id;
+  const user = await User.findById(userId);
 
   try {
     let {
@@ -245,15 +308,11 @@ router.post("/:id/publications", auth, async (req, res) => {
       date,
     });
 
+    user.pub_id_array.push(publication._id);
+
     await publication.save();
 
-    connectedUsers.forEach(async (connectedUserId) => {
-      let userEntry = await User.findById(connectedUserId);
-      userEntry.pub_id_array.push(publication._id.toString());
-      await userEntry.save();
-    });
-
-    res.json({ data: publication });
+    res.json(publication);
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {

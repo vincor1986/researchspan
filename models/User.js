@@ -29,6 +29,27 @@ const UserSchema = new mongoose.Schema({
     ],
     default: [],
   },
+  orgnisation: {
+    type: String,
+  },
+  department: {
+    type: String,
+  },
+  position: {
+    type: String,
+  },
+  location: {
+    type: String,
+  },
+  profileId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "profile",
+  },
+  notifcations: [
+    {
+      type: mongoose.Mixed,
+    },
+  ],
   date: {
     type: Date,
     default: Date.now,

@@ -5,6 +5,24 @@ const PostSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
+  first_name: {
+    type: String,
+  },
+  last_name: {
+    type: String,
+  },
+  organistion: {
+    type: String,
+  },
+  position: {
+    type: String,
+  },
+  location: {
+    type: String,
+  },
+  avatar: {
+    type: String,
+  },
   head: {
     type: String,
   },
@@ -30,6 +48,7 @@ const PostSchema = new mongoose.Schema({
   last_edited: {
     type: Date,
   },
+  replyData: [mongoose.Mixed],
   date: {
     type: Date,
     default: Date.now,
