@@ -17,6 +17,9 @@ router.get("/", auth, async (req, res) => {
     res.json(user);
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "User not found" }] });
+    }
     res.status(500).send("Server error");
   }
 });
@@ -72,6 +75,9 @@ router.post(
       );
     } catch (err) {
       console.error(err.message);
+      if (err.kind === "ObjectId") {
+        return res.status(404).json({ errors: [{ msg: "User not found" }] });
+      }
       return res.status(500).send("Server error");
     }
   }
@@ -147,6 +153,9 @@ router.put(
       );
     } catch (err) {
       console.error(err.message);
+      if (err.kind === "ObjectId") {
+        return res.status(404).json({ errors: [{ msg: "User not found" }] });
+      }
       return res.status(500).send("Server error");
     }
   }

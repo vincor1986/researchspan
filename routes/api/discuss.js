@@ -20,6 +20,10 @@ router.get("/:id", async (req, res) => {
 
     return res.json({ data: post });
   } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
+    }
     return res.status(500).send("Server Error");
   }
 });
@@ -32,6 +36,7 @@ router.get("/questions", async (req, res) => {
     const allQuestions = await Post.find({ format: "question" });
     return res.json({ data: allQuestions });
   } catch (err) {
+    console.error(err.message);
     return res.status(500).send("Server Error");
   }
 });
@@ -44,6 +49,7 @@ router.get("/forum", async (req, res) => {
     const forumPosts = await Post.find({ format: "discussion" });
     return res.json({ data: forumPosts });
   } catch (err) {
+    console.error(err.message);
     return res.status(500).send("Server Error");
   }
 });
@@ -140,6 +146,11 @@ router.post("/:head/:id", auth, async (req, res) => {
     return res.json({ data: head });
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({
+        errors: [{ msg: "Cannot reply to post, post does not exist" }],
+      });
+    }
     return res.status(500).send("Server error");
   }
 });
@@ -153,9 +164,7 @@ router.put("/:id", auth, async (req, res) => {
     const post = await Post.findById(req.params.id);
 
     if (!post) {
-      return res
-        .status(401)
-        .json({ errors: [{ msg: "Requested post cannot be found" }] });
+      return res.status(401).json({ errors: [{ msg: "Post not found" }] });
     }
 
     if (user !== post.user.toString()) {
@@ -192,6 +201,9 @@ router.put("/:id", auth, async (req, res) => {
     return res.json({ data: post });
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });
@@ -208,9 +220,7 @@ router.delete("/:head/:id", async (req, res) => {
     const head = await Post.findById(headId);
 
     if (!head) {
-      return res
-        .status(401)
-        .json({ errors: [{ msg: "Requested post cannot be found" }] });
+      return res.status(401).json({ errors: [{ msg: "Post not found" }] });
     }
 
     if (headId === postId) {
@@ -239,6 +249,9 @@ router.delete("/:head/:id", async (req, res) => {
     }
   } catch (err) {
     console.error(err);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
+    }
     return res.status(500).send("Server Error");
   }
 });

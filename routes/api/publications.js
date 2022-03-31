@@ -6,40 +6,45 @@ const Publication = require("../../models/Publication");
 // @desc    Get publications by search
 // @access  Public
 router.get("/", async (req, res) => {
-  const query = req.query.search.split(" ").map((val) => val.toLowerCase());
+  try {
+    const query = req.query.search.split(" ").map((val) => val.toLowerCase());
 
-  let data = [],
-    searchKeys = ["keywords", "field", "subcategories"];
+    let data = [],
+      searchKeys = ["keywords", "field", "subcategories"];
 
-  for (let i = 0; i < query.length; i++) {
-    const keyword = query[i];
+    for (let i = 0; i < query.length; i++) {
+      const keyword = query[i];
 
-    for (let j = 0; j < searchKeys.length; j++) {
-      const key = searchKeys[j];
-      const entryArray = await Publication.find({ [key]: keyword });
-      if (entryArray.length === 0) continue;
-      entryArray.forEach((entry) => {
-        if (
-          !data[0] ||
-          data.filter((obj) => obj._id.toString() === entry.id.toString())
-            .length === 0
-        ) {
-          data.push(entry);
-        }
-      });
+      for (let j = 0; j < searchKeys.length; j++) {
+        const key = searchKeys[j];
+        const entryArray = await Publication.find({ [key]: keyword });
+        if (entryArray.length === 0) continue;
+        entryArray.forEach((entry) => {
+          if (
+            !data[0] ||
+            data.filter((obj) => obj._id.toString() === entry.id.toString())
+              .length === 0
+          ) {
+            data.push(entry);
+          }
+        });
+      }
     }
+
+    data = data.filter((obj) =>
+      query.every(
+        (item) =>
+          obj.keywords.includes(item) ||
+          obj.field.match(item) ||
+          obj.subcategories.includes(item)
+      )
+    );
+
+    res.json({ data });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server error");
   }
-
-  data = data.filter((obj) =>
-    query.every(
-      (item) =>
-        obj.keywords.includes(item) ||
-        obj.field.match(item) ||
-        obj.subcategories.includes(item)
-    )
-  );
-
-  res.json({ data });
 });
 
 // @route   GET api/publications/:id

@@ -32,6 +32,9 @@ router.get("/:id", async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "No profile found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });
@@ -83,6 +86,9 @@ router.post("/:id", auth, async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "No profile found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });
@@ -165,6 +171,9 @@ router.put("/:id", auth, async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "No profile found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });
@@ -187,6 +196,9 @@ router.get("/:id/publications", async (req, res) => {
     res.json({ data: publications });
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "No user found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });
@@ -244,6 +256,9 @@ router.post("/:id/publications", auth, async (req, res) => {
     res.json({ data: publication });
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Not found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });

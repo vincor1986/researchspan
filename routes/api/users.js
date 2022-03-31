@@ -16,98 +16,108 @@ const Publication = require("../../models/Publication");
 // @desc    Get users by search
 // @access  Public
 router.get("/", async (req, res) => {
-  if (!req.query.search) {
-    const allUsers = await User.find();
-    if (!allUsers) {
-      return res.status(500).json({
-        errors: [{ msg: "Something went wrong. Please try again in a while" }],
-      });
+  try {
+    if (!req.query.search) {
+      const allUsers = await User.find();
+      if (!allUsers) {
+        return res.status(500).json({
+          errors: [
+            { msg: "Something went wrong. Please try again in a while" },
+          ],
+        });
+      }
+      return res.json({ data: allUsers });
     }
-    return res.json({ data: allUsers });
-  }
 
-  const query = req.query.search.split(" ").map((val) => val.toLowerCase());
+    const query = req.query.search.split(" ").map((val) => val.toLowerCase());
 
-  let data = [];
-  const userSearchKeys = ["first_name", "last_name"],
-    profileSearchKeys = [
-      "organisation",
-      "department",
-      "position",
-      "location",
-      "interests",
-    ],
-    pubSearchKeys = ["title", "field", "subcategories", "keywords"];
+    let data = [];
+    const userSearchKeys = ["first_name", "last_name"],
+      profileSearchKeys = [
+        "organisation",
+        "department",
+        "position",
+        "location",
+        "interests",
+      ],
+      pubSearchKeys = ["title", "field", "subcategories", "keywords"];
 
-  // Search for loop over each search term
-  for (let i = 0; i < query.length; i++) {
-    const keyword = new RegExp(query[i], "gi");
+    // Search for loop over each search term
+    for (let i = 0; i < query.length; i++) {
+      const keyword = new RegExp(query[i], "gi");
 
-    // Publication search
-    for (let j = 0; j < pubSearchKeys.length; j++) {
-      const key = pubSearchKeys[j];
-      const entryArray = await Publication.find({ [key]: keyword });
-      if (entryArray.length === 0) continue;
+      // Publication search
+      for (let j = 0; j < pubSearchKeys.length; j++) {
+        const key = pubSearchKeys[j];
+        const entryArray = await Publication.find({ [key]: keyword });
+        if (entryArray.length === 0) continue;
 
-      const users = [];
-      for (let k = 0; k < entryArray.length; k++) {
-        const pub = entryArray[k];
-        for (let l = 0; l < pub.connectedUsers.length; l++) {
-          users.push(await User.findById(pub.connectedUsers[l].toString()));
+        const users = [];
+        for (let k = 0; k < entryArray.length; k++) {
+          const pub = entryArray[k];
+          for (let l = 0; l < pub.connectedUsers.length; l++) {
+            users.push(await User.findById(pub.connectedUsers[l].toString()));
+          }
         }
+
+        users.forEach((entry) => {
+          if (
+            !data[0] ||
+            data.filter((obj) => obj._id.toString() === entry.id.toString())
+              .length === 0
+          ) {
+            data.push(entry);
+          }
+        });
       }
 
-      users.forEach((entry) => {
-        if (
-          !data[0] ||
-          data.filter((obj) => obj._id.toString() === entry.id.toString())
-            .length === 0
-        ) {
-          data.push(entry);
-        }
-      });
-    }
-
-    // User search
-    for (let j = 0; j < userSearchKeys.length; j++) {
-      const key = userSearchKeys[j];
-      const entryArray = await User.find({ [key]: keyword });
-      if (entryArray.length === 0) continue;
-      entryArray.forEach((entry) => {
-        if (
-          !data[0] ||
-          data.filter((obj) => obj._id.toString() === entry.id.toString())
-            .length === 0
-        ) {
-          data.push(entry);
-        }
-      });
-    }
-
-    // Profile search
-    for (let j = 0; j < profileSearchKeys.length; j++) {
-      const key = profileSearchKeys[j];
-      const entryArray = await Profile.find({ [key]: keyword });
-      if (entryArray.length === 0) continue;
-
-      const users = [];
-      for (let k = 0; k < entryArray.length; k++) {
-        users.push(await User.findById(entryArray[k].user.toString()));
+      // User search
+      for (let j = 0; j < userSearchKeys.length; j++) {
+        const key = userSearchKeys[j];
+        const entryArray = await User.find({ [key]: keyword });
+        if (entryArray.length === 0) continue;
+        entryArray.forEach((entry) => {
+          if (
+            !data[0] ||
+            data.filter((obj) => obj._id.toString() === entry.id.toString())
+              .length === 0
+          ) {
+            data.push(entry);
+          }
+        });
       }
 
-      users.forEach((entry) => {
-        if (
-          !data[0] ||
-          data.filter((obj) => obj._id.toString() === entry.id.toString())
-            .length === 0
-        ) {
-          data.push(entry);
-        }
-      });
-    }
-  }
+      // Profile search
+      for (let j = 0; j < profileSearchKeys.length; j++) {
+        const key = profileSearchKeys[j];
+        const entryArray = await Profile.find({ [key]: keyword });
+        if (entryArray.length === 0) continue;
 
-  res.json({ data });
+        const users = [];
+        for (let k = 0; k < entryArray.length; k++) {
+          users.push(await User.findById(entryArray[k].user.toString()));
+        }
+
+        users.forEach((entry) => {
+          if (
+            !data[0] ||
+            data.filter((obj) => obj._id.toString() === entry.id.toString())
+              .length === 0
+          ) {
+            data.push(entry);
+          }
+        });
+      }
+    }
+
+    res.json({ data });
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Not found" }] });
+    }
+    return res.status(500).send("Server error");
+  }
 });
 
 // @route   POST api/users
@@ -174,6 +184,9 @@ router.post(
       );
     } catch (err) {
       console.error(err.message);
+      if (err.kind === "ObjectId") {
+        return res.status(404).json({ errors: [{ msg: "User not found" }] });
+      }
       return res.status(500).send("Server error");
     }
   }
@@ -204,6 +217,9 @@ router.delete("/deleteaccount", auth, async (req, res) => {
     return res.json({ msg: "Account deleted" });
   } catch (err) {
     console.error(err);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "User not found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });

@@ -24,11 +24,15 @@ router.get("/vacancies/:id", async (req, res) => {
     const vacancy = await Vacancy.findById(req.params.id);
 
     if (!vacancy) {
-      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
+      return res.status(404).json({ errors: [{ msg: "Vacancy not found" }] });
     }
 
     return res.json({ data: vacancy });
   } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Vacancy not found" }] });
+    }
     return res.status(500).send("Server Error");
   }
 });
@@ -99,6 +103,10 @@ router.put("/vacancies/:id", auth, async (req, res) => {
   try {
     const user = getAuthUserId(req);
     const vacancy = await Vacancy.findById(req.params.id);
+
+    if (!vacancy) {
+      return res.status(404).json({ errors: [{ msg: "Vacancy not found" }] });
+    }
 
     if (user !== vacancy.user.toString()) {
       return res.status(401).json({
@@ -193,6 +201,9 @@ router.put("/vacancies/:id", auth, async (req, res) => {
     return res.json({ data: vacancy });
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Vacancy not found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });
@@ -206,9 +217,7 @@ router.delete("/vacancies/:id", auth, async (req, res) => {
     const vacancy = await Vacancy.findById(req.params.id);
 
     if (!vacancy) {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: "There is no vacancy with this id" }] });
+      return res.status(400).json({ errors: [{ msg: "Vacancy not found" }] });
     }
 
     if (userId !== vacancy.user.toString()) {
@@ -222,6 +231,9 @@ router.delete("/vacancies/:id", auth, async (req, res) => {
     return res.status(200).json({ msg: "Vacancy listing deleted" });
   } catch (err) {
     console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Vacancy not found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });
