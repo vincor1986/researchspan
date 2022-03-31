@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const auth = require("../../middleware/auth");
 const config = require("config");
 const getReplyCommand = require("../../utils/getReplyCommand");
+const deleteReplyHelper = require("../../utils/deleteReplyHelper");
 const getAuthUserId = require("../../utils/getAuthUserId");
 const User = require("../../models/User");
 
@@ -266,15 +267,23 @@ router.delete("/:head/:id", async (req, res) => {
 
       return res.json({ msg: "Post deleted" });
     } else {
-      const [postUser, delCommand] = getNestedReplyString(head, postId, true);
+      const indexArray = head.replyData[0][postId][0];
+      const [postUser, delCommand] = deleteReplyHelper(head, indexArray);
+
       if (postUser !== authUserId) {
         return res.status(401).json({
           errors: [{ msg: "You are not authorised to delete this post" }],
         });
       }
 
+      console.log(delCommand);
+      console.log("trying to delete");
+
       eval(delCommand);
+      delete head.replyData[0][postId];
+
       head.markModified("responses");
+      head.markModified("replyData");
       await head.save();
 
       return res.json({ msg: "Post deleted" });
