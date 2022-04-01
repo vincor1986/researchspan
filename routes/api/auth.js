@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const getAuthUserId = require("../../utils/getAuthUserId");
 
 // @route   GET api/auth
-// @desc    Test route
+// @desc    Get auth user
 // @access  Public
 router.get("/", auth, async (req, res) => {
   try {
@@ -88,8 +88,8 @@ router.post(
 // @access  Private
 router.put(
   "/changepassword",
-  auth,
   [
+    auth,
     check("currentPassword", "Current password is required").exists(),
     check("newPassword", "A new password is required").exists(),
     check(

@@ -110,7 +110,7 @@ router.get("/", async (req, res) => {
       }
     }
 
-    res.json({ data });
+    res.json(data);
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {
@@ -195,33 +195,64 @@ router.post(
 //@Route    DELETE api/users/deleteaccount
 //@Desc     Delete account
 //@Access   Private
-router.delete("/deleteaccount", auth, async (req, res) => {
-  try {
-    const authUserId = getAuthUserId(req);
-    const user = await User.findById(authUserId);
-    const profile = await Profile.find({ user: authUserId });
+router.delete(
+  "/deleteaccount",
+  [auth, [check("password", "Password is required").exists()]],
+  async (req, res) => {
+    const errors = validationResult(req);
 
-    for (let i = 0; i < user.pub_id_array.length; i++) {
-      const pubIndex = user.pub_id_array[i];
-      const publication = await Publication.findById(pubIndex);
-      const arrayIndex = publication.connectedUsers.indexOf(authUserId);
-      publication.connectedUsers.splice(arrayIndex, 1);
-      publication.coauthors.push(`${user.first_name} ${user.last_name}`);
-      await publication.save();
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
-    if (profile) {
-      await Profile.findByIdAndDelete(profile._id);
-    }
-    await User.findByIdAndDelete(authUserId);
 
-    return res.json({ msg: "Account deleted" });
-  } catch (err) {
-    console.error(err);
-    if (err.kind === "ObjectId") {
-      return res.status(404).json({ errors: [{ msg: "User not found" }] });
+    const { password } = req.body;
+
+    try {
+      const authUserId = getAuthUserId(req);
+      const user = await User.findById(authUserId);
+
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      if (!isMatch) {
+        return res
+          .status(401)
+          .json({ errors: [{ msg: "Invalid credentials" }] });
+      }
+
+      const profile = await Profile.find({ user: authUserId });
+
+      for (let i = 0; i < user.pub_id_array.length; i++) {
+        const pubId = user.pub_id_array[i];
+        const publication = await Publication.findById(pubId);
+
+        if (publication.user.toString() === authUserId) {
+          await Publication.findOneAndDelete(pubId);
+        } else {
+          const arrayIndex = publication.connectedUsers
+            .map((id) => id.toString())
+            .indexOf(authUserId);
+          publication.connectedUsers.splice(arrayIndex, 1);
+          publication.coauthors.push(
+            `${user.last_name.toUpperCase}, ${user.first_name}`
+          );
+          await publication.save();
+        }
+      }
+
+      if (profile) {
+        await Profile.findByIdAndDelete(profile._id);
+      }
+      await User.findByIdAndDelete(authUserId);
+
+      return res.json({ msg: "Account deleted" });
+    } catch (err) {
+      console.error(err);
+      if (err.kind === "ObjectId") {
+        return res.status(404).json({ errors: [{ msg: "User not found" }] });
+      }
+      return res.status(500).send("Server error");
     }
-    return res.status(500).send("Server error");
   }
-});
+);
 
 module.exports = router;

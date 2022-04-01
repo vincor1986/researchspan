@@ -10,7 +10,7 @@ const getAuthUserId = require("../../utils/getAuthUserId");
 router.get("/", async (req, res) => {
   try {
     const vacancies = await Vacancy.find();
-    res.json({ vacancies });
+    res.json({ data: vacancies });
   } catch (err) {
     return res.status(500).send("Server error");
   }
@@ -27,7 +27,7 @@ router.get("/vacancies/:id", async (req, res) => {
       return res.status(404).json({ errors: [{ msg: "Vacancy not found" }] });
     }
 
-    return res.json({ data: vacancy });
+    return res.json(vacancy);
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {
@@ -89,7 +89,7 @@ router.post("/vacancies", auth, async (req, res) => {
 
     await vacancy.save();
 
-    return res.json({ data: vacancy });
+    return res.json(vacancy);
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
@@ -198,7 +198,7 @@ router.put("/vacancies/:id", auth, async (req, res) => {
 
     await vacancy.save();
 
-    return res.json({ data: vacancy });
+    return res.json(vacancy);
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {

@@ -11,7 +11,7 @@ const getAuthUserId = require("../../utils/getAuthUserId");
 const User = require("../../models/User");
 
 // @route   GET api/discuss/:id
-// @desc    Get post by id
+// @desc    Get head post by id
 // @access  Public
 router.get("/:id", async (req, res) => {
   try {
@@ -21,12 +21,25 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ errors: [{ msg: "Post not found" }] });
     }
 
-    return res.json({ data: post });
+    return res.json(post);
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {
       return res.status(404).json({ errors: [{ msg: "Post not found" }] });
     }
+    return res.status(500).send("Server Error");
+  }
+});
+
+// @route   GET api/discuss
+// @desc    Get all discussion posts
+// @access  Public
+router.get("/", async (req, res) => {
+  try {
+    const forumPosts = await Post.find({ format: "discussion" });
+    return res.json({ data: forumPosts });
+  } catch (err) {
+    console.error(err.message);
     return res.status(500).send("Server Error");
   }
 });
@@ -44,19 +57,6 @@ router.get("/questions", async (req, res) => {
   }
 });
 
-// @route   GET api/discuss/forum
-// @desc    Get all discussion posts
-// @access  Public
-router.get("/forum", async (req, res) => {
-  try {
-    const forumPosts = await Post.find({ format: "discussion" });
-    return res.json({ data: forumPosts });
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server Error");
-  }
-});
-
 // @route   POST api/discuss
 // @desc    Create a new discussion or question post
 // @access  Private
@@ -66,7 +66,7 @@ router.post("/", auth, async (req, res) => {
     const decoded = jwt.verify(token, config.get("jwtSecret"));
     const user = decoded.user.id;
 
-    const { format, keywords, main, context, date } = req.body;
+    const { format, keywords, main, context } = req.body;
 
     const { first_name, last_name, avatar, organisation, position, location } =
       await User.findById(user);
@@ -92,7 +92,7 @@ router.post("/", auth, async (req, res) => {
       keywords,
       main,
       context,
-      date,
+      date: Date.now(),
       consensus_agree: [],
       consensus_disagree: [],
       recommended: [],
@@ -103,7 +103,7 @@ router.post("/", auth, async (req, res) => {
 
     await newPost.save();
 
-    return res.json({ data: newPost });
+    return res.json(newPost);
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
@@ -115,8 +115,8 @@ router.post("/", auth, async (req, res) => {
 // @access  Private
 router.post("/:head/:id", auth, async (req, res) => {
   try {
-    const postId = req.params.id;
     const headId = req.params.head;
+    const postId = req.params.id;
 
     const user = getAuthUserId(req);
 
@@ -139,7 +139,7 @@ router.post("/:head/:id", auth, async (req, res) => {
       });
     }
 
-    const { format, main, date } = req.body;
+    const { format, main } = req.body;
 
     const newPost = new Post({
       user,
@@ -154,11 +154,11 @@ router.post("/:head/:id", auth, async (req, res) => {
       keywords: [],
       main,
       context: "",
-      date,
       consensus_agree: [],
       consensus_disagree: [],
       recommended: [],
       responses: [],
+      date: Date.now(),
     });
 
     if (headId === postId) {
@@ -176,7 +176,7 @@ router.post("/:head/:id", auth, async (req, res) => {
     head.markModified("replyData");
     await head.save();
 
-    return res.json({ data: head });
+    return res.json(head);
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {
@@ -232,7 +232,7 @@ router.put("/:id", auth, async (req, res) => {
 
     await post.save();
 
-    return res.json({ data: post });
+    return res.json(post);
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {

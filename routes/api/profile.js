@@ -215,13 +215,11 @@ router.put("/:id", auth, async (req, res) => {
     }
 
     res.json({
-      data: {
-        ...profile._doc,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        publications,
-        avatar: user.avatar,
-      },
+      ...profile._doc,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      publications,
+      avatar: user.avatar,
     });
   } catch (err) {
     console.error(err.message);
@@ -260,63 +258,6 @@ router.get("/:id/publications", async (req, res) => {
     console.error(err.message);
     if (err.kind === "ObjectId") {
       return res.status(404).json({ errors: [{ msg: "No user found" }] });
-    }
-    return res.status(500).send("Server error");
-  }
-});
-
-// @route   POST api/profile/:id/publications
-// @desc    Create publication entry
-// @access  Private
-router.post("/:id/publications", auth, async (req, res) => {
-  const userId = req.params.id;
-  const user = await User.findById(userId);
-
-  try {
-    let {
-      title,
-      type,
-      field,
-      subcategories,
-      keywords,
-      journal,
-      issue,
-      colleagues,
-      connectedUsers,
-      DOI,
-      PMID,
-      link,
-      date,
-    } = req.body;
-
-    connectedUsers.unshift(userId);
-
-    let publication = new Publication({
-      user: userId,
-      title,
-      type,
-      field,
-      subcategories,
-      keywords,
-      journal,
-      issue,
-      colleagues,
-      connectedUsers,
-      DOI,
-      PMID,
-      link,
-      date,
-    });
-
-    user.pub_id_array.push(publication._id);
-
-    await publication.save();
-
-    res.json(publication);
-  } catch (err) {
-    console.error(err.message);
-    if (err.kind === "ObjectId") {
-      return res.status(404).json({ errors: [{ msg: "Not found" }] });
     }
     return res.status(500).send("Server error");
   }

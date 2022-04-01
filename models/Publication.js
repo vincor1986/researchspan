@@ -34,6 +34,14 @@ const PublicationSchema = new mongoose.Schema({
       },
     ],
   },
+  pendingUsers: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
+  },
   journal: {
     type: String,
   },
