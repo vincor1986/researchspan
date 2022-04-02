@@ -116,7 +116,7 @@ router.post("/:head/:id", auth, async (req, res) => {
 
     const user = getAuthUserId(req);
 
-    const head = await Post.findById(req.params.head);
+    const head = await Post.findById(headId);
 
     if (!head) {
       return res.status(400).json({

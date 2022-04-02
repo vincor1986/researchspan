@@ -45,7 +45,7 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "profile",
   },
-  notifcations: [
+  notifications: [
     {
       type: mongoose.Mixed,
     },

@@ -5,8 +5,8 @@ const NotificationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  notificationIndex: {
-    type: Number,
+  notificationId: {
+    type: String,
   },
   type: {
     type: String,

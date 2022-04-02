@@ -269,7 +269,7 @@ router.put("/:pubId", auth, async (req, res) => {
           type: "confirm_coauthor",
           sendingUserId: userId,
           referenceId: publication._id,
-          recipientUserId: recipientId,
+          recipientUserId: newUserId,
         };
         await sendNotification(notificationParams);
         publication.pendingUsers.push(newUserId);

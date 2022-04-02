@@ -10,11 +10,12 @@ const getAuthUserId = require("../../utils/getAuthUserId");
 
 // @route   GET api/auth
 // @desc    Get auth user
-// @access  Public
+// @access  Private
 router.get("/", auth, async (req, res) => {
   try {
     const userId = getAuthUserId(req);
-    const user = await User.findById(userId).select("-password");
+    let user = await User.findById(userId).select("-password");
+    user.notifications = user.notifications.slice(0, 10);
     res.json(user);
   } catch (err) {
     console.error(err.message);

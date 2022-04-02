@@ -208,8 +208,8 @@ router.put("/:id", auth, async (req, res) => {
 
     let publications = [];
 
-    for (let i = 0; i < pub_id_array.length; i++) {
-      const pubId = pub_id_array[i];
+    for (let i = 0; i < user.pub_id_array.length; i++) {
+      const pubId = user.pub_id_array[i];
       const newPublication = await Publication.findById(pubId);
       publications.push(newPublication);
     }

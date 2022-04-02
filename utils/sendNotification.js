@@ -1,7 +1,9 @@
 const User = require("../models/User");
 const Publication = require("../models/Publication");
 const Post = require("../models/Post");
+const Notification = require("../models/Notification");
 const getPostUser = require("./getPostUser");
+const { v4: uuid } = require("uuid");
 
 const sendNotification = async (params) => {
   const { type, sendingUserId, referenceId, postId, recipientUserId, head } =
@@ -26,7 +28,7 @@ const sendNotification = async (params) => {
             userArray: [
               { id: sendingUserId, name: `${first_name} ${last_name}` },
             ],
-            notificationIndex: recipient.notifications.length,
+            notificationId: uuid(),
             reference: referenceId,
           });
           recipient.notifications.unshift(newNotification);
@@ -65,7 +67,7 @@ const sendNotification = async (params) => {
             userArray: [
               { id: sendingUserId, name: `${first_name} ${last_name}` },
             ],
-            notificationIndex: recipient.notifications.length,
+            notificationId: uuid(),
             reference: referenceId,
             reply_reference: postId,
           });
@@ -101,7 +103,7 @@ const sendNotification = async (params) => {
           userArray: [
             { id: sendingUserId, name: `${first_name} ${last_name}` },
           ],
-          notificationIndex: recipient.notifications.length,
+          notificationId: uuid(),
           reference: referenceId,
           publication_title: title,
         });
