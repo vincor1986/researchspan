@@ -149,6 +149,7 @@ router.post("/new", auth, async (req, res) => {
     user.pub_id_array.push(publication._id);
 
     await publication.save();
+    await user.save();
 
     for (let i = 0; i < connectedUsers.length; i++) {
       const recipientId = connectedUsers[i];
@@ -279,6 +280,47 @@ router.put("/:pubId", auth, async (req, res) => {
     await publication.save();
 
     res.json(publication);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Not found" }] });
+    }
+    return res.status(500).send("Server error");
+  }
+});
+
+// @route   PUT api/publications/confirm/:pubId
+// @desc    Confirm coauthor status
+// @access  Private
+router.put("/confirm/:pubId", auth, async (req, res) => {
+  const userId = getAuthUserId(req);
+  const pubId = req.params.pubId;
+  const add = Boolean(req.query.response);
+
+  try {
+    const publication = await Publication.findById(pubId);
+
+    const userIndex = publication.pendingUsers
+      .map((id) => id.toString())
+      .indexOf(userId);
+
+    if (userIndex === -1) {
+      return res.status(404).json({ errors: [{ msg: "Not authorised" }] });
+    }
+
+    publication.pendingUsers.splice(userIndex, 1);
+
+    if (add) {
+      publication.connectedUsers.push(userId);
+      user.pub_id_array.push(publication._id);
+      await user.save();
+    }
+
+    await publication.save();
+
+    const user = await User.findById(userId);
+
+    return res.json(publication);
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {

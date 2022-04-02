@@ -13,7 +13,12 @@ const VacancySchema = new mongoose.Schema({
     type: String,
   },
   contact_details: {
-    type: [String],
+    type: [
+      {
+        form: String,
+        detail: String,
+      },
+    ],
   },
   title: {
     type: String,
@@ -52,7 +57,12 @@ const VacancySchema = new mongoose.Schema({
     required: true,
   },
   attachment_links: {
-    type: [String],
+    type: [
+      {
+        form: String,
+        link: String,
+      },
+    ],
   },
   date: {
     type: Date,

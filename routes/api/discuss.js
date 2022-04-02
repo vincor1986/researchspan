@@ -8,31 +8,10 @@ const sendNotification = require("../../utils/sendNotification");
 const getAuthUserId = require("../../utils/getAuthUserId");
 const User = require("../../models/User");
 
-// @route   GET api/discuss/:id
-// @desc    Get head post by id
-// @access  Public
-router.get("/:id", async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-
-    if (!post) {
-      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
-    }
-
-    return res.json(post);
-  } catch (err) {
-    console.error(err.message);
-    if (err.kind === "ObjectId") {
-      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
-    }
-    return res.status(500).send("Server Error");
-  }
-});
-
-// @route   GET api/discuss
+// @route   GET api/discuss/forum
 // @desc    Get all discussion posts
 // @access  Public
-router.get("/", async (req, res) => {
+router.get("/forum", async (req, res) => {
   try {
     const forumPosts = await Post.find({ format: "discussion" });
     return res.json({ data: forumPosts });
@@ -51,6 +30,27 @@ router.get("/questions", async (req, res) => {
     return res.json({ data: allQuestions });
   } catch (err) {
     console.error(err.message);
+    return res.status(500).send("Server Error");
+  }
+});
+
+// @route   GET api/discuss/:id
+// @desc    Get head post by id
+// @access  Public
+router.get("/:id", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
+    }
+
+    return res.json(post);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Post not found" }] });
+    }
     return res.status(500).send("Server Error");
   }
 });

@@ -145,7 +145,10 @@ router.put("/vacancies/:id", auth, async (req, res) => {
       vacancy.contact_name = contact_name;
     }
 
-    if (contact_details && contact_details !== vacancy.contact_details) {
+    if (
+      contact_details &&
+      contact_details.toString() !== vacancy.contact_details.toString()
+    ) {
       vacancy.contact_details = contact_details;
     }
 

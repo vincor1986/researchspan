@@ -41,11 +41,11 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// @route   POST api/profile/:id
+// @route   POST api/profile/
 // @desc    Create user profile
 // @access  Private
-router.post("/:id", auth, async (req, res) => {
-  const userId = req.params.id;
+router.post("/", auth, async (req, res) => {
+  const userId = getAuthUserId(req);
 
   try {
     let profile = await Profile.findOne({ user: userId });
@@ -121,19 +121,11 @@ router.post("/:id", auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/profile/:id
+// @route   PUT api/profile/
 // @desc    Update user profile
 // @access  Private
-router.put("/:id", auth, async (req, res) => {
-  const userId = req.params.id;
-
-  const authUserId = getAuthUserId(req);
-
-  if (authUserId !== userId) {
-    res.status(401).json({
-      errors: [{ msg: "You are not authorised to make these changes" }],
-    });
-  }
+router.put("/", auth, async (req, res) => {
+  const userId = getAuthUserId(req);
 
   try {
     let profile = await Profile.findOne({ user: userId });
@@ -172,19 +164,28 @@ router.put("/:id", auth, async (req, res) => {
     if (interests && interests.toString() !== profile.interests.toString()) {
       profile.interests = interests;
     }
-    if (social.linkedin && social.linkedin !== profile.social.linkedin) {
+    if (
+      social &&
+      social.linkedin &&
+      social.linkedin !== profile.social.linkedin
+    ) {
       profile.social.linkedin = social.linkedin;
     }
     if (
+      social &&
       social.researchgate &&
       social.researchgate !== profile.social.researchgate
     ) {
       profile.social.researchgate = social.researchgate;
     }
-    if (social.facebook && social.facebook !== profile.social.facebook) {
+    if (
+      social &&
+      social.facebook &&
+      social.facebook !== profile.social.facebook
+    ) {
       profile.social.facebook = social.facebook;
     }
-    if (social.twitter && social.twitter !== profile.social.twitter) {
+    if (social && social.twitter && social.twitter !== profile.social.twitter) {
       profile.social.twitter = social.twitter;
     }
 
