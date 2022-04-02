@@ -228,7 +228,7 @@ router.delete("/vacancies/:id", auth, async (req, res) => {
 
     await Vacancy.findByIdAndDelete(req.params.id);
 
-    return res.status(200).json({ msg: "Vacancy listing deleted" });
+    return res.json({ msg: "Vacancy listing deleted" });
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {

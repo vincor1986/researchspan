@@ -13,7 +13,8 @@ const getAuthUserId = require("../../utils/getAuthUserId");
 // @access  Public
 router.get("/", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const userId = getAuthUserId(req);
+    const user = await User.findById(userId).select("-password");
     res.json(user);
   } catch (err) {
     console.error(err.message);
