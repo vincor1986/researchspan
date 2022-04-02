@@ -4,6 +4,7 @@ const Publication = require("../../models/Publication");
 const auth = require("../../middleware/auth");
 const getAuthUserId = require("../../utils/getAuthUserId");
 const User = require("../../models/User");
+const sendNotification = require("../../utils/sendNotification");
 
 // @route   GET api/publications/
 // @desc    Get publications by search
@@ -149,6 +150,17 @@ router.post("/new", auth, async (req, res) => {
 
     await publication.save();
 
+    for (let i = 0; i < connectedUsers.length; i++) {
+      const recipientId = connectedUsers[i];
+      const notificationParams = {
+        type: "confirm_coauthor",
+        sendingUserId: userId,
+        referenceId: publication._id,
+        recipientUserId: recipientId,
+      };
+      await sendNotification(notificationParams);
+    }
+
     res.json(publication);
   } catch (err) {
     console.error(err.message);
@@ -194,11 +206,9 @@ router.put("/:pubId", auth, async (req, res) => {
       ...publication.pendingUsers.map((id) => id.toString()),
     ];
 
-    connectedUsers.forEach((newUserId) => {
-      if (!existingConnected.includes(newUserId)) {
-        // TODO: Send notification to new user
-      }
-    });
+    publication.pendingUsers = publication.pendingUsers.filter((pendingUser) =>
+      connectedUsers.includes(pendingUser)
+    );
 
     const remove = existingConnected.filter(
       (existingUser) => !connectedUsers.includes(existingUser)
@@ -250,6 +260,20 @@ router.put("/:pubId", auth, async (req, res) => {
     }
     if (date && date !== publication.date) {
       publication.date = date;
+    }
+
+    for (let i = 0; i < connectedUsers.length; i++) {
+      const newUserId = connectedUsers[i];
+      if (!existingConnected.includes(newUserId)) {
+        const notificationParams = {
+          type: "confirm_coauthor",
+          sendingUserId: userId,
+          referenceId: publication._id,
+          recipientUserId: recipientId,
+        };
+        await sendNotification(notificationParams);
+        publication.pendingUsers.push(newUserId);
+      }
     }
 
     await publication.save();

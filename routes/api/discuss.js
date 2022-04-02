@@ -7,6 +7,7 @@ const auth = require("../../middleware/auth");
 const config = require("config");
 const getReplyCommand = require("../../utils/getReplyCommand");
 const deleteReplyHelper = require("../../utils/deleteReplyHelper");
+const sendNotification = require("../../utils/sendNotification");
 const getAuthUserId = require("../../utils/getAuthUserId");
 const User = require("../../models/User");
 
@@ -62,9 +63,7 @@ router.get("/questions", async (req, res) => {
 // @access  Private
 router.post("/", auth, async (req, res) => {
   try {
-    const token = req.header("x-auth-token");
-    const decoded = jwt.verify(token, config.get("jwtSecret"));
-    const user = decoded.user.id;
+    const user = getAuthUserId(req);
 
     const { format, keywords, main, context } = req.body;
 
@@ -175,6 +174,16 @@ router.post("/:head/:id", auth, async (req, res) => {
     head.markModified("responses");
     head.markModified("replyData");
     await head.save();
+
+    const notificationParams = {
+      type: format,
+      sendingUserId: user,
+      referenceId: headId,
+      postId,
+      head,
+    };
+
+    await sendNotification(notificationParams);
 
     return res.json(head);
   } catch (err) {

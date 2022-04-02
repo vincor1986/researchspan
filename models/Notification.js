@@ -5,8 +5,12 @@ const NotificationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  notificationIndex: {
+    type: Number,
+  },
   type: {
     type: String,
+    required: true,
   },
   userArray: [
     {
@@ -25,6 +29,17 @@ const NotificationSchema = new mongoose.Schema({
   },
   reference: {
     type: String,
+    required: true,
+  },
+  reply_reference: {
+    type: String,
+  },
+  publication_title: {
+    type: String,
+  },
+  avatar: {
+    type: String,
+    required: true,
   },
 });
 
