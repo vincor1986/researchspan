@@ -248,6 +248,111 @@ router.put("/:id", auth, async (req, res) => {
   }
 });
 
+// @route   PUT api/discuss/consensus/:headId/:postId
+// @desc    Toggle agree / disagree on post
+// @access  Private
+router.put("/consensus/:headId/:postId", auth, async (req, res) => {
+  try {
+    const headId = req.params.headId;
+    const postId = req.params.postId;
+    const userId = getAuthUserId(req);
+    const response = req.query.response.replace(/"/g, "");
+
+    if (response !== "agree" && response !== "disagree") {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Something went wrong" }] });
+    }
+
+    const head = await Post.findById(headId);
+    let currentAgree, currentDisagree, path;
+    if (headId === postId) {
+      currentAgree = head.consensus_agree.map((id) => id.toString());
+      currentDisagree = head.consensus_disagree.map((id) => id.toString());
+    } else {
+      const postIndexArray = head.replyData[0][postId][0];
+      const middle = postIndexArray.map((index) => `.responses[${index}]`);
+      path = "head" + middle.join("");
+      currentAgree = eval(path + ".consensus_agree").map((id) => id.toString());
+      currentDisagree = eval(path + ".consensus_disagree").map((id) =>
+        id.toString()
+      );
+    }
+
+    if (response === "agree") {
+      if (currentDisagree.includes(userId)) {
+        return res
+          .status(401)
+          .json({ msg: "You have already disagreed to this post" });
+      }
+      if (currentAgree.includes(userId)) {
+        const indexOfUser = currentAgree.indexOf(userId);
+        if (headId === postId) {
+          head.consensus_agree.splice(indexOfUser, 1);
+          head.markModified("responses");
+          await head.save();
+          return res.json({ msg: "Agree removed" });
+        } else {
+          eval(path).consensus_agree.splice(indexOfUser, 1);
+          head.markModified("responses");
+          await head.save();
+          return res.json({ msg: "Agree removed" });
+        }
+      } else {
+        if (head === postId) {
+          head.consensus_agree.push(userId);
+          head.markModified("responses");
+          await head.save();
+          return res.json({ msg: "Agree added" });
+        } else {
+          eval(path).consensus_agree.push(userId);
+          head.markModified("responses");
+          await head.save();
+          return res.json({ msg: "Agree added" });
+        }
+      }
+    } else {
+      if (currentAgree.includes(userId)) {
+        return res
+          .status(401)
+          .json({ msg: "You have already Agreed to this post" });
+      }
+      if (currentDisagree.includes(userId)) {
+        const indexOfUser = currentDisagree.indexOf(userId);
+        if (headId === postId) {
+          head.consensus_disagree.splice(indexOfUser, 1);
+          head.markModified("responses");
+          await head.save();
+          return res.json({ msg: "Disagree removed" });
+        } else {
+          eval(path).consensus_disagree.splice(indexOfUser, 1);
+          head.markModified("responses");
+          await head.save();
+          return res.json({ msg: "Disagree removed" });
+        }
+      } else {
+        if (head === postId) {
+          head.consensus_disagree.push(userId);
+          head.markModified("responses");
+          await head.save();
+          return res.json({ msg: "Disagree added" });
+        } else {
+          eval(path).consensus_disagree.push(userId);
+          head.markModified("responses");
+          await head.save();
+          return res.json({ msg: "Disagree added" });
+        }
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Not found" }] });
+    }
+    return res.status(500).send("Server error");
+  }
+});
+
 // @route   DELETE api/discuss/:head/:id
 // @desc    Delete posts
 // @access  Private
