@@ -55,6 +55,7 @@ const VacancySchema = new mongoose.Schema({
   apply_link: {
     type: String,
     required: true,
+    unique: true,
   },
   attachment_links: {
     type: [

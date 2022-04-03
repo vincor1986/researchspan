@@ -5,13 +5,63 @@ const auth = require("../../middleware/auth");
 const getAuthUserId = require("../../utils/getAuthUserId");
 
 // @route   GET api/jobs/
-// @desc    Test route
+// @desc    Get vacancies by search
 // @access  Public
 router.get("/", async (req, res) => {
   try {
-    const vacancies = await Vacancy.find();
-    res.json({ data: vacancies });
+    if (!req.query.search) {
+      const allJobs = await Vacancy.find();
+      if (!allJobs) {
+        return res.status(404).json({
+          errors: [{ msg: "No current vacancies were found" }],
+        });
+      }
+      return res.json({ data: allJobs });
+    }
+
+    const query = req.query.search.split(" ").map((val) => val.toLowerCase());
+
+    let data = [],
+      idArray = [];
+    const vacancySearchKeys = [
+      "title",
+      "field",
+      "location",
+      "keywords",
+      "jd",
+      "organisation",
+    ];
+
+    // Search for loop over each search term
+    for (let i = 0; i < query.length; i++) {
+      const keyword = new RegExp(query[i], "gi");
+
+      // Vacancies search
+      for (let j = 0; j < vacancySearchKeys.length; j++) {
+        const key = vacancySearchKeys[j];
+        const entryArray = await Vacancy.find({ [key]: keyword });
+        if (entryArray.length === 0) continue;
+
+        for (let k = 0; k < entryArray.length; k++) {
+          const entry = entryArray[k];
+          const entryId = entry._id.toString();
+
+          if (!idArray.includes(entryId)) {
+            data.push(entry);
+            idArray.push(entryId);
+          }
+        }
+      }
+    }
+
+    data = Array.from(new Set(data));
+
+    res.json(data);
   } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Not found" }] });
+    }
     return res.status(500).send("Server error");
   }
 });

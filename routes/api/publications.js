@@ -330,4 +330,59 @@ router.put("/confirm/:pubId", auth, async (req, res) => {
   }
 });
 
+// @route   DELETE api/publications/:pubId
+// @desc    Delete publication
+// @access  Private
+router.delete("/:pubId", auth, async (req, res) => {
+  const pubId = req.params.pubId;
+  const userId = getAuthUserId(req);
+
+  try {
+    const publication = await Publication.findById(pubId);
+
+    if (publication.user.toString() !== userId) {
+      return res.status(401).json({ errors: [{ msg: "Not authorised" }] });
+    }
+
+    for (let i = 0; i < publication.connectedUsers.length; i++) {
+      const connectedUserId = publication.connectedUsers[i];
+      const connectedUser = await User.findById(connectedUserId);
+
+      const idArrayIndex = connectedUser.pub_id_array
+        .map((id) => id.toString())
+        .indexOf(publication._id.toString());
+
+      if (idArrayIndex === -1) continue;
+
+      connectedUser.pub_id_array.splice(idArrayIndex, 1);
+      await connectedUser.save();
+    }
+
+    for (let i = 0; i < publication.pendingUsers.length; i++) {
+      const pendingUserId = publication.pendingUsers[i];
+      const pendingUser = await User.findById(pendingUserId);
+
+      const idArrayIndex = pendingUser.notifications
+        .map((obj) => obj.reference)
+        .indexOf(publication._id.toString());
+
+      if (idArrayIndex === -1) continue;
+
+      pendingUser.notifications.splice(idArrayIndex, 1);
+      pendingUser.markModified("notifications");
+      await pendingUser.save();
+    }
+
+    await Publication.findOneAndDelete({ _id: pubId });
+
+    return res.json({ msg: "Publication deleted" });
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Not found" }] });
+    }
+    return res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;
