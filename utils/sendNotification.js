@@ -6,8 +6,15 @@ const getPostUser = require("./getPostUser");
 const { v4: uuid } = require("uuid");
 
 const sendNotification = async (params) => {
-  const { type, sendingUserId, referenceId, postId, recipientUserId, head } =
-    params;
+  const {
+    type,
+    sendingUserId,
+    referenceId,
+    postId,
+    recipientUserId,
+    publication_title,
+    head,
+  } = params;
   const { avatar, first_name, last_name } = await User.findById(sendingUserId);
 
   // types
@@ -95,7 +102,6 @@ const sendNotification = async (params) => {
       }
       case "confirm_coauthor": {
         const recipient = await User.findById(recipientUserId);
-        const { title } = await Publication.findById(referenceId);
 
         const newNotification = new Notification({
           type,
@@ -105,10 +111,49 @@ const sendNotification = async (params) => {
           ],
           notificationId: uuid(),
           reference: referenceId,
-          publication_title: title,
+          publication_title,
         });
         recipient.notifications.unshift(newNotification);
 
+        recipient.markModified("notifications");
+        await recipient.save();
+        break;
+      }
+      case "coauthor_confirmed": {
+        const recipient = await User.findById(recipientUserId);
+        const existingNotificationIndex = recipient.notifications
+          .map((obj) => obj.reference)
+          .indexOf(postId);
+
+        if (existingNotificationIndex === -1) {
+          const newNotification = new Notification({
+            type,
+            avatar,
+            userArray: [
+              { id: sendingUserId, name: `${first_name} ${last_name}` },
+            ],
+            notificationId: uuid(),
+            publication_title,
+            reference: referenceId,
+          });
+          recipient.notifications.unshift(newNotification);
+        } else {
+          recipient.notifications[existingNotificationIndex] = {
+            ...recipient.notifications[existingNotificationIndex],
+            date: Date.now(),
+            avatar,
+            userArray: [
+              ...recipient.notifications[existingNotificationIndex].userArray,
+              { id: sendingUserId, name: `${first_name} ${last_name}` },
+            ],
+            unread: true,
+          };
+          const removed = recipient.notifications.splice(
+            existingNotificationIndex,
+            1
+          );
+          recipient.notifications.unshift(removed[0]);
+        }
         recipient.markModified("notifications");
         await recipient.save();
         break;

@@ -4,7 +4,7 @@ const User = require("../../models/User");
 const getAuthUserId = require("../../utils/getAuthUserId");
 const auth = require("../../middleware/auth");
 
-// @route   GET api/notification/
+// @route   GET api/notifications/
 // @desc    Get all notifications
 // @access  Private
 router.get("/", auth, async (req, res) => {

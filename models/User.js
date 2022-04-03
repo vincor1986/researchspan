@@ -50,6 +50,20 @@ const UserSchema = new mongoose.Schema({
       type: mongoose.Mixed,
     },
   ],
+  shortlist: {
+    vacancies: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "vacancy",
+      },
+    ],
+    publications: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "publication",
+      },
+    ],
+  },
   date: {
     type: Date,
     default: Date.now,

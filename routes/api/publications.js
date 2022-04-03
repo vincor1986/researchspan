@@ -157,6 +157,7 @@ router.post("/new", auth, async (req, res) => {
         type: "confirm_coauthor",
         sendingUserId: userId,
         referenceId: publication._id,
+        publication_title: publication.title,
         recipientUserId: recipientId,
       };
       await sendNotification(notificationParams);
@@ -271,6 +272,7 @@ router.put("/:pubId", auth, async (req, res) => {
           sendingUserId: userId,
           referenceId: publication._id,
           recipientUserId: newUserId,
+          publication_title: publication.title,
         };
         await sendNotification(notificationParams);
         publication.pendingUsers.push(newUserId);
@@ -295,9 +297,9 @@ router.put("/:pubId", auth, async (req, res) => {
 router.put("/confirm/:pubId", auth, async (req, res) => {
   const userId = getAuthUserId(req);
   const pubId = req.params.pubId;
-  const add = Boolean(req.query.response);
 
   try {
+    const add = Boolean(req.query.response);
     const publication = await Publication.findById(pubId);
 
     const userIndex = publication.pendingUsers
@@ -312,19 +314,59 @@ router.put("/confirm/:pubId", auth, async (req, res) => {
 
     if (add) {
       publication.connectedUsers.push(userId);
+      const user = await User.findById(userId);
       user.pub_id_array.push(publication._id);
       await user.save();
+
+      const notificationParams = {
+        type: "coauthor_confirmed",
+        sendingUserId: userId,
+        recipientUserId: publication.user.toString(),
+        referenceId: pubId,
+        publication_title: publication.title,
+      };
+
+      await sendNotification(notificationParams);
     }
 
     await publication.save();
-
-    const user = await User.findById(userId);
 
     return res.json(publication);
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {
       return res.status(404).json({ errors: [{ msg: "Not found" }] });
+    }
+    return res.status(500).send("Server error");
+  }
+});
+
+// @route   PUT api/publications/shortlist/:pubId
+// @desc    Toggle vacancy in shortlist
+// @access  Private
+router.put("/shortlist/:pubId", auth, async (req, res) => {
+  try {
+    const pubId = req.params.pubId;
+    const userId = getAuthUserId(req);
+    const user = await User.findById(userId);
+
+    const shortlistIndex = user.shortlist.publications
+      .map((id) => id.toString())
+      .indexOf(pubId);
+
+    if (shortlistIndex === -1) {
+      user.shortlist.publications.unshift(pubId);
+      await user.save();
+      return res.json({ msg: "Added publication to shortlist" });
+    } else {
+      user.shortlist.publications.splice(shortlistIndex, 1);
+      await user.save();
+      return res.json({ msg: "Removed publication from shortlist" });
+    }
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Vacancy not found" }] });
     }
     return res.status(500).send("Server error");
   }

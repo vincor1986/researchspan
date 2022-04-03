@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
   try {
     if (!req.query.search) {
       const allUsers = await User.find().select(
-        "-password -notifications -email"
+        "-password -notifications -email -shortlist"
       );
       if (!allUsers) {
         return res.status(500).json({
@@ -77,7 +77,7 @@ router.get("/", async (req, res) => {
       for (let j = 0; j < userSearchKeys.length; j++) {
         const key = userSearchKeys[j];
         const entryArray = await User.find({ [key]: keyword }).select(
-          "-password -notifications -email"
+          "-password -notifications -email -shortlist"
         );
         if (entryArray.length === 0) continue;
         entryArray.forEach((entry) => {

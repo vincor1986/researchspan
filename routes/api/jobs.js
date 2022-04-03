@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Vacancy = require("../../models/Vacancy");
+const User = require("../../models/User");
 const auth = require("../../middleware/auth");
 const getAuthUserId = require("../../utils/getAuthUserId");
 
@@ -252,6 +253,37 @@ router.put("/vacancies/:id", auth, async (req, res) => {
     await vacancy.save();
 
     return res.json(vacancy);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Vacancy not found" }] });
+    }
+    return res.status(500).send("Server error");
+  }
+});
+
+// @route   PUT api/jobs/vacancies/shortlist/:vacancyId
+// @desc    Toggle vacancy in shortlist
+// @access  Private
+router.put("/vacancies/shortlist/:vacancyId", auth, async (req, res) => {
+  try {
+    const vacancyId = req.params.vacancyId;
+    const userId = getAuthUserId(req);
+    const user = await User.findById(userId);
+
+    const shortlistIndex = user.shortlist.vacancies
+      .map((id) => id.toString())
+      .indexOf(vacancyId);
+
+    if (shortlistIndex === -1) {
+      user.shortlist.vacancies.unshift(vacancyId);
+      await user.save();
+      return res.json({ msg: "Added vacancy to shortlist" });
+    } else {
+      user.shortlist.vacancies.splice(shortlistIndex, 1);
+      await user.save();
+      return res.json({ msg: "Removed vacancy from shortlist" });
+    }
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {
