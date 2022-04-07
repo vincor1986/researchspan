@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "arxiv-api": "^1.1.1",
+    "axios": "^0.26.1",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.7",
     "express": "^4.17.3",
