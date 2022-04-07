@@ -21,4 +21,10 @@ const getArxivPapers = async (search, start, max) => {
   return papers;
 };
 
+(async () => {
+  const papers = await getArxivPapers("psychology cognitive");
+  const first = papers[0];
+  console.log(first.id.replace("http://arxiv.org/abs/", ""));
+})();
+
 exports.default = getArxivPapers;
