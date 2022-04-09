@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144.959" height="144.46" viewBox="0 0 144.959 144.46">
+  <g id="spinner" transform="translate(-17.723 -424.537)">
+    <g id="Ellipse_2" data-name="Ellipse 2" transform="matrix(0.799, -0.602, 0.602, 0.799, 33.689, 523.866)" fill="none" stroke="#4f9fd4" stroke-linejoin="round" stroke-width="11" stroke-dasharray="3 1">
+      <ellipse cx="61.23" cy="12.208" rx="61.23" ry="12.208" stroke="none"/>
+      <ellipse cx="61.23" cy="12.208" rx="66.73" ry="17.708" fill="none"/>
+    </g>
+    <circle id="Ellipse_4" data-name="Ellipse 4" cx="6.966" cy="6.966" r="6.966" transform="translate(80.364 496.238) rotate(-42)" fill="none"/>
+    <g id="Ellipse_5" data-name="Ellipse 5" transform="translate(77.994 557.997) rotate(-90)" fill="none" stroke="#4f9fd4" stroke-linejoin="round" stroke-width="11" stroke-dasharray="3 1">
+      <ellipse cx="61.23" cy="12.208" rx="61.23" ry="12.208" stroke="none"/>
+      <ellipse cx="61.23" cy="12.208" rx="66.73" ry="17.708" fill="none"/>
+    </g>
+    <g id="Ellipse_6" data-name="Ellipse 6" transform="matrix(-0.819, -0.574, 0.574, -0.819, 133.357, 541.874)" fill="none" stroke="#4f9fd4" stroke-linejoin="round" stroke-width="11" stroke-dasharray="3 1">
+      <ellipse cx="61.23" cy="12.208" rx="61.23" ry="12.208" stroke="none"/>
+      <ellipse cx="61.23" cy="12.208" rx="66.73" ry="17.708" fill="none"/>
+    </g>
+    <g id="Ellipse_3" data-name="Ellipse 3" transform="translate(63.928 495.656) rotate(-42)" fill="none" stroke="#cee0eb" stroke-width="7">
+      <ellipse cx="18.594" cy="18.219" rx="18.594" ry="18.219" stroke="none"/>
+      <ellipse cx="18.594" cy="18.219" rx="15.094" ry="14.719" fill="none"/>
+    </g>
+    <g id="Path_8" data-name="Path 8" transform="translate(73.972 480.788)" fill="none">
+      <path d="M16.153,0A16.153,16.153,0,1,1,0,16.153,16.153,16.153,0,0,1,16.153,0Z" stroke="none"/>
+      <path d="M 16.15274047851562 7 C 11.10590553283691 7 7 11.10590553283691 7 16.15274047851562 C 7 21.19957542419434 11.10590553283691 25.30548095703125 16.15274047851562 25.30548095703125 C 21.19957542419434 25.30548095703125 25.30548095703125 21.19957542419434 25.30548095703125 16.15274047851562 C 25.30548095703125 11.10590553283691 21.19957542419434 7 16.15274047851562 7 M 16.15274047851562 0 C 25.07364654541016 0 32.30548095703125 7.231822967529297 32.30548095703125 16.15274047851562 C 32.30548095703125 25.07364654541016 25.07364654541016 32.30548095703125 16.15274047851562 32.30548095703125 C 7.231822967529297 32.30548095703125 0 25.07364654541016 0 16.15274047851562 C 0 7.231822967529297 7.231822967529297 0 16.15274047851562 0 Z" stroke="none" fill="#4f9fd4"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,123 @@
+import React from "react";
+
+const LogoSvg = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="311.23"
+      height="65.886"
+      viewBox="0 0 311.23 65.886"
+      style={{ height: "100%" }}
+    >
+      <g id="Logo" transform="translate(-86.48 -136.231)">
+        <g id="Group_2" dataName="Group 2" transform="translate(86.48 132.536)">
+          <g
+            id="Rectangle_4"
+            dataName="Rectangle 4"
+            transform="translate(0 39.581)"
+            fill="#4f9fd4"
+            stroke="#4f9fd4"
+            strokeWidth="1"
+          >
+            <path
+              d="M0,0H183a0,0,0,0,1,0,0V30a0,0,0,0,1,0,0H15A15,15,0,0,1,0,15V0A0,0,0,0,1,0,0Z"
+              stroke="none"
+            />
+            <path
+              d="M.5.5h182a0,0,0,0,1,0,0v29a0,0,0,0,1,0,0H15A14.5,14.5,0,0,1,.5,15V.5A0,0,0,0,1,.5.5Z"
+              fill="none"
+            />
+          </g>
+          <g id="Group_1" dataName="Group 1" transform="translate(0.012 0)">
+            <g
+              id="Path_6"
+              dataName="Path 6"
+              transform="translate(311.219 34) rotate(180)"
+              fill="#4f9fd4"
+            >
+              <path
+                d="M 119.9434509277344 29.5 L 14.00504875183105 29.5 C 10.40424823760986 29.5 7.017064094543457 27.99612236022949 4.467448711395264 25.26538467407227 C 1.909002423286438 22.52516937255859 0.500002384185791 18.8795223236084 0.500002384185791 15 L 0.500002384185791 0.5 L 119.9434509277344 0.5 L 119.9434509277344 29.5 Z"
+                stroke="none"
+              />
+              <path
+                d="M 0.9999923706054688 1 L 0.9999923706054688 15 C 0.9999923706054688 18.75239944458008 2.3612060546875 22.2768669128418 4.832908630371094 24.92415046691895 C 7.28692626953125 27.55249977111816 10.54432678222656 29 14.00504302978516 29 L 119.4434432983398 29 L 119.4434432983398 1 L 0.9999923706054688 1 M -7.62939453125e-06 0 L 120.4434432983398 0 L 120.4434432983398 30 L 14.00504302978516 30 C 6.270278930664062 30 -7.62939453125e-06 23.28426742553711 -7.62939453125e-06 15 L -7.62939453125e-06 0 Z"
+                stroke="none"
+                fill="#4f9fd4"
+              />
+            </g>
+            <text
+              id="research"
+              transform="translate(13.439 3.695)"
+              fill="#1c73ae"
+              fontSize="27"
+              fontFamily="CreteRound-Regular, Crete Round"
+              letter-spacing="0.257em"
+            >
+              <tspan x="0" y="27">
+                research
+              </tspan>
+            </text>
+            <text
+              id="span"
+              transform="translate(204.988 34.581)"
+              fill="#1c73ae"
+              fontSize="27"
+              fontFamily="CreteRound-Regular, Crete Round"
+              letter-spacing="0.338em"
+            >
+              <tspan x="0" y="27">
+                span
+              </tspan>
+            </text>
+            <path
+              id="Path_2"
+              dataName="Path 2"
+              d="M82.218,231.236l6.357-8.8L92,227.953l12.714-13.832,15.649,10.441,10.758-15.223,16.138,13.1,15.16-8.313,29.341,17.116,10.758-12.714,13.2,9.431,12.225-13.832,10.269,8.313,11.736-13.1"
+              transform="translate(-70.3 -167.369)"
+              fill="none"
+              stroke="#bdf3f2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              strokeWidth="4"
+              stroke-dasharray="0 8"
+            />
+            <g id="Group_4" dataName="Group 4" transform="translate(0 32.955)">
+              <path
+                id="Path_1"
+                dataName="Path 1"
+                d="M0,49.854V42.143"
+                transform="translate(186.878 -42.143)"
+                fill="none"
+                stroke="#4f9fd4"
+                strokeWidth="2"
+              />
+              <path
+                id="Path_4"
+                dataName="Path 4"
+                d="M0,7.56V0"
+                transform="translate(183.109 3.855) rotate(-90)"
+                fill="none"
+                stroke="#4f9fd4"
+                strokeWidth="2"
+              />
+            </g>
+            <path
+              id="Path_5"
+              dataName="Path 5"
+              d="M64.238,240.377l11.448-9.4,7.9,9.4,15.862-14.8,9.718,8.406,6.909-6.281L128.3,240.377,140.524,227.7l13.693,6.281,20.05-12.319"
+              transform="translate(130.106 -212.053)"
+              fill="none"
+              stroke="#bdf3f2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              strokeWidth="4"
+              stroke-dasharray="0 8"
+            />
+          </g>
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+export default LogoSvg;

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="734.007" height="184.021" viewBox="0 0 734.007 184.021" class="chart-icon">
+  <g id="Group_8" data-name="Group 8" transform="translate(-72.005 -640.761)">
+    <g id="chart" transform="translate(79.537 640.761)">
+      <g id="Group_7" data-name="Group 7" transform="translate(0)">
+        <g id="Rectangle_6" data-name="Rectangle 6" fill="#4f9fd4" stroke="#4f9fd4" stroke-width="1">
+          <rect width="724.845" height="184.021" stroke="none"/>
+          <rect x="0.5" y="0.5" width="723.845" height="183.021" fill="none"/>
+        </g>
+      </g>
+      <g id="Group_9" data-name="Group 9" transform="translate(0 47.643)">
+        <path id="Path_11" data-name="Path 11" d="M82.218,296.639l20.719-35.092,11.157,22L155.533,228.4l51,41.624,35.064-60.69,52.6,52.208L343.6,228.4l95.628,68.235,35.064-50.689,43.033,37.6L557.17,228.4l33.47,33.143,38.251-52.208" transform="translate(-82.218 -209.339)" fill="none" stroke="#bdf3f2" stroke-linecap="round" stroke-linejoin="round" stroke-width="11" stroke-dasharray="0 21"/>
+        <path id="Path_12" data-name="Path 12" d="M66.016,198.631,86.13,215.583l26.027,21,25.28-13.025L160.271,270.1l24.459-28.065,39.6,38.959" transform="translate(494.363 -192.259)" fill="none" stroke="#bdf3f2" stroke-linecap="round" stroke-linejoin="round" stroke-width="11" stroke-dasharray="0 21"/>
+      </g>
+    </g>
+  </g>
+</svg>
