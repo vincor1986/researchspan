@@ -144,7 +144,14 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { first_name, last_name, email, password } = req.body;
+    const {
+      first_name,
+      last_name,
+      email,
+      organisation,
+      account_type,
+      password,
+    } = req.body;
 
     try {
       let user = await User.findOne({ email });
@@ -152,7 +159,11 @@ router.post(
       if (user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: "User already exists" }] });
+          .json({
+            errors: [
+              { msg: "There was a problem. Please try again in a while." },
+            ],
+          });
       }
 
       const avatar = gravatar.url(email, { s: "200", r: "pg", d: "mm" });
@@ -161,6 +172,8 @@ router.post(
         first_name,
         last_name,
         email,
+        account_type,
+        organisation,
         avatar,
         password,
       });

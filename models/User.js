@@ -29,6 +29,10 @@ const UserSchema = new mongoose.Schema({
     ],
     default: [],
   },
+  account_type: {
+    type: String,
+    required: true,
+  },
   orgnisation: {
     type: String,
   },
