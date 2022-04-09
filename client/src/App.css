@@ -311,6 +311,52 @@ input:checked {
   opacity: 1;
 }
 
+.alert-wrapper {
+  position: fixed;
+  top: 7rem;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.alert {
+
+  width: 100%;
+  background: linear-gradient(to right, #427bc5, #71abec);
+  height: 5rem;
+  padding-left: 2rem;
+  display: flex;
+  align-items: center;
+  z-index: 1500;
+  color: white;
+  font-size: 2.3rem;
+  letter-spacing: 0.2rem;
+  margin-bottom: 0.5rem;
+  animation: fadeInOut 5s ease;
+  opacity: 0;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.alert-warning {
+  background: linear-gradient(to right, #963343, #c03d53);
+}
+
 .main-title {
   color: white;
   font-size: 2.3rem;
@@ -2148,6 +2194,10 @@ button:hover {
 
   .main-body-container {
       margin-top: 5rem;
+  }
+
+  .alert-wrapper {
+    top: 5rem;
   }
 
   .result-user-section {
