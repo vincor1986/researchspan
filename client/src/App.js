@@ -15,6 +15,7 @@ import JobResults from "./components/jobs/JobResults";
 import DiscussionSearch from "./components/search-panels/DiscussionSearch";
 import DiscussionResults from "./components/discuss/DiscussionResults";
 import setAuthToken from "./utils/setAuthToken";
+import PrivateRoute from "./components/routing/PrivateRoute";
 
 //Redux
 import { Provider } from "react-redux";
@@ -48,6 +49,11 @@ const App = () => {
               </Route>
               <Route path="/discuss/*" element={<DiscussionSearch />}>
                 <Route exact path="" element={<DiscussionResults />} />
+                <Route
+                  exact
+                  path="unique"
+                  element={<PrivateRoute element={<JobResults />} />}
+                />
               </Route>
             </Routes>
           </main>
