@@ -1,36 +1,37 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import LogoSvg from "./LogoSvg";
 
 const Navbar = () => {
   return (
     <nav className="nav">
-      <div className="title-logo">
+      <Link to="/" className="title-logo">
         <LogoSvg className="logo" />
-      </div>
+      </Link>
       <div className="nav-links">
         <div className="navlink-wrapper active">
-          <a href="#" className="navlink">
+          <Link to="/publications/" className="navlink">
             Publications
-          </a>
+          </Link>
         </div>
         <div className="navlink-wrapper">
-          <a href="#" className="navlink">
+          <Link to="/jobs/" className="navlink">
             Jobs in Research
-          </a>
+          </Link>
         </div>
         <div className="navlink-wrapper">
-          <a href="#" className="navlink">
+          <Link to="/discuss/" className="navlink">
             Discuss
-          </a>
+          </Link>
         </div>
       </div>
       <div className="auth-links">
-        <a href="#" className="authlink login">
+        <Link to="/login" className="authlink login">
           login
-        </a>
-        <a href="#" className="authlink register">
+        </Link>
+        <Link to="/register" className="authlink register">
           register
-        </a>
+        </Link>
       </div>
     </nav>
   );
