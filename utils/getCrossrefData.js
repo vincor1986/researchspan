@@ -13,30 +13,33 @@ const getCrossrefData = async (query) => {
     },
   };
 
-  const url = `https://api.crossref.org/works?query=${queryStr}&query.publisher-name=IOS&select=DOI,URL,abstract,author,published,publisher,score,issue,page,title,type,volume&mailto=info@vincentcoraldean.com`;
+  const url = `https://api.crossref.org/works?query=${queryStr}&select=DOI,URL,abstract,author,published,publisher,score,issue,page,title,type,volume&mailto=info@vincentcoraldean.com`;
 
   const res = await axios.get(url, params);
 
   if (res.data.message.items.length === 0) {
-    return console.log("no entries found");
+    return [];
   }
 
-  // const result = res.data.message.items.sort((a, b) => b.score - a.score)[0];
+  const results = res.data.message.items;
 
-  console.log(res.data.message.items);
-  console.log(res.data.message.items[0].published["date-parts"]);
-
-  // console.log("result", result);
-  // console.log("result.resource.primary", result.resource.primary);
-  // result.link && console.log("link", result.link[0]);
-  // console.log("source", result.source);
-  // console.log("url", result.URL);
+  return results.map((item) => {
+    return {
+      DOI: item.DOI,
+      format: item.format,
+      publisher: item.publisher,
+      abstract: item.abstract,
+      date_published: item.published,
+      title: item.title,
+      authors: item.author,
+      URL: item.URL,
+    };
+  });
 };
 
-(async () => await getCrossrefData("throat swelling swallowing"))();
+module.exports = getCrossrefData;
 
 /*
-
 Oxford Univeristy Press (OUP)
 BMJ
 American Medical Association (AMA)

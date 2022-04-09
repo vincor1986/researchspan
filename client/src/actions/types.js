@@ -7,3 +7,6 @@ export const LOGIN_FAIL = "LOGIN_FAIL";
 export const USER_LOADED = "USER_LOADED";
 export const AUTH_ERROR = "AUTH_ERROR";
 export const LOGOUT = "LOGOUT";
+export const SET_SEARCH_LOADING = "SET_SEARCH_LOADING";
+export const UPDATE_PUB_SEARCH = "UPDATE_PUB_SEARCH";
+export const PUB_SEARCH_ERROR = "PUB_SEARCH_ERROR";

@@ -184,7 +184,7 @@ input::placeholder{
   color: #ccc;
 }
 
-button {
+button, .link-btn {
   margin-top: 3rem;
   width: 15rem;
   height: 5rem;
@@ -658,22 +658,39 @@ input:checked {
 }
 
 .apply-btn {
+  border-radius: 1rem;
+  outline: none;
+  border: none;
+  box-shadow: 0rem 0rem 1rem rgba(0,0,0,0.2);
+  background:#4f9fd4;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;   
   font-size: 1.7rem;
   width: 14rem;
   height: 4rem;
   margin-left: 1.5rem;
   padding: 1rem;
   box-shadow: 1rem 1rem 1rem rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .apply-link-btn {
   background: rgb(84, 173, 147);
 }
 
+.apply-link-btn:hover {
+  opacity: 0.9
+}
+
 .btn-text {
   display: inline-block;
   position: relative;
-  top: -0.8rem;
+  top: -0.2rem;
+  margin-right: 0.6rem;
   font-size: 1.7rem;
 }
 
@@ -1219,7 +1236,7 @@ button:hover {
 .result-publication-title {
   font-size: 3rem;
   font-family: "Crete Round", serif;
-  color:rgb(36, 60, 87);
+  color:rgb(67, 104, 146);
   letter-spacing: 0.1rem; 
 }
 

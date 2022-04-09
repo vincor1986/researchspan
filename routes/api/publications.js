@@ -5,12 +5,15 @@ const auth = require("../../middleware/auth");
 const getAuthUserId = require("../../utils/getAuthUserId");
 const User = require("../../models/User");
 const sendNotification = require("../../utils/sendNotification");
+const getArxivPapers = require("../../utils/getArxivPapers");
+const getCrossrefData = require("../../utils/getCrossrefData");
 
 // @route   GET api/publications/
 // @desc    Get publications by search
 // @access  Public
 router.get("/", async (req, res) => {
   try {
+    const queryStr = req.query.search;
     const query = req.query.search.split(" ").map((val) => val.toLowerCase());
 
     let data = [],
@@ -44,7 +47,12 @@ router.get("/", async (req, res) => {
       )
     );
 
-    res.json({ data });
+    const crossref = await getCrossrefData(queryStr);
+    const arxiv = await getArxivPapers(queryStr, 0, 10);
+
+    console.log(arxiv.length);
+
+    res.json({ data: [...data, ...crossref, ...arxiv] });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");

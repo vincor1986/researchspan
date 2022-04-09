@@ -18,13 +18,16 @@ const getArxivPapers = async (search, start, max) => {
     maxResults: max,
   });
 
-  return papers;
+  return papers.map((item) => {
+    return {
+      DOI: item.id.replace("http://arxiv.org/abs/", ""),
+      title: item.title,
+      abstract: item.summary,
+      authors: item.authors,
+      date_published: item.published,
+      URL: item.id,
+    };
+  });
 };
 
-(async () => {
-  const papers = await getArxivPapers("psychology cognitive");
-  const first = papers[0];
-  console.log(first.id.replace("http://arxiv.org/abs/", ""));
-})();
-
-exports.default = getArxivPapers;
+module.exports = getArxivPapers;
