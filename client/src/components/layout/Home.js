@@ -1,6 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { pubSearch } from "../../actions/search";
 
-const Home = () => {
+const Home = ({ pubSearch }) => {
+  const [pubKeywords, setPubKeywords] = useState("");
+  const navigate = useNavigate();
+
+  const sendPubSearch = () => {
+    pubSearch({
+      keywords: pubKeywords,
+      format: "",
+      subject_area: "",
+      field: "",
+    });
+    navigate("/publications", { replace: false });
+  };
+
   return (
     <div>
       <header class="hero-header-container">
@@ -24,9 +41,14 @@ const Home = () => {
                 name="search-input"
                 class="search-input"
                 placeholder="article title, authors, field or topic"
+                value={pubKeywords}
+                onChange={(e) => setPubKeywords(e.target.value)}
               />
             </div>
-            <button class="search-btn publication-search-btn" type="submit">
+            <button
+              class="search-btn publication-search-btn"
+              onClick={sendPubSearch}
+            >
               search
             </button>
           </form>
@@ -74,4 +96,8 @@ const Home = () => {
   );
 };
 
-export default Home;
+Home.propTypes = {
+  pubSearch: PropTypes.func.isRequired,
+};
+
+export default connect(null, { pubSearch })(Home);

@@ -10,7 +10,7 @@ const PubSearch = ({
   search: { pubSearchResults, loading, pubSearchParams },
 }) => {
   const [searchData, setSearchData] = useState({
-    keywords: "",
+    keywords: pubSearchParams.keywords || "",
     format: "",
     subject_area: "",
     field: "",

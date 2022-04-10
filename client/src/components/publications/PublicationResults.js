@@ -24,7 +24,11 @@ const PublicationResults = ({
   let resultsNumber = [];
 
   useEffect(() => {
-    pubSearch({ keywords: "", format: "", subject_area: "", field: "" });
+    window.scrollTo({ top: 0 });
+
+    if (!pubSearchParams.keywords) {
+      pubSearch({ keywords: "", format: "", subject_area: "", field: "" });
+    }
   }, []);
 
   if (pubTotalResults > 0) {
