@@ -3,50 +3,75 @@ import {
   SET_SEARCH_LOADING,
   PUB_SEARCH_ERROR,
   UPDATE_PUB_SEARCH,
+  ADD_NEXT_PAGE_RESULTS,
+  PREVIOUS_SEARCH_PAGE,
 } from "./types";
 import { setAlert } from "./alert";
 
-export const setSearchLoading = (searchParams) => (dispatch) => {
+export const setSearchLoading = (searchParams, type) => (dispatch) => {
   dispatch({
     type: SET_SEARCH_LOADING,
-    payload: searchParams,
+    payload: {
+      params: searchParams,
+      type,
+    },
   });
 };
 
-export const pubSearch = (searchParams) => async (dispatch) => {
-  dispatch(setSearchLoading(searchParams));
+export const pubSearch =
+  (searchParams, nextCursor = "*") =>
+  async (dispatch) => {
+    dispatch(setSearchLoading(searchParams, "publications"));
 
-  let { keywords, format, subject_area, field } = searchParams;
+    let { keywords, format, subject_area, field } = searchParams;
 
-  keywords = keywords
-    .split(" ")
-    .map((el) => el.trim())
-    .join(" ");
+    console.log(searchParams, nextCursor);
 
-  let searchString = [keywords, format, subject_area].join(" ");
+    keywords = keywords
+      .split(" ")
+      .map((el) => el.trim())
+      .join(" ");
 
-  if (field && field !== "") {
-    searchString += ` ${field}`;
-  }
+    let searchString = [keywords, format, subject_area]
+      .filter((el) => el !== "")
+      .join(" ");
 
-  try {
-    const res = await axios.get(`/api/publications/?search=${searchString}`);
+    if (field && field !== "") {
+      searchString += ` ${field}`;
+    }
 
-    dispatch({
-      type: UPDATE_PUB_SEARCH,
-      payload: res.data,
-    });
-  } catch (err) {
-    if (err) {
-      const errors = err.response.data.errors;
+    try {
+      const res = await axios.get(
+        `/api/publications/?search=${searchString}&cursor=${nextCursor}`
+      );
 
-      if (errors) {
-        errors.forEach((error) => setAlert(error.msg, "warning"));
+      console.log("data", res.data);
 
+      if (nextCursor === "*") {
         dispatch({
-          type: PUB_SEARCH_ERROR,
+          type: UPDATE_PUB_SEARCH,
+          payload: res.data,
+        });
+      } else {
+        dispatch({
+          type: ADD_NEXT_PAGE_RESULTS,
+          payload: {
+            response: res.data,
+            type: "publications",
+          },
         });
       }
+    } catch (err) {
+      if (err) {
+        const errors = err.response.data.errors;
+
+        if (errors) {
+          errors.forEach((error) => setAlert(error.msg, "warning"));
+
+          dispatch({
+            type: PUB_SEARCH_ERROR,
+          });
+        }
+      }
     }
-  }
-};
+  };

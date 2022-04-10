@@ -3,7 +3,15 @@ import { Link } from "react-router-dom";
 import defaultAvatar from "../../img/default-avatar.png";
 import newWindowIcon from "../../img/icons/new-window.png";
 
-const PubResult = ({ title, date_published, authors, abstract, type, URL }) => {
+const PubResult = ({
+  title,
+  date_published,
+  authors,
+  abstract,
+  type,
+  URL,
+  source,
+}) => {
   return (
     <div class="result">
       <div class="result-publication-content-section">
@@ -25,9 +33,9 @@ const PubResult = ({ title, date_published, authors, abstract, type, URL }) => {
           </div>
           <div class="result-all-authors-wrapper">
             {authors &&
-              authors.map((author) => {
+              authors.map((author, i) => {
                 return (
-                  <div class="result-author-wrapper">
+                  <div class="result-author-wrapper" key={i}>
                     <div class="result-author-avatar-wrapper">
                       <img class="result-author-avatar" src={defaultAvatar} />
                     </div>
@@ -43,20 +51,25 @@ const PubResult = ({ title, date_published, authors, abstract, type, URL }) => {
         </div>
         <div class="result-content-context-section">
           {abstract && (
-            <p
-              class="result-content-context abstract-text"
-              innerText={abstract
-                .replace(/<jats:p>/g, "")
-                .replace(/<\/jats:p>/)}
-            >
-              <strong>Abstract:</strong>{" "}
+            <p class="result-content-context abstract-text">
+              <strong id="abstract-title">Abstract:</strong> <br />
               {abstract
                 .replace(/<jats:p>/g, "")
                 .replace(/<\/jats:p>/)
                 .replace(/<p>/g, "")
                 .replace(/<\/p>/g, "")
                 .replace(/<italic>/g, "")
-                .replace(/<\/italic>/g, "")}
+                .replace(/<\/italic>/g, "")
+                .replace(/<jats:title>/g, "")
+                .replace(/<\/jats:title>/g, "")
+                .replace("undefined", "")}
+            </p>
+          )}
+        </div>
+        <div class="result-content-context-section">
+          {source && (
+            <p class="result-content-context abstract-text">
+              <strong id="abstract-title">Source:</strong> {source}
             </p>
           )}
         </div>

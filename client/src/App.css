@@ -231,6 +231,7 @@ button:active {
   width: 40rem;
   background: linear-gradient(to top left, #dddddd44, #eeeeee44);
   border-right: 2px solid white;
+  z-index: 800;
 }
 
 .search-panel-title {
@@ -471,6 +472,11 @@ input:checked {
   background: linear-gradient(to top left, #fbfbfb, #ffffff);
   overflow:hidden;
   position: relative;
+}
+
+#abstract-title {
+  color:rgb(36, 60, 87);
+  opacity: 0.8;
 }
 
 .result-user-section {
@@ -1226,6 +1232,19 @@ button:hover {
 
 /* Publications */
 
+.no-results-msg {
+  padding: 15rem 5rem;
+  text-align: center;
+  font-size: 3rem;
+  color:rgb(36, 60, 87);
+  opacity: 0.8;
+  border: 1px solid rgb(192, 209, 219);
+  border-radius: 0.8rem;
+  margin: auto;
+  width: 100%;
+  margin-bottom: 8rem;
+}
+
 .result-publication-content-section {
   width: 100%;
   height: 100%;
@@ -1309,6 +1328,42 @@ button:hover {
   color:rgb(36, 60, 87);
   font-size: 1.7rem;
 }
+
+.pagination-controls {
+  display: flex;
+  border: 1px solid rgb(214, 214, 214);
+  width: 15rem;
+  border-radius: 0.8rem;
+  margin: auto;
+  cursor: pointer;
+}
+
+.page-control-wrapper {
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  color:rgb(52, 91, 136);
+  height: 100%;
+  width: 100%;
+  padding: 1rem;
+}
+
+.page-control-wrapper:hover {
+  background: rgb(76, 148, 182);
+  color: white;
+}
+
+.page-control {
+  font-size: 1.7rem;
+  font-weight: bold;
+
+}
+
+
 
 /* end of publications */
 
@@ -1764,10 +1819,13 @@ button:hover {
 /* loading-modal */
 
 .loading-modal {
-  position: absolute;
-  height: 100%;
+  position: fixed;
+  top: 7rem;
+  left: 40rem;
+  height: calc(100vh - 7rem);
   width: calc(100% - 40rem);
   background: linear-gradient(to top, #cee0eb, #e7eef3);
+  z-index: 750;
 }
 
 .loading-wrapper {
@@ -1785,6 +1843,8 @@ button:hover {
   border: 1px solid #bdf3f293;
   border-radius: 0.4rem;
   overflow: hidden;
+  position: relative;
+  z-index: 1000;
 
 }
 
@@ -1798,6 +1858,14 @@ button:hover {
 .chart-icon:nth-child(2) {
   position: relative;
   left: -1px;
+}
+
+#load-update {
+  background: linear-gradient(to top, #cee0ebaa, #e7eef3aa);
+}
+
+#always-opaque {
+  opacity: 1;
 }
 
 @keyframes slide {
@@ -1814,24 +1882,8 @@ button:hover {
   color:#4f9fd4;
   font-weight: normal;
   font-family: "Crete Round", serif;
-  animation: glow 4s ease infinite;
   margin-top: 1rem;
 }
-
-@keyframes glow {
-  0% {
-      text-shadow: none;
-  }
-  50% {
-      text-shadow: 0rem 0rem 2rem #BDF3F2;
-  }
-  100% {
-      text-shadow: none;
-  }
-}
-
-
-
 
 /* end of loading modal */
 

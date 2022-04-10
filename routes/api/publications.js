@@ -16,6 +16,8 @@ router.get("/", async (req, res) => {
     const queryStr = req.query.search;
     const query = req.query.search.split(" ").map((val) => val.toLowerCase());
 
+    const cursor = req.query.cursor;
+
     let data = [],
       searchKeys = ["keywords", "field", "subcategories"];
 
@@ -47,12 +49,30 @@ router.get("/", async (req, res) => {
       )
     );
 
-    const crossref = await getCrossrefData(queryStr);
-    const arxiv = await getArxivPapers(queryStr, 0, 10);
+    const timeoutReturn = () =>
+      res.status(500).json({
+        errors: [
+          { msg: "Something went wrong. Please try again in a short while." },
+        ],
+      });
 
-    console.log(arxiv.length);
+    const timeout = setTimeout(timeoutReturn, 35000);
 
-    res.json({ data: [...data, ...crossref, ...arxiv] });
+    const crossref = await getCrossrefData(queryStr, cursor).catch((err) =>
+      console.error(err.message)
+    );
+
+    clearTimeout(timeout);
+
+    const [totalResults, nextCursor, resultsPage] = crossref;
+
+    res.json({
+      data: {
+        results: [...data, ...resultsPage],
+        totalResults,
+        nextCursor,
+      },
+    });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
