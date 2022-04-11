@@ -9,6 +9,7 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT,
+  SET_ACTIVE_TAB,
 } from "./types";
 
 // Load User
@@ -117,4 +118,13 @@ export const loginUser = (email, password) => async (dispatch) => {
 // Logout
 export const logout = () => (dispatch) => {
   dispatch({ type: LOGOUT });
+};
+
+// Set active tab
+
+export const setActiveTab = (activeTab) => (dispatch) => {
+  dispatch({
+    type: SET_ACTIVE_TAB,
+    payload: activeTab,
+  });
 };

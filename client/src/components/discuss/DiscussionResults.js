@@ -8,6 +8,7 @@ import { discussionSearch } from "../../actions/discussion";
 
 const DiscussionResults = ({
   search: { loading, discussSearchParams, discussSearchResults },
+  discussionSearch,
 }) => {
   const [displayNewPostForm, setDisplayNewPostForm] = useState(false);
   const [view, setView] = useState("all");
@@ -132,7 +133,7 @@ const DiscussionResults = ({
           {noResults && (
             <h4 className="no-results-msg">
               {noSearch
-                ? "Configure your search to find publications"
+                ? "Configure your search to find discussions"
                 : "No results to display"}
             </h4>
           )}
@@ -180,10 +181,13 @@ const DiscussionResults = ({
 
 DiscussionResults.propTypes = {
   search: PropTypes.object.isRequired,
+  discussionSearch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   search: state.search,
 });
 
-export default connect(mapStateToProps)(DiscussionResults);
+export default connect(mapStateToProps, { discussionSearch })(
+  DiscussionResults
+);

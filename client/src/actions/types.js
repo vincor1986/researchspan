@@ -8,6 +8,7 @@ export const LOGIN_FAIL = "LOGIN_FAIL";
 export const USER_LOADED = "USER_LOADED";
 export const AUTH_ERROR = "AUTH_ERROR";
 export const LOGOUT = "LOGOUT";
+export const SET_ACTIVE_TAB = "SET_ACTIVE_TAB";
 
 export const SET_LOADING = "SET_SEARCH_LOADING";
 

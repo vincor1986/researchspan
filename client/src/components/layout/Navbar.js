@@ -4,8 +4,18 @@ import LogoSvg from "./LogoSvg";
 import { connect } from "react-redux";
 import { logout } from "../../actions/auth";
 import PropTypes from "prop-types";
+import { setActiveTab } from "../../actions/auth";
 
-const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
+const Navbar = ({
+  auth: { isAuthenticated, loading, user, active_tab },
+  logout,
+  setActiveTab,
+}) => {
+  const setTabActive = (e) => {
+    console.log(e.target.id);
+    setActiveTab(e.target.id);
+  };
+
   const guestLinks = (
     <div className="auth-links">
       <Link to="/login" className="authlink login">
@@ -31,18 +41,47 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
         <LogoSvg className="logo" />
       </Link>
       <div className="nav-links">
-        <div className="navlink-wrapper active">
-          <Link to="/publications/" className="navlink">
+        <div
+          className={`navlink-wrapper ${
+            active_tab === "publications" && "active"
+          }`}
+          id="publications"
+          onClick={(e) => setTabActive(e)}
+        >
+          <Link
+            to="/publications/"
+            className="navlink"
+            id="publications"
+            onClick={(e) => setTabActive(e)}
+          >
             Publications
           </Link>
         </div>
-        <div className="navlink-wrapper">
-          <Link to="/jobs/" className="navlink">
+        <div
+          className={`navlink-wrapper ${active_tab === "jobs" && "active"}`}
+          id="jobs"
+          onClick={(e) => setTabActive(e)}
+        >
+          <Link
+            to="/jobs/"
+            className="navlink"
+            id="jobs"
+            onClick={(e) => setTabActive(e)}
+          >
             Jobs in Research
           </Link>
         </div>
-        <div className="navlink-wrapper">
-          <Link to="/discuss/" className="navlink">
+        <div
+          className={`navlink-wrapper ${active_tab === "discuss" && "active"}`}
+          id="discuss"
+          onClick={(e) => setTabActive(e)}
+        >
+          <Link
+            to="/discuss/"
+            className="navlink"
+            id="discuss"
+            onClick={(e) => setTabActive(e)}
+          >
             Discuss
           </Link>
         </div>
@@ -55,10 +94,11 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
 Navbar.propTypes = {
   auth: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired,
+  setActiveTab: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { logout })(Navbar);
+export default connect(mapStateToProps, { logout, setActiveTab })(Navbar);

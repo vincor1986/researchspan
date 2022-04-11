@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { pubSearch } from "../../actions/search";
+import { setActiveTab } from "../../actions/auth";
 
-const Home = ({ pubSearch }) => {
+const Home = ({ pubSearch, setActiveTab }) => {
   const [pubKeywords, setPubKeywords] = useState("");
   const navigate = useNavigate();
 
@@ -15,6 +16,7 @@ const Home = ({ pubSearch }) => {
       subject_area: "",
       field: "",
     });
+    setActiveTab("publications");
     navigate("/publications", { replace: false });
   };
 
@@ -98,6 +100,7 @@ const Home = ({ pubSearch }) => {
 
 Home.propTypes = {
   pubSearch: PropTypes.func.isRequired,
+  setActiveTab: PropTypes.func.isRequired,
 };
 
-export default connect(null, { pubSearch })(Home);
+export default connect(null, { pubSearch, setActiveTab })(Home);

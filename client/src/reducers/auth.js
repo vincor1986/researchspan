@@ -6,6 +6,7 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
   LOGOUT,
+  SET_ACTIVE_TAB,
 } from "../actions/types";
 
 const initialState = {
@@ -13,6 +14,7 @@ const initialState = {
   isAuthenticated: null,
   loading: true,
   user: null,
+  active_tab: null,
 };
 
 const auth = (state = initialState, action) => {
@@ -45,6 +47,11 @@ const auth = (state = initialState, action) => {
         token: null,
         isAuthenticated: false,
         loading: false,
+      };
+    case SET_ACTIVE_TAB:
+      return {
+        ...state,
+        active_tab: payload,
       };
     default:
       return state;

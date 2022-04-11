@@ -29,7 +29,7 @@ const PublicationResults = ({
     if (noSearch) {
       pubSearch({ keywords: "", format: "", subject_area: "", field: "" });
     }
-  }, [noSearch, pubSearch]);
+  }, [noSearch]);
 
   if (pubTotalResults > 0) {
     resultsNumber = pubTotalResults
