@@ -8,6 +8,79 @@ const sendNotification = require("../../utils/sendNotification");
 const getAuthUserId = require("../../utils/getAuthUserId");
 const User = require("../../models/User");
 
+// @route   GET api/discuss/
+// @desc    Get publications by search
+// @access  Public
+router.get("/", async (req, res) => {
+  try {
+    const queryStr = req.query.search;
+    const qs = Boolean(req.query.question);
+    const ds = Boolean(req.query.discussion);
+
+    if (!req.query || !req.query.search || req.query.search === "") {
+      const allPosts = await Post.find();
+
+      return res.json(allPosts);
+    }
+
+    const query = req.query.search.split(" ").map((val) => val.toLowerCase());
+
+    let data = [],
+      searchKeys = ["keywords", "main", "context"];
+
+    const timeoutReturn = () =>
+      res.status(500).json({
+        errors: [
+          { msg: "Something went wrong. Please try again in a short while." },
+        ],
+      });
+
+    const timeout = setTimeout(timeoutReturn, 35000);
+
+    for (let i = 0; i < query.length; i++) {
+      const keyword = query[i];
+
+      for (let j = 0; j < searchKeys.length; j++) {
+        const key = searchKeys[j];
+        const entryArray = await Post.find({ [key]: keyword });
+        if (entryArray.length === 0) continue;
+        entryArray.forEach((entry) => {
+          if (
+            !data[0] ||
+            data.filter((obj) => obj._id.toString() === entry.id.toString())
+              .length === 0
+          ) {
+            data.push(entry);
+          }
+        });
+      }
+    }
+
+    data = data.filter((obj) =>
+      query.every(
+        (item) =>
+          obj.keywords.includes(item) ||
+          obj.field.match(item) ||
+          obj.subcategories.includes(item)
+      )
+    );
+
+    if (!ds) {
+      data = data.filter((obj) => obj.format !== "discussion");
+    }
+    if (!qs) {
+      data = data.filter((obj) => obj.format !== "question");
+    }
+
+    clearTimeout(timeout);
+
+    res.json({ data });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server error");
+  }
+});
+
 // @route   GET api/discuss/forum
 // @desc    Get all discussion posts
 // @access  Public

@@ -26,10 +26,10 @@ const PublicationResults = ({
   useEffect(() => {
     window.scrollTo({ top: 0 });
 
-    if (!pubSearchParams.keywords) {
+    if (noSearch) {
       pubSearch({ keywords: "", format: "", subject_area: "", field: "" });
     }
-  }, []);
+  }, [noSearch, pubSearch]);
 
   if (pubTotalResults > 0) {
     resultsNumber = pubTotalResults

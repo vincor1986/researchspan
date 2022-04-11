@@ -1,30 +1,36 @@
 import {
-  SET_SEARCH_LOADING,
+  SET_LOADING,
   UPDATE_PUB_SEARCH,
   PUB_SEARCH_ERROR,
   ADD_NEXT_PAGE_RESULTS,
+  UPDATE_DISCUSS_SEARCH,
+  DISCUSS_SEARCH_ERROR,
 } from "../actions/types";
 
 const initialState = {
   loading: false,
-  pubSearchResults: [],
   pubSearchParams: {},
-  jobSearchResults: [],
-  discussionSearchResults: [],
-  pubNextCursor: null,
+  pubSearchResults: [],
   pubTotalResults: null,
+  pubNextCursor: null,
+  jobSearchResults: [],
+  discussSearchParams: {},
+  discussSearchResults: [],
 };
 
 const search = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case SET_SEARCH_LOADING:
+    case SET_LOADING:
       let properties = [];
 
       switch (payload.type) {
         case "publications":
           properties = ["pubSearchParams"];
+          break;
+        case "discussions":
+          properties = ["discussSearchParams"];
           break;
         default:
           properties = [];
@@ -42,24 +48,45 @@ const search = (state = initialState, action) => {
         pubTotalResults: payload.data.totalResults,
         loading: false,
       };
+    case UPDATE_DISCUSS_SEARCH:
+      return {
+        ...state,
+        discussSearchResults: payload,
+        loading: false,
+      };
     case PUB_SEARCH_ERROR:
       return {
         ...state,
         pubSearchResults: [],
         loading: false,
       };
+    case DISCUSS_SEARCH_ERROR:
+      return {
+        ...state,
+        discussSearchResults: [],
+        loading: false,
+      };
     case ADD_NEXT_PAGE_RESULTS:
-      if (payload.type === "publications") {
-        return {
-          ...state,
-          pubSearchResults: [
-            ...state.pubSearchResults,
-            ...payload.response.data.results,
-          ],
-          pubNextCursor: payload.response.data.nextCursor,
+      switch (payload.type) {
+        case "publications":
+          return {
+            ...state,
+            pubSearchResults: [
+              ...state.pubSearchResults,
+              ...payload.response.data.results,
+            ],
+            pubNextCursor: payload.response.data.nextCursor,
 
-          loading: false,
-        };
+            loading: false,
+          };
+        case "discussions":
+          return {
+            ...state,
+            discussSearchResults: [...state.discussSearchResults, ...payload],
+            loading: false,
+          };
+        default:
+          return state;
       }
     default:
       return state;

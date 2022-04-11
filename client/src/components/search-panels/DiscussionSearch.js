@@ -1,7 +1,37 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Outlet } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { discussionSearch } from "../../actions/discussion";
+import getFields from "../../utils/getFields";
 
-const DiscussionSearch = () => {
+const DiscussionSearch = ({
+  discussionSearch,
+  search: { discussSearchParams },
+}) => {
+  const [searchData, setSearchData] = useState({
+    keywords: discussSearchParams.keywords || "",
+    discussion: true,
+    question: true,
+    subject_area: "",
+    field: "",
+  });
+
+  const { keywords, discussion, question, subject_area, field } = searchData;
+
+  const onChange = (e) => {
+    setSearchData({ ...searchData, [e.target.name]: e.target.value });
+  };
+
+  const handleCheckboxChange = (e) => {
+    setSearchData({ ...searchData, [e.target.name]: e.target.checked });
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    discussionSearch({ keywords, discussion, question, subject_area, field });
+  };
+
   return (
     <Fragment>
       {" "}
@@ -10,7 +40,7 @@ const DiscussionSearch = () => {
           <p>Configure your search</p>
         </div>
         <div class="search-panel-form-wrapper">
-          <form class="search-panel-form">
+          <form class="search-panel-form" onSubmit={onSubmit}>
             <h4 class="search-panel-subheading">Show</h4>
             <div class="search-panel-wrapper">
               <div class="search-panel-checkbox-item">
@@ -23,8 +53,9 @@ const DiscussionSearch = () => {
                 <input
                   type="checkbox"
                   class="checkbox"
-                  name="show-discussions-checkbox"
-                  checked="true"
+                  name="discussion"
+                  checked={discussion}
+                  onChange={(e) => handleCheckboxChange(e)}
                 />
               </div>
               <div class="search-panel-checkbox-item">
@@ -34,8 +65,9 @@ const DiscussionSearch = () => {
                 <input
                   type="checkbox"
                   class="checkbox"
-                  name="show-questions-checkbox"
-                  checked="true"
+                  name="question"
+                  checked={question}
+                  onChange={(e) => handleCheckboxChange(e)}
                 />
               </div>
             </div>
@@ -46,38 +78,59 @@ const DiscussionSearch = () => {
               </label>
               <input
                 class="search-panel-text-input"
-                name="search-panel-text-input"
+                name="keywords"
                 type="text"
                 placeholder="field, subject or topic"
+                value={keywords}
+                onChange={(e) => onChange(e)}
               />
             </div>
-            <h4 class="search-panel-subheading">Categories</h4>
+            <h4 class="search-panel-subheading">Subject {"&"} Field</h4>
             <div class="search-panel-wrapper">
               <label for="search-panel-select-input" class="search-panel-label">
                 Subject
               </label>
               <select
                 class="search-panel-text-input"
-                name="search-panel-select-input"
+                id="search-panel-select-input"
+                name="subject_area"
+                value={subject_area}
+                onChange={(e) => onChange(e)}
               >
-                <option class="search-panel-select-option">Science</option>
-                <option class="search-panel-select-option">Technology</option>
-                <option class="search-panel-select-option">General</option>
-                <option class="search-panel-select-option">Politics</option>
-                <option class="search-panel-select-option">Sociology</option>
-                <option class="search-panel-select-option">History</option>
+                <option class="search-panel-select-option">Select...</option>
+                <option class="search-panel-select-option">Biology</option>
                 <option class="search-panel-select-option">
-                  Business {"&"} Industry
+                  Computer Science
                 </option>
+                <option class="search-panel-select-option">Economics</option>
+                <option class="search-panel-select-option">
+                  Electrical Engineering
+                </option>
+                <option class="search-panel-select-option">Finance</option>
+                <option class="search-panel-select-option">Mathematics</option>
+                <option class="search-panel-select-option">Physics</option>
+                <option class="search-panel-select-option">Statistics</option>
               </select>
               <label for="search-panel-select-input" class="search-panel-label">
                 Field
               </label>
               <select
                 class="search-panel-text-input"
-                name="search-panel-select-input"
-                disabled="true"
-              ></select>
+                id="search-panel-select-input"
+                name="field"
+                value={field}
+                onChange={(e) => onChange(e)}
+                disabled={["Select...", ""].includes(subject_area)}
+              >
+                {!["Select...", ""].includes(subject_area) &&
+                  getFields(subject_area)
+                    .sort()
+                    .map((item, index) => (
+                      <option key={index} class="search-panel-select-option">
+                        {item}
+                      </option>
+                    ))}
+              </select>
             </div>
             <button type="submit" class="search-panel-update-btn">
               Update results
@@ -90,4 +143,13 @@ const DiscussionSearch = () => {
   );
 };
 
-export default DiscussionSearch;
+DiscussionSearch.propTypes = {
+  search: PropTypes.object.isRequired,
+  discussionSearch: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  search: state.search,
+});
+
+export default connect(mapStateToProps, { discussionSearch })(DiscussionSearch);

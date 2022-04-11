@@ -1,7 +1,63 @@
-import React from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import NewDiscussionForm from "./NewDiscussionForm";
+import DiscussionResult from "./DiscussionResult";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import ResultsLoading from "../layout/ResultsLoading";
+import { discussionSearch } from "../../actions/discussion";
 
-const DiscussionResults = () => {
-  return (
+const DiscussionResults = ({
+  search: { loading, discussSearchParams, discussSearchResults },
+}) => {
+  const [displayNewPostForm, setDisplayNewPostForm] = useState(false);
+  const [view, setView] = useState("all");
+
+  const totalQuestions = discussSearchResults.filter(
+    (obj) => obj.format === "question"
+  ).length;
+  const totalDiscussions = discussSearchResults.filter(
+    (obj) => obj.format === "discussion"
+  ).length;
+
+  const filterCriteria =
+    view === "all"
+      ? ["question", "discussion"]
+      : view === "discussion"
+      ? ["discussion"]
+      : ["question"];
+
+  const toggleNewPostDisplay = () => {
+    setDisplayNewPostForm(!displayNewPostForm);
+  };
+
+  const setTab = (e) => {
+    setView(e.target.id);
+  };
+
+  const noSearch = Object.keys(discussSearchParams).length === 0;
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+
+    if (noSearch) {
+      discussionSearch({
+        question: true,
+        discussion: true,
+        keywords: "",
+        field: "",
+        subject_area: "",
+      });
+    }
+  }, [noSearch]);
+
+  const firstLoad = discussSearchResults.length === 0;
+
+  const noResults =
+    discussSearchResults.length === 0 ||
+    (view === "discussion" && totalDiscussions === 0) ||
+    (view === "question" && totalQuestions === 0);
+
+  const showResults = (
     <div class="main-body-container">
       <div class="main-title-wrapper">
         <h3 class="main-title">Search discussions</h3>
@@ -11,70 +67,51 @@ const DiscussionResults = () => {
         broaden your understanding of key concepts and theories.
       </h4>
       <section class="create-new-section">
-        <button class="create-new-btn">New post</button>
-        <form class="create-new-form">
-          <div class="create-new-container">
-            <div class="new-title-wrapper">
-              <label class="create-new-label" for="new-type">
-                Type:
-              </label>
-              <select class="new-type">
-                <option class="new-type-option" value="discussion">
-                  Discussion
-                </option>
-                <option class="new-type-option" value="question">
-                  Question
-                </option>
-              </select>
-              <label class="create-new-label" for="new-title">
-                Title:
-              </label>
-              <textarea
-                name="new-title"
-                class="edit new-title"
-                maxlength="250"
-              ></textarea>
-              <label class="create-new-label" for="new-context">
-                Context:
-              </label>
-              <textarea
-                name="new-context"
-                class="edit new-context"
-                maxlength="750"
-              ></textarea>
-              <br />
-              <div class="keywords-editor-wrapper">
-                <label class="create-new-label">
-                  Keywords:
-                  <span class="keywords-note">comma-seperated</span>
-                </label>
-                <input
-                  class="edit edit-keywords"
-                  id="edit-keywords"
-                  maxlength="120"
-                  type="text"
-                />
-              </div>
-              <div class="create-new-controls">
-                <button class="cancel-btn">Cancel</button>
-                <button type="submit" class="create-new-btn">
-                  Post
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
+        {!displayNewPostForm && (
+          <button class="create-new-btn" onClick={toggleNewPostDisplay}>
+            New post
+          </button>
+        )}
+        {displayNewPostForm && (
+          <NewDiscussionForm toggle={toggleNewPostDisplay} />
+        )}
       </section>
       <div class="main-content-container discuss-main-content">
         <div class="main-content-tabs">
-          <div class="content-tab tab-active">
-            <p class="tab-name">ALL</p>
+          <div
+            class={`content-tab ${view === "all" && "tab-active"}`}
+            id="all"
+            onClick={(e) => setTab(e)}
+          >
+            <p class="tab-name noselect" id="all" onClick={(e) => setTab(e)}>
+              ALL
+            </p>
           </div>
-          <div class="content-tab">
-            <p class="tab-name">DISCUSSIONS</p>
+          <div
+            class={`content-tab ${view === "discussion" && "tab-active"}`}
+            id="discussion"
+            onClick={(e) => setTab(e)}
+          >
+            <p
+              class="tab-name noselect"
+              id="discussion"
+              onClick={(e) => setTab(e)}
+            >
+              DISCUSSIONS
+            </p>
           </div>
-          <div class="content-tab">
-            <p class="tab-name">QUESTIONS</p>
+          <div
+            class={`content-tab ${view === "question" && "tab-active"}`}
+            id="question"
+            onClick={(e) => setTab(e)}
+          >
+            <p
+              class="tab-name noselect"
+              id="question"
+              onClick={(e) => setTab(e)}
+            >
+              QUESTIONS
+            </p>
           </div>
         </div>
         <div class="sort-wrapper">
@@ -90,281 +127,63 @@ const DiscussionResults = () => {
         </div>
         <div class="main-content-results-label">
           <h4 class="subheading results-msg">Results</h4>
-          <p class="results-stat">1,087 matches</p>
         </div>
         <div class="results-section">
-          <div class="result">
-            <div class="result-user-section">
-              <div class="result-user-avatar-section">
-                <div class="avatar-wrapper">
-                  <img
-                    src="./img/default-avatar.png"
-                    alt="avatar"
-                    class="avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Vincent Coraldean</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Date posted:</p>
-                    <p class="info-date">
-                      Wednesday 6th April 2022 at 12:12pm GMT
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-type">Discussion</div>
-              <div class="result-content-main-section">
-                <p class="result-content-main">
-                  What improvements can I make to the Research Span website to
-                  improve user engagement and user experience?
-                </p>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  I've just created the Research Span website and I'm looking
-                  for advice. I want to know what improvements I can make to the
-                  website to help users get the most out of their time one here.
-                  I have ...
-                </p>
-              </div>
-              <div class="result-content-info-section">
-                <p class="result-content-info">16 Comments</p>
-                <p class="result-content-info">
-                  Consensus <span class="consensus-score">70%</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="result">
-            <div class="result-user-section">
-              <div class="result-user-avatar-section">
-                <div class="avatar-wrapper">
-                  <img
-                    src="./img/default-avatar.png"
-                    alt="avatar"
-                    class="avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Juan Lopez</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Blockchain Evolution Inc</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Date posted:</p>
-                    <p class="info-date">
-                      Wednesday 6th April 2022 at 12:12pm GMT
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-type">Discussion</div>
-              <div class="result-content-main-section">
-                <p class="result-content-main">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Optio quaerat fugiat nostrum magnam earum voluptatibus, autem
-                  asperiores, dolorem illo aperiam cum porro? Reprehenderit,
-                  molestiae placeat veniam nobis atque dolore, tenetur suscipit
-                  quam numquam quis alias in aperiam exercitationem soluta
-                  officiis.
-                </p>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  I've just created the Research Span website and I'm looking
-                  for advice. I want to know what improvements I can make to the
-                  website to help users get the most out of their time one here.
-                  I have ...
-                </p>
-              </div>
-              <div class="result-content-info-section">
-                <p class="result-content-info">16 Comments</p>
-                <p class="result-content-info">
-                  Consensus <span class="consensus-score">70%</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="result">
-            <div class="result-user-section">
-              <div class="result-user-avatar-section">
-                <div class="avatar-wrapper">
-                  <img
-                    src="./img/default-avatar.png"
-                    alt="avatar"
-                    class="avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Alexander Graham-Bell</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">The Patent Office</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Date posted:</p>
-                    <p class="info-date">
-                      Wednesday 6th April 2022 at 12:12pm GMT
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-type">Question</div>
-              <div class="result-content-main-section">
-                <p class="result-content-main">
-                  Lorem ipsum dolor sit amet consectetur?
-                </p>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  I've just created the Research Span website and I'm looking
-                  for advice. I want to know what improvements I can make to the
-                  website to help users get the most out of their time one here.
-                  I have ...
-                </p>
-              </div>
-              <div class="result-content-info-section">
-                <p class="result-content-info">16 Comments</p>
-                <p class="result-content-info">
-                  Consensus <span class="consensus-score">70%</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="result">
-            <div class="result-user-section">
-              <div class="result-user-avatar-section">
-                <div class="avatar-wrapper">
-                  <img
-                    src="./img/default-avatar.png"
-                    alt="avatar"
-                    class="avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Vincent Coraldean</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Date posted:</p>
-                    <p class="info-date">
-                      Wednesday 6th April 2022 at 12:12pm GMT
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-type">Discussion</div>
-              <div class="result-content-main-section">
-                <p class="result-content-main">
-                  What improvements can I make to the Research Span website to
-                  improve user engagement and user experience?
-                </p>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  I've just created the Research Span website and I'm looking
-                  for advice. I want to know what improvements I can make to the
-                  website to help users get the most out of their time one here.
-                  I have ...
-                </p>
-              </div>
-              <div class="result-content-info-section">
-                <p class="result-content-info">16 Comments</p>
-                <p class="result-content-info">
-                  Consensus <span class="consensus-score">70%</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="result">
-            <div class="result-user-section">
-              <div class="result-user-avatar-section">
-                <div class="avatar-wrapper">
-                  <img
-                    src="./img/default-avatar.png"
-                    alt="avatar"
-                    class="avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Vincent Coraldean</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Date posted:</p>
-                    <p class="info-date">
-                      Wednesday 6th April 2022 at 12:12pm GMT
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-type">Discussion</div>
-              <div class="result-content-main-section">
-                <p class="result-content-main">
-                  What improvements can I make to the Research Span website to
-                  improve user engagement and user experience?
-                </p>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  I've just created the Research Span website and I'm looking
-                  for advice. I want to know what improvements I can make to the
-                  website to help users get the most out of their time one here.
-                  I have ...
-                </p>
-              </div>
-              <div class="result-content-info-section">
-                <p class="result-content-info">16 Comments</p>
-                <p class="result-content-info">
-                  Consensus <span class="consensus-score">70%</span>
-                </p>
-              </div>
-            </div>
-          </div>
+          {noResults && (
+            <h4 className="no-results-msg">
+              {noSearch
+                ? "Configure your search to find publications"
+                : "No results to display"}
+            </h4>
+          )}
+          {discussSearchResults
+            .filter((obj) => filterCriteria.includes(obj.format))
+            .map((result, i) => (
+              <DiscussionResult
+                key={i}
+                id={result._id}
+                user={result.user}
+                first_name={result.first_name}
+                last_name={result.last_name}
+                avatar={result.avatar}
+                format={result.format}
+                keywords={result.keywords}
+                main={result.main}
+                context={result.context}
+                edited={result.edited}
+                responses={result.responses}
+                head={result.head}
+                consensus_agree={result.consensus_agree}
+                consensus_disagree={result.consensus_disagree}
+                recommended={result.recommended}
+                date={result.date}
+                last_edited={result.last_edited}
+                organisation={result.organisation || false}
+              />
+            ))}
         </div>
       </div>
     </div>
   );
+
+  return firstLoad & loading ? (
+    <ResultsLoading firstLoad={firstLoad} />
+  ) : !firstLoad & loading ? (
+    <Fragment>
+      <ResultsLoading firstLoad={firstLoad} />
+      {showResults}
+    </Fragment>
+  ) : (
+    showResults
+  );
 };
 
-export default DiscussionResults;
+DiscussionResults.propTypes = {
+  search: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  search: state.search,
+});
+
+export default connect(mapStateToProps)(DiscussionResults);

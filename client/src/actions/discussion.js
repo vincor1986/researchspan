@@ -1,10 +1,8 @@
 import axios from "axios";
 import {
   SET_LOADING,
-  PUB_SEARCH_ERROR,
-  UPDATE_PUB_SEARCH,
-  ADD_NEXT_PAGE_RESULTS,
-  PREVIOUS_SEARCH_PAGE,
+  DISCUSS_SEARCH_ERROR,
+  UPDATE_DISCUSS_SEARCH,
 } from "./types";
 import { setAlert } from "./alert";
 
@@ -18,21 +16,19 @@ export const setSearchLoading = (searchParams, type) => (dispatch) => {
   });
 };
 
-export const pubSearch =
-  (searchParams, nextCursor = "*") =>
+export const discussionSearch =
+  (searchParams, nextPage = false) =>
   async (dispatch) => {
-    dispatch(setSearchLoading(searchParams, "publications"));
+    dispatch(setSearchLoading(searchParams, "discussions"));
 
-    let { keywords, format, subject_area, field } = searchParams;
-
-    console.log(searchParams, nextCursor);
+    let { discussion, question, keywords, subject_area, field } = searchParams;
 
     keywords = keywords
       .split(" ")
       .map((el) => el.trim())
       .join(" ");
 
-    let searchString = [keywords, format, subject_area]
+    let searchString = [keywords, subject_area]
       .filter((el) => el !== "")
       .join(" ");
 
@@ -42,24 +38,17 @@ export const pubSearch =
 
     try {
       const res = await axios.get(
-        `/api/publications/?search=${searchString}&cursor=${nextCursor}`
+        `/api/discuss/?search=${searchString}&discussion=${discussion}&question=${question}`
       );
 
       console.log("data", res.data);
 
-      if (nextCursor === "*") {
+      if (!nextPage) {
         dispatch({
-          type: UPDATE_PUB_SEARCH,
+          type: UPDATE_DISCUSS_SEARCH,
           payload: res.data,
         });
       } else {
-        dispatch({
-          type: ADD_NEXT_PAGE_RESULTS,
-          payload: {
-            response: res.data,
-            type: "publications",
-          },
-        });
       }
     } catch (err) {
       if (err) {
@@ -69,7 +58,7 @@ export const pubSearch =
           errors.forEach((error) => setAlert(error.msg, "warning"));
 
           dispatch({
-            type: PUB_SEARCH_ERROR,
+            type: DISCUSS_SEARCH_ERROR,
           });
         }
       }
