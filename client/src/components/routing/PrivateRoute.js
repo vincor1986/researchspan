@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -5,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 const PrivateRoute = ({ element, auth: { isAuthenticated, loading } }) => {
   const navigate = useNavigate();
 
-  if (!isAuthenticated && !loading) {
-    navigate("/login", { replace: false });
-  }
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login", { replace: true });
+    }
+  }, [isAuthenticated]);
 
   return element;
 };

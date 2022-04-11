@@ -37,8 +37,8 @@ const Navbar = ({
 
   return (
     <nav className="nav">
-      <Link to="/" className="title-logo">
-        <LogoSvg className="logo" />
+      <Link to="/" className="title-logo" onClick={() => setActiveTab(null)}>
+        <LogoSvg className="logo" onClick={() => setActiveTab(null)} />
       </Link>
       <div className="nav-links">
         <div

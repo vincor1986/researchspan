@@ -16,6 +16,7 @@ import DiscussionSearch from "./components/search-panels/DiscussionSearch";
 import DiscussionResults from "./components/discuss/DiscussionResults";
 import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./components/routing/PrivateRoute";
+import ViewPost from "./components/discuss/ViewPost";
 
 //Redux
 import { Provider } from "react-redux";
@@ -49,11 +50,7 @@ const App = () => {
               </Route>
               <Route path="/discuss/*" element={<DiscussionSearch />}>
                 <Route exact path="" element={<DiscussionResults />} />
-                <Route
-                  exact
-                  path="unique"
-                  element={<PrivateRoute element={<JobResults />} />}
-                />
+                <Route exact path="post/:id" element={<ViewPost />} />
               </Route>
             </Routes>
           </main>

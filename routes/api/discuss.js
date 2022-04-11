@@ -9,7 +9,7 @@ const getAuthUserId = require("../../utils/getAuthUserId");
 const User = require("../../models/User");
 
 // @route   GET api/discuss/
-// @desc    Get publications by search
+// @desc    Get post by search
 // @access  Public
 router.get("/", async (req, res) => {
   try {

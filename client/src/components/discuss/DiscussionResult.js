@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const DiscussionResult = ({
   id,
@@ -24,7 +26,9 @@ const DiscussionResult = ({
   const consScore =
     Math.round(
       (+consensus_agree / (+consensus_agree + +consensus_disagree)) * 100
-    ) || "-";
+    ) || "- ";
+
+  const navigate = useNavigate();
 
   return (
     <div class="result">
@@ -55,7 +59,9 @@ const DiscussionResult = ({
       <div class="result-content-section">
         <div class="result-content-type">{format}</div>
         <div class="result-content-main-section">
-          <p class="result-content-main">{main}</p>
+          <Link to={`post/${id}`} class="result-content-main">
+            {main}
+          </Link>
         </div>
         <div class="result-content-context-section">
           <p class="result-content-context">{context}</p>

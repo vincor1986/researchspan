@@ -3,6 +3,9 @@ import {
   SET_LOADING,
   DISCUSS_SEARCH_ERROR,
   UPDATE_DISCUSS_SEARCH,
+  UPDATE_ITEM,
+  SET_ITEM_LOADING,
+  ITEM_ERROR,
 } from "./types";
 import { setAlert } from "./alert";
 
@@ -64,3 +67,41 @@ export const discussionSearch =
       }
     }
   };
+
+export const getPost = (postId) => async (dispatch) => {
+  dispatch({
+    type: SET_ITEM_LOADING,
+    payload: {
+      type: "get_page",
+    },
+  });
+
+  if (!postId) {
+    dispatch({
+      type: ITEM_ERROR,
+    });
+    setAlert("Please provide a valid post id", "warning");
+  }
+
+  try {
+    const res = await axios.get(`/api/discuss/${postId}`);
+
+    dispatch({
+      type: UPDATE_ITEM,
+      payload: {
+        item: res.data,
+        type: "discussion",
+      },
+    });
+  } catch (err) {
+    const errors = err.response.data.errors;
+
+    errors.forEach((error) => {
+      setAlert(error.msg, "warning");
+    });
+
+    dispatch({
+      type: ITEM_ERROR,
+    });
+  }
+};
