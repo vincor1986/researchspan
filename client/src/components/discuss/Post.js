@@ -1,6 +1,8 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import PostReply from "./PostReply";
+import { connect } from "react-redux";
+import ReplyForm from "./ReplyForm";
 
 const Post = ({
   post: {
@@ -25,11 +27,26 @@ const Post = ({
     organisation,
   },
   authUserPost,
+  items: { send_error, loading },
+  isAuthenticated,
 }) => {
   const consScore =
     Math.round(
       (+consensus_agree / (+consensus_agree + +consensus_disagree)) * 100
     ) || "- ";
+
+  const [replySent, setReplySent] = useState(false);
+  const [showReplyForm, setShowReplyForm] = useState(false);
+
+  useEffect(() => {
+    if (replySent) {
+      if (!send_error && !loading) {
+        window.location.reload();
+      } else if (send_error) {
+        setReplySent(false);
+      }
+    }
+  }, [send_error, loading, replySent]);
 
   return (
     <div className="main-body-container">
@@ -80,22 +97,30 @@ const Post = ({
           <p class="context">{context}</p>
         </div>
         <div class="post-actions-section">
-          <p class="main-post-reply">reply</p>
+          <p
+            class="main-post-reply"
+            onClick={() => setShowReplyForm(!showReplyForm)}
+          >
+            reply
+          </p>
           <p class="consensus">
             consensus <span class="consensus-score">{`${consScore}%`}</span>
           </p>
           <button class="agree consensus-btn">✓</button>
           <button class="disagree consensus-btn">✘</button>
         </div>
-        <div class="main-post-reply-section">
-          <form class="reply-form">
-            <textarea class="reply-input"></textarea>
-            <p class="chars-remaining">750 characters remaining</p>
-            <button type="submit" class="reply-btn">
-              reply
-            </button>
-          </form>
-        </div>
+        {showReplyForm && isAuthenticated && (
+          <ReplyForm
+            headId={head}
+            postId={head}
+            type={format === "question" ? "answer" : "comment"}
+            showReplyForm={showReplyForm}
+            setReplySent={setReplySent}
+          />
+        )}
+        {showReplyForm && !isAuthenticated && (
+          <div className="login-msg">Please log in to reply</div>
+        )}
       </div>
       <section class="comments-section">
         <div class="comments-title-wrapper">
@@ -106,16 +131,18 @@ const Post = ({
             <p class="sort-msg">Sort by:</p>
             <select class="sort-selector">
               <option class="sort-option" value="date">
-                date
+                newest
               </option>
               <option class="sort-option" value="consensus">
                 consensus
               </option>
             </select>
           </div>
-          {responses.map((reply, index) => (
+          {[...responses].reverse().map((reply, index) => (
             <PostReply
               key={index}
+              postId={reply._id}
+              headId={head}
               date={reply.date}
               title={reply.title}
               avatar={reply.avatar}
@@ -127,6 +154,7 @@ const Post = ({
               consensus_disagree={reply.consensus_disagree}
               organisation={reply.organisation}
               reply={false}
+              setReplySent={setReplySent}
             />
           ))}
         </div>
@@ -135,6 +163,14 @@ const Post = ({
   );
 };
 
-Post.propTypes = {};
+Post.propTypes = {
+  items: PropTypes.object.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+};
 
-export default Post;
+const mapStateToProps = (state) => ({
+  items: state.items,
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps)(Post);

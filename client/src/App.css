@@ -946,6 +946,13 @@ input:checked {
   color:rgb(80, 180, 147);
 }
 
+.login-msg {
+  font-size: 1.8rem;
+  color: rgb(223, 24, 117);
+  margin-left: 2rem;
+  margin-top: 1rem;
+}
+
 .consensus-score {
   background:rgb(80, 180, 147);
   padding: 0.4rem 1rem;
@@ -974,13 +981,11 @@ input:checked {
 }
 
 .main-post-reply-section {
-  border: 1px solid lightgrey;
   margin-top: 2rem;
   padding: 0rem;
   border-radius: 0.5rem;
   transition: all 1s ease;
-  height: 1px;
-  overflow: hidden;
+  min-height: fit-content;
 }
 
 .reply-active {
@@ -995,6 +1000,7 @@ input:checked {
 }
 .reply-input {
   min-height: 15rem;
+  max-width: 100%;
   outline: none;
   border: 1px solid lightgrey;
   border-radius: 0.5rem;
@@ -1009,7 +1015,8 @@ input:checked {
 }
 
 .reply-btn {
-  margin-top: 1rem;
+  margin-top: 0rem;
+  margin-bottom: 1rem;
   font-size: 1.8rem;
   width: 10rem;
   align-self: flex-end;
@@ -1107,6 +1114,12 @@ input:checked {
 .comment-actions {
   padding-left: 0.5rem;
   margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.comments-post-actions-wrapper {
+  display: flex;
 }
 
 .reply {

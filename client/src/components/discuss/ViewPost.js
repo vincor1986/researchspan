@@ -8,48 +8,41 @@ import ResultsLoading from "../layout/ResultsLoading";
 
 const ViewPost = ({
   search: { discussSearchResults },
-  items: { discussion, loading, item_error },
+  items: { discussion, item_error },
   auth,
   getPost,
 }) => {
-  const params = useParams();
+  const { postId } = useParams();
 
-  const [post, setPost] = useState(
-    discussSearchResults.filter((obj) => obj._id === params.id.toString())[0]
-  );
+  const [post, setPost] = useState(undefined);
+  const [loading, setLoading] = useState(true);
 
-  let _id,
-    user,
-    first_name,
-    last_name,
-    title,
-    avatar,
-    format,
-    keywords,
-    main,
-    context,
-    edited,
-    responses,
-    head,
-    consensus_agree,
-    consensus_disagree,
-    recommended,
-    date,
-    last_edited,
-    organisation;
+  const postInState = discussSearchResults.find((obj) => obj._id === postId);
 
   useEffect(() => {
-    if (post === undefined || !post) {
-      getPost(params.id);
+    if (!postInState) {
+      getPost(postId);
+    } else {
+      setPost(postInState);
+      console.log("post set from state");
     }
+  }, [postInState, postId, getPost, setPost]);
 
-    if (discussion) {
+  useEffect(() => {
+    if (Object.keys(discussion).length > 0 && !postInState) {
       setPost(discussion);
+      console.log("post set from fetch");
     }
-  }, [discussion]);
+  }, [discussion, setPost, postInState]);
+
+  useEffect(() => {
+    if (post || item_error) {
+      setLoading(false);
+    }
+  }, [post, item_error]);
 
   const authUserPost =
-    auth.user && post.user.toString() === auth.user._id.toString();
+    auth.user && post && post.user.toString() === auth.user._id.toString();
 
   return loading ? (
     <ResultsLoading firstLoad={true} />

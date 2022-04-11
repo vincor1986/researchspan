@@ -50,7 +50,7 @@ const App = () => {
               </Route>
               <Route path="/discuss/*" element={<DiscussionSearch />}>
                 <Route exact path="" element={<DiscussionResults />} />
-                <Route exact path="post/:id" element={<ViewPost />} />
+                <Route exact path="post/:postId" element={<ViewPost />} />
               </Route>
             </Routes>
           </main>

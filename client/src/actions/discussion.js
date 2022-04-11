@@ -6,6 +6,8 @@ import {
   UPDATE_ITEM,
   SET_ITEM_LOADING,
   ITEM_ERROR,
+  UPDATE_DISCUSSION,
+  SEND_ERROR,
 } from "./types";
 import { setAlert } from "./alert";
 
@@ -71,9 +73,6 @@ export const discussionSearch =
 export const getPost = (postId) => async (dispatch) => {
   dispatch({
     type: SET_ITEM_LOADING,
-    payload: {
-      type: "get_page",
-    },
   });
 
   if (!postId) {
@@ -105,3 +104,46 @@ export const getPost = (postId) => async (dispatch) => {
     });
   }
 };
+
+export const sendReply =
+  ({ main, format }, headId, postId) =>
+  async (dispatch) => {
+    dispatch({ type: SET_ITEM_LOADING });
+
+    try {
+      const params = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const body = JSON.stringify({ main, format });
+
+      const res = await axios.post(
+        `/api/discuss/${headId}/${postId}`,
+        body,
+        params
+      );
+
+      console.log(res.data);
+
+      dispatch({
+        type: UPDATE_DISCUSSION,
+        payload: res.data,
+      });
+    } catch (err) {
+      if (err) {
+        console.log("err", err);
+
+        const errors = err.response.data.errors;
+
+        errors.forEach((error) => {
+          setAlert(error.msg, "warning");
+        });
+
+        dispatch({
+          type: SEND_ERROR,
+        });
+      }
+    }
+  };
