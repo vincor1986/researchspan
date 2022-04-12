@@ -1,9 +1,12 @@
 import React from "react";
 import chart from "../../img/icons/chart.png";
 
-export const ResultsLoading = ({ firstLoad }) => {
+export const ResultsLoading = ({ firstLoad, fs }) => {
   return (
-    <div class="loading-modal" id={!firstLoad ? "load-update" : ""}>
+    <div
+      class="loading-modal"
+      id={`${fs ? "fs" : ""} ${!firstLoad ? "load-update" : ""}`}
+    >
       <div class="loading-wrapper" id="always-opaque">
         <div class="chart-wrapper">
           <img class="chart-icon" src={chart} />

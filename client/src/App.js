@@ -17,6 +17,8 @@ import DiscussionResults from "./components/discuss/DiscussionResults";
 import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import ViewPost from "./components/discuss/ViewPost";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
 //Redux
 import { Provider } from "react-redux";
@@ -59,6 +61,10 @@ const App = () => {
       </Router>
     </Provider>
   );
+};
+
+App.propTypes = {
+  auth: PropTypes.object.isRequired,
 };
 
 export default App;

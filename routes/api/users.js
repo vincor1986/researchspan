@@ -148,6 +148,7 @@ router.post(
       first_name,
       last_name,
       email,
+      position,
       organisation,
       account_type,
       password,
@@ -157,13 +158,11 @@ router.post(
       let user = await User.findOne({ email });
 
       if (user) {
-        return res
-          .status(400)
-          .json({
-            errors: [
-              { msg: "There was a problem. Please try again in a while." },
-            ],
-          });
+        return res.status(400).json({
+          errors: [
+            { msg: "There was a problem. Please try again in a while." },
+          ],
+        });
       }
 
       const avatar = gravatar.url(email, { s: "200", r: "pg", d: "mm" });
@@ -173,6 +172,7 @@ router.post(
         last_name,
         email,
         account_type,
+        position,
         organisation,
         avatar,
         password,

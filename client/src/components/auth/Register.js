@@ -19,8 +19,15 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
 
   const navigate = useNavigate();
 
-  const { first_name, last_name, email, organisation, password, password2 } =
-    formData;
+  const {
+    first_name,
+    last_name,
+    email,
+    position,
+    organisation,
+    password,
+    password2,
+  } = formData;
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -101,6 +108,16 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                 name="last_name"
                 onChange={(e) => onChange(e)}
                 value={last_name}
+              />
+            </div>
+            <div class="auth-form-item">
+              <p class="auth-label">Position:</p>
+              <input
+                type="text"
+                class="auth-form-input"
+                name="position"
+                onChange={(e) => onChange(e)}
+                value={position}
               />
             </div>
             <div class="auth-form-item">
