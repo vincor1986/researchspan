@@ -45,6 +45,7 @@ const auth = (state = initialState, action) => {
         token: null,
         isAuthenticated: false,
         loading: false,
+        user: {},
       };
     case SET_ACTIVE_TAB:
       return {

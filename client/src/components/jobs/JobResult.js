@@ -59,7 +59,7 @@ const JobResult = ({
           class="result-job-apply-section"
           id="publications-apply-controls-wrapper"
         >
-          <Link to={`/vacancy/${_id}`} class="more-info-btn apply-btn">
+          <Link to={`/jobs/${_id}`} class="more-info-btn apply-btn">
             More info
           </Link>
           <a href={apply_link} class="apply-link-btn apply-btn">

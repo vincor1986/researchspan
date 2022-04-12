@@ -42,7 +42,7 @@ const ViewPost = ({
   }, [post, item_error]);
 
   const authUserPost =
-    auth.user && post && post.user.toString() === auth.user._id.toString();
+    auth.user._id && post && post.user.toString() === auth.user._id.toString();
 
   return loading ? (
     <ResultsLoading firstLoad={true} />

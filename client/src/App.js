@@ -17,12 +17,12 @@ import DiscussionResults from "./components/discuss/DiscussionResults";
 import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import ViewPost from "./components/discuss/ViewPost";
-import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 //Redux
 import { Provider } from "react-redux";
 import store from "./store";
+import ViewVacancy from "./components/jobs/ViewVacancy";
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -49,6 +49,7 @@ const App = () => {
               </Route>
               <Route path="/jobs/*" element={<JobSearch />}>
                 <Route exact path="" element={<JobResults />} />
+                <Route exact path=":jobId" element={<ViewVacancy />} />
               </Route>
               <Route path="/discuss/*" element={<DiscussionSearch />}>
                 <Route exact path="" element={<DiscussionResults />} />
