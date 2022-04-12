@@ -1,7 +1,37 @@
-import React from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import JobResult from "./JobResult";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { jobSearch } from "../../actions/search";
+import commaSeperateNumber from "../../utils/commaSeperateNumber";
+import ResultsLoading from "../layout/ResultsLoading";
+import { getAllJobs } from "../../actions/jobs";
 
-const JobResults = () => {
-  return (
+const JobResults = ({
+  search: { loading, jobSearchParams, jobTotalResults, jobSearchResults },
+  getAllJobs,
+}) => {
+  const [resultQty, setResultQty] = useState(10);
+
+  const showMoreResults = () => {
+    setResultQty((prev) => prev + 10);
+  };
+
+  const noSearch = Object.keys(jobSearchParams).length === 0;
+
+  console.log("noSearch", noSearch);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+
+    if (noSearch) {
+      getAllJobs();
+    }
+  }, [noSearch]);
+
+  const firstLoad = jobSearchResults.length === 0;
+
+  const showResults = (
     <div class="main-body-container">
       <div class="main-title-wrapper">
         <h3 class="main-title">Search vacancies</h3>
@@ -30,442 +60,72 @@ const JobResults = () => {
         </div>
         <div class="main-content-results-label">
           <h4 class="subheading results-msg">Results</h4>
-          <p class="results-stat">1,087 matches</p>
+          <p class="results-stat">{`${commaSeperateNumber(
+            jobTotalResults
+          )} matches`}</p>
         </div>
         <div class="results-section">
-          <div class="result">
-            <div class="result-user-section job-detail-section">
-              <div
-                class="result-user-avatar-section"
-                id="recruiter-avatar-section"
-              >
-                <div class="recruiter-avatar-wrapper">
-                  <img
-                    src="./img/researchspan-logo-alt-small.svg"
-                    alt="avatar"
-                    class="recruiter-avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section vacancy-info">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Market researcher</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Location:</p>
-                    <p class="info-organisation">London, UK</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Salary:</p>
-                    <p class="info-organisation">£28,000 per annum.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-closing">
-                Closing date:
-                <span class="closing-date">Friday 8th April 2022</span>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  We're looking for a dynamic and enthusiastic market researcher
-                  to join our team of 200. We are dedicated to providing
-                  researchers with all the tools and information they need to
-                  thrive in their careers. We want to make the most of your
-                  experience to....
-                </p>
-              </div>
-              <div
-                class="result-job-apply-section"
-                id="publications-apply-controls-wrapper"
-              >
-                <button class="more-info-btn apply-btn">More info</button>
-                <button class="apply-link-btn apply-btn">
-                  <p class="btn-text">Apply link</p>
-                  <img class="btn-icon" src="./img/icons/new-window.png" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="result">
-            <div class="result-user-section job-detail-section">
-              <div
-                class="result-user-avatar-section"
-                id="recruiter-avatar-section"
-              >
-                <div class="recruiter-avatar-wrapper">
-                  <img
-                    src="./img/researchspan-logo-alt-small.svg"
-                    alt="avatar"
-                    class="recruiter-avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section vacancy-info">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">
-                      A really really really really long title that challenges
-                      the flexbox in many ways
-                    </h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Location:</p>
-                    <p class="info-organisation">London, UK</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Salary:</p>
-                    <p class="info-organisation">£28,000 per annum.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-closing">
-                Closing date:
-                <span class="closing-date">Friday 8th April 2022</span>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  We're looking for a dynamic and enthusiastic market researcher
-                  to join our team of 200. We are dedicated to providing
-                  researchers with all the tools and information they need to
-                  thrive in their careers. We want to make the most of your
-                  experience to....
-                </p>
-              </div>
-              <div
-                class="result-job-apply-section"
-                id="publications-apply-controls-wrapper"
-              >
-                <button class="more-info-btn apply-btn">More info</button>
-                <button class="apply-link-btn apply-btn">
-                  <p class="btn-text">Apply link</p>
-                  <img class="btn-icon" src="./img/icons/new-window.png" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="result">
-            <div class="result-user-section job-detail-section">
-              <div
-                class="result-user-avatar-section"
-                id="recruiter-avatar-section"
-              >
-                <div class="recruiter-avatar-wrapper">
-                  <img
-                    src="./img/researchspan-logo-alt-small.svg"
-                    alt="avatar"
-                    class="recruiter-avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section vacancy-info">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Market researcher</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Location:</p>
-                    <p class="info-organisation">London, UK</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Salary:</p>
-                    <p class="info-organisation">£28,000 per annum.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-closing">
-                Closing date:
-                <span class="closing-date">Friday 8th April 2022</span>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  We're looking for a dynamic and enthusiastic market researcher
-                  to join our team of 200. We are dedicated to providing
-                  researchers with all the tools and information they need to
-                  thrive in their careers. We want to make the most of your
-                  experience to....
-                </p>
-              </div>
-              <div
-                class="result-job-apply-section"
-                id="publications-apply-controls-wrapper"
-              >
-                <button class="more-info-btn apply-btn">More info</button>
-                <button class="apply-link-btn apply-btn">
-                  <p class="btn-text">Apply link</p>
-                  <img class="btn-icon" src="./img/icons/new-window.png" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="result">
-            <div class="result-user-section job-detail-section">
-              <div
-                class="result-user-avatar-section"
-                id="recruiter-avatar-section"
-              >
-                <div class="recruiter-avatar-wrapper">
-                  <img
-                    src="./img/researchspan-logo-alt-small.svg"
-                    alt="avatar"
-                    class="recruiter-avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section vacancy-info">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Market researcher</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Location:</p>
-                    <p class="info-organisation">London, UK</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Salary:</p>
-                    <p class="info-organisation">£28,000 per annum.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-closing">
-                Closing date:
-                <span class="closing-date">Friday 8th April 2022</span>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  We're looking for a dynamic and enthusiastic market researcher
-                  to join our team of 200. We are dedicated to providing
-                  researchers with all the tools and information they need to
-                  thrive in their careers. We want to make the most of your
-                  experience to....
-                </p>
-              </div>
-              <div
-                class="result-job-apply-section"
-                id="publications-apply-controls-wrapper"
-              >
-                <button class="more-info-btn apply-btn">More info</button>
-                <button class="apply-link-btn apply-btn">
-                  <p class="btn-text">Apply link</p>
-                  <img class="btn-icon" src="./img/icons/new-window.png" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="result">
-            <div class="result-user-section job-detail-section">
-              <div
-                class="result-user-avatar-section"
-                id="recruiter-avatar-section"
-              >
-                <div class="recruiter-avatar-wrapper">
-                  <img
-                    src="./img/researchspan-logo-alt-small.svg"
-                    alt="avatar"
-                    class="recruiter-avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section vacancy-info">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Market researcher</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Location:</p>
-                    <p class="info-organisation">London, UK</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Salary:</p>
-                    <p class="info-organisation">£28,000 per annum.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-closing">
-                Closing date:
-                <span class="closing-date">Friday 8th April 2022</span>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  We're looking for a dynamic and enthusiastic market researcher
-                  to join our team of 200. We are dedicated to providing
-                  researchers with all the tools and information they need to
-                  thrive in their careers. We want to make the most of your
-                  experience to....
-                </p>
-              </div>
-              <div
-                class="result-job-apply-section"
-                id="publications-apply-controls-wrapper"
-              >
-                <button class="more-info-btn apply-btn">More info</button>
-                <button class="apply-link-btn apply-btn">
-                  <p class="btn-text">Apply link</p>
-                  <img class="btn-icon" src="./img/icons/new-window.png" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="result">
-            <div class="result-user-section job-detail-section">
-              <div
-                class="result-user-avatar-section"
-                id="recruiter-avatar-section"
-              >
-                <div class="recruiter-avatar-wrapper">
-                  <img
-                    src="./img/researchspan-logo-alt-small.svg"
-                    alt="avatar"
-                    class="recruiter-avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section vacancy-info">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Market researcher</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Location:</p>
-                    <p class="info-organisation">London, UK</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Salary:</p>
-                    <p class="info-organisation">£28,000 per annum.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-closing">
-                Closing date:
-                <span class="closing-date">Friday 8th April 2022</span>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  We're looking for a dynamic and enthusiastic market researcher
-                  to join our team of 200. We are dedicated to providing
-                  researchers with all the tools and information they need to
-                  thrive in their careers. We want to make the most of your
-                  experience to....
-                </p>
-              </div>
-              <div
-                class="result-job-apply-section"
-                id="publications-apply-controls-wrapper"
-              >
-                <button class="more-info-btn apply-btn">More info</button>
-                <button class="apply-link-btn apply-btn">
-                  <p class="btn-text">Apply link</p>
-                  <img class="btn-icon" src="./img/icons/new-window.png" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="result">
-            <div class="result-user-section job-detail-section">
-              <div
-                class="result-user-avatar-section"
-                id="recruiter-avatar-section"
-              >
-                <div class="recruiter-avatar-wrapper">
-                  <img
-                    src="./img/researchspan-logo-alt-small.svg"
-                    alt="avatar"
-                    class="recruiter-avatar"
-                  />
-                </div>
-              </div>
-              <div class="result-user-info-section vacancy-info">
-                <div class="result-info">
-                  <div class="info-name-wrapper">
-                    <h2 class="info-name">Market researcher</h2>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Organisation:</p>
-                    <p class="info-organisation">Research Span</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Location:</p>
-                    <p class="info-organisation">London, UK</p>
-                  </div>
-                  <div class="info-subsection">
-                    <p class="info-label">Salary:</p>
-                    <p class="info-organisation">£28,000 per annum.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="result-content-section">
-              <div class="result-content-closing">
-                Closing date:
-                <span class="closing-date">Friday 8th April 2022</span>
-              </div>
-              <div class="result-content-context-section">
-                <p class="result-content-context">
-                  We're looking for a dynamic and enthusiastic market researcher
-                  to join our team of 200. We are dedicated to providing
-                  researchers with all the tools and information they need to
-                  thrive in their careers. We want to make the most of your
-                  experience to....
-                </p>
-              </div>
-              <div
-                class="result-job-apply-section"
-                id="publications-apply-controls-wrapper"
-              >
-                <button class="more-info-btn apply-btn">More info</button>
-                <button class="apply-link-btn apply-btn">
-                  <p class="btn-text">Apply link</p>
-                  <img class="btn-icon" src="./img/icons/new-window.png" />
-                </button>
-              </div>
-            </div>
-          </div>
+          {jobSearchResults.length === 0 && (
+            <h4 className="no-results-msg">
+              {noSearch
+                ? "Configure your search to find publications"
+                : "No results to display"}
+            </h4>
+          )}
+          {jobSearchResults.length > 0 &&
+            jobSearchResults.map((result, index) => {
+              return (
+                <JobResult
+                  key={index}
+                  _id={result._id}
+                  user={result.user}
+                  organisation={result.organisation}
+                  contact_name={result.contact_name}
+                  contact_details={result.contact_details}
+                  title={result.title}
+                  salary_amount={result.salary}
+                  salary_currency={result.salary_currency}
+                  salary_period={result.salary_period}
+                  reference={result.ref}
+                  keywords={result.keywords}
+                  jd={result.jd}
+                  apply_link={result.apply_link}
+                  attachment_links={result.attachment_links}
+                  date_posted={result.date}
+                />
+              );
+            })}
         </div>
+        {resultQty < jobSearchResults.length && (
+          <div className="pagination-controls">
+            <div className="page-control-wrapper" onClick={showMoreResults}>
+              <p className="page-control">Load 10 more</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
+
+  return firstLoad && loading ? (
+    <ResultsLoading firstLoad={firstLoad} />
+  ) : !firstLoad && loading ? (
+    <Fragment>
+      <ResultsLoading firstLoad={firstLoad} />
+      {showResults}
+    </Fragment>
+  ) : (
+    showResults
+  );
 };
 
-export default JobResults;
+JobResults.propTypes = {
+  search: PropTypes.object.isRequired,
+  getAllJobs: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  search: state.search,
+});
+
+export default connect(mapStateToProps, { getAllJobs })(JobResults);

@@ -26,3 +26,6 @@ export const UPDATE_ITEM = "UPDATE_ITEM";
 export const UPDATE_DISCUSSION = "UPDATE_DISCUSSION";
 
 export const SEND_ERROR = "SEND_ERROR";
+
+export const UPDATE_JOB_SEARCH = "UPDATE_JOB_SEARCH";
+export const JOB_SEARCH_ERROR = "JOB_SEARCH_ERROR";

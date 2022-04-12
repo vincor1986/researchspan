@@ -4,6 +4,7 @@ import ResultsLoading from "../layout/ResultsLoading";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { pubSearch } from "../../actions/search";
+import commaSeperateNumber from "../../utils/commaSeperateNumber";
 
 const PublicationResults = ({
   search: {
@@ -30,23 +31,6 @@ const PublicationResults = ({
       pubSearch({ keywords: "", format: "", subject_area: "", field: "" });
     }
   }, [noSearch]);
-
-  if (pubTotalResults > 0) {
-    resultsNumber = pubTotalResults
-      .toString()
-      .split("")
-      .reverse()
-      .map((el, i) => ((i + 1) % 3 === 0 ? `,${el}` : el))
-      .reverse()
-      .join("")
-      .split("");
-
-    if (resultsNumber[0] === ",") {
-      resultsNumber.shift();
-    }
-
-    resultsNumber.join("");
-  }
 
   const firstLoad = pubSearchResults.length === 0;
 
@@ -80,7 +64,9 @@ const PublicationResults = ({
         <div class="main-content-results-label">
           <h4 class="subheading results-msg">Results</h4>
           {pubTotalResults > 0 && (
-            <p class="results-stat">{resultsNumber} matches</p>
+            <p class="results-stat">
+              {commaSeperateNumber(pubTotalResults)} matches
+            </p>
           )}
         </div>
         <div class="results-section">
@@ -118,9 +104,9 @@ const PublicationResults = ({
     </div>
   );
 
-  return firstLoad & loading ? (
+  return firstLoad && loading ? (
     <ResultsLoading firstLoad={firstLoad} />
-  ) : !firstLoad & loading ? (
+  ) : !firstLoad && loading ? (
     <Fragment>
       <ResultsLoading firstLoad={firstLoad} />
       {showResults}

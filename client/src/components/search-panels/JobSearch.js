@@ -1,7 +1,36 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import { jobSearch } from "../../actions/search";
+import getFields from "../../utils/getFields";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
-export const JobSearch = () => {
+export const JobSearch = ({ search: { jobSearchParams }, jobSearch }) => {
+  const [formData, setFormData] = useState({
+    keywords: "",
+    location: "",
+    subject_area: "",
+    field: "",
+    currency: "Any",
+  });
+
+  const { keywords, location, subject_area, field, currency } = formData;
+
+  const onChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    jobSearch({ keywords, location, subject_area, field, currency });
+  };
+
+  useEffect(() => {
+    if (jobSearchParams.keywords) {
+      setFormData({ ...formData, keywords: jobSearchParams.keywords });
+    }
+  }, [jobSearchParams]);
+
   return (
     <Fragment>
       {" "}
@@ -10,7 +39,7 @@ export const JobSearch = () => {
           <p>Configure your search</p>
         </div>
         <div class="search-panel-form-wrapper">
-          <form class="search-panel-form">
+          <form class="search-panel-form" onSubmit={(e) => onSubmit(e)}>
             <h4 class="search-panel-subheading">Keywords</h4>
             <div class="search-panel-wrapper">
               <label for="search-panel-text-input" class="search-panel-label">
@@ -18,9 +47,11 @@ export const JobSearch = () => {
               </label>
               <input
                 class="search-panel-text-input"
-                name="search-panel-text-input"
+                name="keywords"
                 type="text"
+                value={keywords}
                 placeholder="job title, location or field"
+                onChange={(e) => onChange(e)}
               />
             </div>
             <h4 class="search-panel-subheading">Location</h4>
@@ -30,48 +61,74 @@ export const JobSearch = () => {
               </label>
               <input
                 class="search-panel-text-input"
-                name="search-panel-text-input"
+                name="location"
                 type="text"
                 placeholder="city, country or region"
+                value={location}
+                onChange={(e) => onChange(e)}
               />
             </div>
-            <h4 class="search-panel-subheading">Categories</h4>
+            <h4 class="search-panel-subheading">Subject {"&"} Field</h4>
             <div class="search-panel-wrapper">
               <label for="search-panel-select-input" class="search-panel-label">
                 Subject
               </label>
               <select
                 class="search-panel-text-input"
-                name="search-panel-select-input"
+                id="search-panel-select-input"
+                name="subject_area"
+                value={subject_area}
+                onChange={(e) => onChange(e)}
               >
-                <option class="search-panel-select-option">Science</option>
-                <option class="search-panel-select-option">Technology</option>
-                <option class="search-panel-select-option">General</option>
-                <option class="search-panel-select-option">Politics</option>
-                <option class="search-panel-select-option">Sociology</option>
-                <option class="search-panel-select-option">History</option>
+                <option class="search-panel-select-option">Select...</option>
+                <option class="search-panel-select-option">Biology</option>
                 <option class="search-panel-select-option">
-                  Business {"&"} Industry
+                  Computer Science
                 </option>
+                <option class="search-panel-select-option">Economics</option>
+                <option class="search-panel-select-option">
+                  Electrical Engineering
+                </option>
+                <option class="search-panel-select-option">Finance</option>
+                <option class="search-panel-select-option">Mathematics</option>
+                <option class="search-panel-select-option">Physics</option>
+                <option class="search-panel-select-option">Statistics</option>
               </select>
               <label for="search-panel-select-input" class="search-panel-label">
                 Field
               </label>
               <select
                 class="search-panel-text-input"
-                name="search-panel-select-input"
-                disabled="true"
-              ></select>
-              <h4 class="search-panel-subheading">Salary Currency</h4>
+                id="search-panel-select-input"
+                name="field"
+                value={field}
+                onChange={(e) => onChange(e)}
+                disabled={["Select...", ""].includes(subject_area)}
+              >
+                {!["Select...", ""].includes(subject_area) &&
+                  getFields(subject_area)
+                    .sort()
+                    .map((item, index) => (
+                      <option key={index} class="search-panel-select-option">
+                        {item}
+                      </option>
+                    ))}
+              </select>
             </div>
+            <h4 class="search-panel-subheading">Salary Currency</h4>
             <div class="search-panel-wrapper">
               <label for="search-panel-select-input" class="search-panel-label">
                 Currency
               </label>
               <select
                 class="search-panel-text-input"
-                name="search-panel-select-input"
+                name="currency"
+                value={currency}
+                onChange={(e) => onChange(e)}
               >
+                <option class="search-panel-select-option" value="Any">
+                  Any
+                </option>
                 <option class="search-panel-select-option" value="£">
                   £
                 </option>
@@ -80,9 +137,6 @@ export const JobSearch = () => {
                 </option>
                 <option class="search-panel-select-option" value="€">
                   €
-                </option>
-                <option class="search-panel-select-option">
-                  Business {"&"} Industry
                 </option>
               </select>
             </div>
@@ -97,4 +151,13 @@ export const JobSearch = () => {
   );
 };
 
-export default JobSearch;
+JobSearch.propTypes = {
+  search: PropTypes.object.isRequired,
+  jobSearch: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  search: state.search,
+});
+
+export default connect(mapStateToProps, { jobSearch })(JobSearch);

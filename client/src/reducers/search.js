@@ -5,6 +5,8 @@ import {
   ADD_NEXT_PAGE_RESULTS,
   UPDATE_DISCUSS_SEARCH,
   DISCUSS_SEARCH_ERROR,
+  UPDATE_JOB_SEARCH,
+  JOB_SEARCH_ERROR,
 } from "../actions/types";
 
 const initialState = {
@@ -13,7 +15,9 @@ const initialState = {
   pubSearchResults: [],
   pubTotalResults: null,
   pubNextCursor: null,
+  jobSearchParams: {},
   jobSearchResults: [],
+  jobTotalResults: null,
   discussSearchParams: {},
   discussSearchResults: [],
 };
@@ -32,6 +36,8 @@ const search = (state = initialState, action) => {
         case "discussions":
           properties = ["discussSearchParams"];
           break;
+        case "jobs":
+          properties = ["jobSearchParams"];
         default:
           properties = [];
       }
@@ -54,10 +60,23 @@ const search = (state = initialState, action) => {
         discussSearchResults: payload,
         loading: false,
       };
+    case UPDATE_JOB_SEARCH:
+      return {
+        ...state,
+        jobSearchResults: payload.data,
+        pubTotalResults: payload.data.length,
+        loading: false,
+      };
     case PUB_SEARCH_ERROR:
       return {
         ...state,
         pubSearchResults: [],
+        loading: false,
+      };
+    case JOB_SEARCH_ERROR:
+      return {
+        ...state,
+        jobSearchResults: [],
         loading: false,
       };
     case DISCUSS_SEARCH_ERROR:

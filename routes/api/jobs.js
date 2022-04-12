@@ -22,6 +22,8 @@ router.get("/", async (req, res) => {
 
     const query = req.query.search.split(" ").map((val) => val.toLowerCase());
 
+    const currency = req.query.currency;
+
     let data = [],
       idArray = [];
     const vacancySearchKeys = [
@@ -57,7 +59,11 @@ router.get("/", async (req, res) => {
 
     data = Array.from(new Set(data));
 
-    res.json(data);
+    if (currency !== "Any") {
+      data = data.filter((obj) => obj.salary_currency === currency);
+    }
+
+    res.json({ data });
   } catch (err) {
     console.error(err.message);
     if (err.kind === "ObjectId") {
