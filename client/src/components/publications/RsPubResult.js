@@ -25,12 +25,11 @@ const RsPubResult = ({
   users: { loading, userArray },
 }) => {
   const [usersReady, setUsersReady] = useState(connectedUsers.length === 0);
-  const [sentReq, setSentReq] = useState(false);
 
   const isInArray = (id, arr) => arr.map((obj) => obj._id).includes(id);
 
   useEffect(() => {
-    if (!usersReady && !loading && !sentReq) {
+    if (!usersReady) {
       getUsers(connectedUsers);
     }
   }, []);

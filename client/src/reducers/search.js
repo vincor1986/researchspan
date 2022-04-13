@@ -7,6 +7,7 @@ import {
   DISCUSS_SEARCH_ERROR,
   UPDATE_JOB_SEARCH,
   JOB_SEARCH_ERROR,
+  UPDATE_SEARCH_ITEM,
 } from "../actions/types";
 
 const initialState = {
@@ -107,6 +108,26 @@ const search = (state = initialState, action) => {
           };
         default:
           return state;
+      }
+    case UPDATE_SEARCH_ITEM:
+      const format = payload.type;
+      const property = `${format}SearchResults`;
+      const property2 = `${format}SearchParams`;
+      const itemId =
+        format === "discuss" ? payload.data.head : payload.data._id;
+      const indexOfHead = state[property].map((obj) => obj._id).indexOf(itemId);
+
+      if (indexOfHead === -1) {
+        return {
+          ...state,
+        };
+      } else {
+        console.log("updating search results");
+        return {
+          ...state,
+          [property]: state[property].filter((obj) => obj._id !== itemId),
+          [property2]: {},
+        };
       }
     default:
       return state;

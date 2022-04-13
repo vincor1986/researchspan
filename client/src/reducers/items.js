@@ -6,12 +6,15 @@ import {
   SEND_ERROR,
 } from "../actions/types";
 
+import { updateSearchItem } from "../actions/items";
+
 const initialState = {
   discussion: {},
   job: {},
   loading: false,
   item_error: false,
   send_error: false,
+  lastActionSuccess: null,
 };
 
 const items = (state = initialState, action) => {
@@ -22,37 +25,35 @@ const items = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
+        lastActionSuccess: false,
       };
     case ITEM_ERROR:
       return {
         ...state,
         item_error: true,
         loading: false,
+        lastActionSuccess: false,
       };
     case UPDATE_ITEM:
       return {
         ...state,
         [payload.type]: payload.item,
         loading: false,
+        lastActionSuccess: true,
       };
     case UPDATE_DISCUSSION:
-      const postId = payload.head;
-      const indexOfHead = state.discussSearchResults
-        .map((obj) => obj._id)
-        .indexOf(postId);
-      const postInState = indexOfHead !== -1;
       return {
         ...state,
-        discussSearchResults: postInState
-          ? state.discussSearchResults.splice(indexOfHead, 1, payload)
-          : [...state.discussSearchResults, payload],
         discussion: payload,
+        loading: false,
+        lastActionSuccess: true,
       };
     case SEND_ERROR:
       return {
         ...state,
         send_error: true,
         loading: false,
+        lastActionSuccess: false,
       };
     default:
       return state;

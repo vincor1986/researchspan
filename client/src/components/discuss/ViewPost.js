@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Post from "./Post";
+import PostEdit from "./PostEdit";
 import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getPost } from "../../actions/discussion";
 import ResultsLoading from "../layout/ResultsLoading";
+import { Routes, Route } from "react-router-dom";
+import AuthRoute from "../routing/AuthRoute";
 
 const ViewPost = ({
   search: { discussSearchResults },
@@ -12,7 +15,9 @@ const ViewPost = ({
   auth,
   getPost,
 }) => {
-  const { postId } = useParams();
+  const params = useParams();
+  const { postId } = params;
+  const editMode = params["*"] === "edit";
 
   const [post, setPost] = useState(undefined);
   const [loading, setLoading] = useState(true);
@@ -44,12 +49,29 @@ const ViewPost = ({
   const authUserPost =
     auth.user._id && post && post.user.toString() === auth.user._id.toString();
 
-  return loading ? (
+  const redirect = loading ? (
     <ResultsLoading firstLoad={true} />
   ) : post ? (
-    <Post post={post} authUserPost={authUserPost} />
+    <AuthRoute
+      item={post}
+      element={<PostEdit post={post} authUserPost={authUserPost} />}
+    />
   ) : (
     <h4>No post here</h4>
+  );
+
+  return (
+    <Fragment>
+      {editMode ? (
+        redirect
+      ) : loading ? (
+        <ResultsLoading firstLoad={true} />
+      ) : post ? (
+        <Post post={post} authUserPost={authUserPost} />
+      ) : (
+        <h4>No post here</h4>
+      )}
+    </Fragment>
   );
 };
 

@@ -901,12 +901,20 @@ input:checked {
   background: rgb(104, 165, 142);
 }
 
+.main-msg-container {
+  background: linear-gradient(to left, #fdfdfd55, #ffffff55);
+}
+
 .main-msg {
   font-size: 4rem;
   color:rgb(64, 83, 112);
   font-weight: bold;
-  font-family: "Crete Round", serif;
   margin-bottom: 2rem;
+}
+
+.main-msg::selection {
+  background: rgb(30, 127, 238);
+  color: white;
 }
 
 .context-label {

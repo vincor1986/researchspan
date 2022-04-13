@@ -8,6 +8,7 @@ import {
   ITEM_ERROR,
   UPDATE_DISCUSSION,
   SEND_ERROR,
+  UPDATE_SEARCH_ITEM,
 } from "./types";
 import { setAlert } from "./alert";
 
@@ -146,3 +147,53 @@ export const sendReply =
       }
     }
   };
+
+export const editDiscussion = (formData, postId) => async (dispatch) => {
+  dispatch({
+    type: SET_ITEM_LOADING,
+  });
+
+  let { main, context, format, keywords } = formData;
+
+  const kws = keywords.split(",").map((kw) => kw.trim().toLowerCase());
+
+  main = main.trim();
+  context = context.trim();
+
+  const params = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify({ main, context, format, kws });
+
+  try {
+    const res = await axios.put(`/api/discuss/${postId}`, body, params);
+
+    dispatch({
+      type: UPDATE_SEARCH_ITEM,
+      payload: {
+        data: res.data,
+        type: "discuss",
+      },
+    });
+
+    dispatch({
+      type: UPDATE_DISCUSSION,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log(err);
+
+    if (err.response) {
+      const errors = err.response.data.errors;
+
+      errors.forEach((error) => setAlert(error.msg, "warning"));
+    }
+
+    dispatch({
+      type: SEND_ERROR,
+    });
+  }
+};

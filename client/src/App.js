@@ -18,6 +18,7 @@ import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import ViewPost from "./components/discuss/ViewPost";
 import PropTypes from "prop-types";
+import { useLocation } from "react-router-dom";
 
 //Redux
 import { Provider } from "react-redux";
@@ -54,6 +55,7 @@ const App = () => {
               <Route path="/discuss/*" element={<DiscussionSearch />}>
                 <Route exact path="" element={<DiscussionResults />} />
                 <Route exact path="post/:postId" element={<ViewPost />} />
+                <Route exact path="post/:postId/*" element={<ViewPost />} />
               </Route>
             </Routes>
           </main>
@@ -62,10 +64,6 @@ const App = () => {
       </Router>
     </Provider>
   );
-};
-
-App.propTypes = {
-  auth: PropTypes.object.isRequired,
 };
 
 export default App;

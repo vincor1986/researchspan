@@ -7,6 +7,7 @@ import { logout } from "../../actions/auth";
 import PropTypes from "prop-types";
 import { setActiveTab } from "../../actions/auth";
 import { setMenuOpen, closeMenu } from "../../actions/ui";
+import { useLocation } from "react-router-dom";
 
 const Navbar = ({
   auth: { isAuthenticated, loading, user, active_tab },
@@ -25,6 +26,8 @@ const Navbar = ({
   const [avatar, setAvatar] = useState(null);
   const [notifications, setNotifications] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const location = useLocation();
 
   const openMenu = () => {
     setShowUserMenu(true);
@@ -52,6 +55,11 @@ const Navbar = ({
       setNewNotifications(false);
     }
   }, [user, notifications, isAuthenticated]);
+
+  useEffect(() => {
+    closeMenu();
+    setShowUserMenu(false);
+  }, [location]);
 
   const guestLinks = (
     <div className="auth-links">

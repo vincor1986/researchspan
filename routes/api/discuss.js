@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
     if (!req.query || !req.query.search || req.query.search === "") {
       const allPosts = await Post.find();
 
-      return res.json(allPosts);
+      return res.json({ results: allPosts });
     }
 
     const query = req.query.search.split(" ").map((val) => val.toLowerCase());

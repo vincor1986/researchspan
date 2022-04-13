@@ -35,3 +35,5 @@ export const JOB_SEARCH_ERROR = "JOB_SEARCH_ERROR";
 
 export const SET_USERS = "SET_USERS";
 export const LOADING_USERS = "LOADING_USERS";
+
+export const UPDATE_SEARCH_ITEM = "UPDATE_SEARCH_ITEM";

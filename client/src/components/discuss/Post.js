@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import PostReply from "./PostReply";
 import { connect } from "react-redux";
 import ReplyForm from "./ReplyForm";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Post = ({
   post: {
@@ -37,6 +38,8 @@ const Post = ({
 
   const [replySent, setReplySent] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (replySent) {
@@ -74,7 +77,14 @@ const Post = ({
             <button class="create-new-btn" id="create-new-btn">
               New post
             </button>
-            <button class="edit-btn discuss-edit-btn">Edit post</button>
+            <button
+              class="edit-btn discuss-edit-btn"
+              onClick={() =>
+                navigate(`/discuss/post/${_id}/edit`, { replace: true })
+              }
+            >
+              Edit post
+            </button>
             <button class="delete-btn discuss-delete-btn">Delete post</button>
           </div>
         )}
@@ -94,7 +104,12 @@ const Post = ({
 
         <div class="context-msg-wrapper">
           <p class="context-label">Context:</p>
-          <p class="context">{context}</p>
+          {context.split("\n").map((para) => (
+            <Fragment>
+              <p class="context">{para}</p>
+              <br />
+            </Fragment>
+          ))}
         </div>
         <div class="post-actions-section">
           <p
