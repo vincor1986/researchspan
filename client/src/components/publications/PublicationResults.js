@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect } from "react";
 import PubResult from "./PubResult";
+import RsPubResult from "./RsPubResult";
 import ResultsLoading from "../layout/ResultsLoading";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -28,7 +29,7 @@ const PublicationResults = ({
     if (noSearch) {
       pubSearch({ keywords: "", format: "", subject_area: "", field: "" });
     }
-  }, [noSearch]);
+  }, [noSearch, pubSearch]);
 
   const firstLoad = pubSearchResults.length === 0;
 
@@ -77,18 +78,39 @@ const PublicationResults = ({
           )}
           {pubSearchResults.length > 0 &&
             pubSearchResults.map((result, index) => {
-              return (
-                <PubResult
-                  key={index}
-                  title={result.title}
-                  URL={result.URL}
-                  authors={result.authors}
-                  date_published={result.date_published}
-                  type={result.type ? result.type : null}
-                  abstract={result.abstract}
-                  source={result.source}
-                />
-              );
+              if (result.rsResult) {
+                console.log("rsResult");
+                return (
+                  <RsPubResult
+                    key={index}
+                    title={result.title}
+                    link={result.link}
+                    coauthors={result.coauthors}
+                    connectedUsers={result.connectedUsers}
+                    date_published={result.date}
+                    type={result.type}
+                    abstract={null}
+                    journal={result.journal}
+                    issue={result.issue}
+                    DOI={result.DOI}
+                    PMID={result.PMID}
+                  />
+                );
+              } else {
+                console.log("pub result");
+                return (
+                  <PubResult
+                    key={index}
+                    title={result.title}
+                    URL={result.URL}
+                    authors={result.authors}
+                    date_published={result.date_published}
+                    type={result.type ? result.type : null}
+                    abstract={result.abstract}
+                    source={result.source}
+                  />
+                );
+              }
             })}
         </div>
         {pubSearchResults.length !== 0 && (

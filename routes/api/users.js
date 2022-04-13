@@ -12,6 +12,27 @@ const getAuthUserId = require("../../utils/getAuthUserId");
 const Profile = require("../../models/Profile");
 const Publication = require("../../models/Publication");
 
+// @route   GET api/users/:id
+// @desc    Get users by id
+// @access  Public
+router.get("/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId).select(
+      "-password -notifications -email -shortlist"
+    );
+
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ errors: [{ msg: "Not found" }] });
+    }
+    return res.status(500).send("Server error");
+  }
+});
+
 // @route   GET api/users/
 // @desc    Get users by search
 // @access  Public

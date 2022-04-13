@@ -4,6 +4,7 @@ import auth from "./auth";
 import search from "./search";
 import items from "./items";
 import ui from "./ui";
+import users from "./users";
 
 export default combineReducers({
   alert,
@@ -11,4 +12,5 @@ export default combineReducers({
   search,
   items,
   ui,
+  users,
 });

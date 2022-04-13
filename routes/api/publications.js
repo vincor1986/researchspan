@@ -49,22 +49,15 @@ router.get("/", async (req, res) => {
       )
     );
 
-    const timeoutReturn = () =>
-      res.status(500).json({
-        errors: [
-          { msg: "Something went wrong. Please try again in a short while." },
-        ],
-      });
-
-    const timeout = setTimeout(timeoutReturn, 35000);
-
     const crossref = await getCrossrefData(queryStr, cursor).catch((err) =>
       console.error(err.message)
     );
 
-    clearTimeout(timeout);
-
     const [totalResults, nextCursor, resultsPage] = crossref;
+
+    data = data.map((obj) => {
+      return { ...obj._doc, rsResult: true };
+    });
 
     res.json({
       data: {

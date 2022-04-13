@@ -2011,6 +2011,12 @@ button:hover {
   margin-top: 1rem;
 }
 
+.tiny-spinner {
+  height: 1.5rem;
+  margin-right: 2rem;
+  margin-top: 0.7rem;
+}
+
 /* end of loading modal */
 
 .noselect {

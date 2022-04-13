@@ -41,6 +41,7 @@ const getCrossrefData = async (query, cursor) => {
         authors: item.author,
         URL: item.URL,
         source: item.publisher,
+        rsResult: false,
       };
     }),
   ];

@@ -24,7 +24,7 @@ const JobResults = ({
     if (noSearch) {
       getAllJobs();
     }
-  }, [noSearch]);
+  }, [noSearch, getAllJobs]);
 
   const firstLoad = jobSearchResults.length === 0;
 
@@ -58,7 +58,7 @@ const JobResults = ({
         <div class="main-content-results-label">
           <h4 class="subheading results-msg">Results</h4>
           <p class="results-stat">{`${commaSeperateNumber(
-            jobTotalResults
+            jobSearchResults.length
           )} matches`}</p>
         </div>
         <div class="results-section">

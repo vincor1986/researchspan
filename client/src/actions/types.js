@@ -32,3 +32,6 @@ export const SEND_ERROR = "SEND_ERROR";
 
 export const UPDATE_JOB_SEARCH = "UPDATE_JOB_SEARCH";
 export const JOB_SEARCH_ERROR = "JOB_SEARCH_ERROR";
+
+export const SET_USERS = "SET_USERS";
+export const LOADING_USERS = "LOADING_USERS";
