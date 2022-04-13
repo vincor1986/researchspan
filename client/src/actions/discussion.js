@@ -61,11 +61,10 @@ export const discussionSearch =
 
         if (errors) {
           errors.forEach((error) => setAlert(error.msg, "warning"));
-
-          dispatch({
-            type: DISCUSS_SEARCH_ERROR,
-          });
         }
+        dispatch({
+          type: DISCUSS_SEARCH_ERROR,
+        });
       }
     }
   };

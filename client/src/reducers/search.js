@@ -38,6 +38,7 @@ const search = (state = initialState, action) => {
           break;
         case "jobs":
           properties = ["jobSearchParams"];
+          break;
         default:
           properties = [];
       }
@@ -57,7 +58,7 @@ const search = (state = initialState, action) => {
     case UPDATE_DISCUSS_SEARCH:
       return {
         ...state,
-        discussSearchResults: payload,
+        discussSearchResults: payload.results,
         loading: false,
       };
     case UPDATE_JOB_SEARCH:

@@ -13,7 +13,6 @@ const User = require("../../models/User");
 // @access  Public
 router.get("/", async (req, res) => {
   try {
-    const queryStr = req.query.search;
     const qs = Boolean(req.query.question);
     const ds = Boolean(req.query.discussion);
 
@@ -28,17 +27,8 @@ router.get("/", async (req, res) => {
     let data = [],
       searchKeys = ["keywords", "main", "context"];
 
-    const timeoutReturn = () =>
-      res.status(500).json({
-        errors: [
-          { msg: "Something went wrong. Please try again in a short while." },
-        ],
-      });
-
-    const timeout = setTimeout(timeoutReturn, 35000);
-
     for (let i = 0; i < query.length; i++) {
-      const keyword = query[i];
+      const keyword = new RegExp(query[i], "gi");
 
       for (let j = 0; j < searchKeys.length; j++) {
         const key = searchKeys[j];
@@ -56,15 +46,6 @@ router.get("/", async (req, res) => {
       }
     }
 
-    data = data.filter((obj) =>
-      query.every(
-        (item) =>
-          obj.keywords.includes(item) ||
-          obj.field.match(item) ||
-          obj.subcategories.includes(item)
-      )
-    );
-
     if (!ds) {
       data = data.filter((obj) => obj.format !== "discussion");
     }
@@ -72,9 +53,9 @@ router.get("/", async (req, res) => {
       data = data.filter((obj) => obj.format !== "question");
     }
 
-    clearTimeout(timeout);
+    console.log({ results: data });
 
-    res.json({ data });
+    res.json({ results: data });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");

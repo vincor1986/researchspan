@@ -1556,12 +1556,14 @@ button:hover {
 
 .notifications-wrapper {
   padding: 1rem;
+  padding-top: 2rem;
+  padding-left: 0rem;
   height: min-content;
 }
 
 .notif-item-wrapper {
   display: flex;
-  border-bottom: 1px solid rgb(221, 226, 226);
+  border-bottom: 1px solid rgb(196, 214, 240);
   margin-bottom: 0.5rem;
   padding: 0rem 1rem 0rem 1rem;
   border-radius: 0.5rem;
@@ -1595,7 +1597,7 @@ button:hover {
 }
 
 .unread {
-  background: rgb(255, 250, 230);
+  background: rgb(229, 244, 253);
 }
 
 .notif-info-msg {
@@ -2019,6 +2021,23 @@ button:hover {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+@media screen and (max-width: 1650px) {
+  .flex-split {
+    flex-direction: column;
+  }
+
+  .search-box {
+    padding-bottom: 6rem;
+    margin-bottom: 6rem;
+    
+  }
+
+  .search-box:not(.search-box:last-of-type) {
+    border-right: none;
+    border-bottom: 1px solid lightgrey;
+}
 }
 
 

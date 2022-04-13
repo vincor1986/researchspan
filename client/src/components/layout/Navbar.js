@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import LogoSvg from "./LogoSvg";
 import UserMenu from "./UserMenu";
@@ -6,11 +6,15 @@ import { connect } from "react-redux";
 import { logout } from "../../actions/auth";
 import PropTypes from "prop-types";
 import { setActiveTab } from "../../actions/auth";
+import { setMenuOpen, closeMenu } from "../../actions/ui";
 
 const Navbar = ({
   auth: { isAuthenticated, loading, user, active_tab },
   logout,
   setActiveTab,
+  ui: { menuOpen },
+  setMenuOpen,
+  closeMenu,
 }) => {
   const setTabActive = (e) => {
     console.log(e.target.id);
@@ -21,6 +25,16 @@ const Navbar = ({
   const [avatar, setAvatar] = useState(null);
   const [notifications, setNotifications] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const openMenu = () => {
+    setShowUserMenu(true);
+    setMenuOpen();
+  };
+
+  const menuClose = () => {
+    setShowUserMenu(false);
+    closeMenu();
+  };
 
   useEffect(() => {
     if (isAuthenticated && Object.keys(user).length > 0) {
@@ -56,7 +70,7 @@ const Navbar = ({
         <div
           class="avatar-wrapper"
           id="navbar-avatar"
-          onClick={() => setShowUserMenu(!showUserMenu)}
+          onClick={() => (showUserMenu ? menuClose() : openMenu())}
         >
           <img src={avatar} alt="avatar" class="avatar noselect" id="navatar" />
         </div>
@@ -67,69 +81,76 @@ const Navbar = ({
 
   return (
     !loading && (
-      <nav className="nav">
-        <Link to="/" className="title-logo" onClick={() => setActiveTab(null)}>
-          <LogoSvg className="logo" onClick={() => setActiveTab(null)} />
-        </Link>
-        <div className="nav-links">
-          <div
-            className={`navlink-wrapper ${
-              active_tab === "publications" && "active"
-            }`}
-            id="publications"
-            onClick={(e) => setTabActive(e)}
+      <Fragment>
+        {showUserMenu && <div class="burger-modal" onClick={menuClose}></div>}
+        <nav className="nav">
+          <Link
+            to="/"
+            className="title-logo"
+            onClick={() => setActiveTab(null)}
           >
-            <Link
-              to="/publications/"
-              className="navlink"
+            <LogoSvg className="logo" onClick={() => setActiveTab(null)} />
+          </Link>
+          <div className="nav-links">
+            <div
+              className={`navlink-wrapper ${
+                active_tab === "publications" && "active"
+              }`}
               id="publications"
               onClick={(e) => setTabActive(e)}
             >
-              Publications
-            </Link>
-          </div>
-          <div
-            className={`navlink-wrapper ${active_tab === "jobs" && "active"}`}
-            id="jobs"
-            onClick={(e) => setTabActive(e)}
-          >
-            <Link
-              to="/jobs/"
-              className="navlink"
+              <Link
+                to="/publications/"
+                className="navlink"
+                id="publications"
+                onClick={(e) => setTabActive(e)}
+              >
+                Publications
+              </Link>
+            </div>
+            <div
+              className={`navlink-wrapper ${active_tab === "jobs" && "active"}`}
               id="jobs"
               onClick={(e) => setTabActive(e)}
             >
-              Jobs in Research
-            </Link>
-          </div>
-          <div
-            className={`navlink-wrapper ${
-              active_tab === "discuss" && "active"
-            }`}
-            id="discuss"
-            onClick={(e) => setTabActive(e)}
-          >
-            <Link
-              to="/discuss/"
-              className="navlink"
+              <Link
+                to="/jobs/"
+                className="navlink"
+                id="jobs"
+                onClick={(e) => setTabActive(e)}
+              >
+                Jobs in Research
+              </Link>
+            </div>
+            <div
+              className={`navlink-wrapper ${
+                active_tab === "discuss" && "active"
+              }`}
               id="discuss"
               onClick={(e) => setTabActive(e)}
             >
-              Discuss
-            </Link>
+              <Link
+                to="/discuss/"
+                className="navlink"
+                id="discuss"
+                onClick={(e) => setTabActive(e)}
+              >
+                Discuss
+              </Link>
+            </div>
           </div>
-        </div>
-        {!loading ? (isAuthenticated ? authLinks : guestLinks) : ""}
-        <div class="user-menu-container"></div>
-        {!loading && showUserMenu && (
-          <UserMenu
-            isAuthenticated={isAuthenticated}
-            setShowUserMenu={setShowUserMenu}
-            logout={logout}
-            user={user}
-          />
-        )}
-      </nav>
+          {!loading ? (isAuthenticated ? authLinks : guestLinks) : ""}
+          <div class="user-menu-container"></div>
+          {!loading && showUserMenu && (
+            <UserMenu
+              isAuthenticated={isAuthenticated}
+              setShowUserMenu={setShowUserMenu}
+              logout={logout}
+              user={user}
+            />
+          )}
+        </nav>
+      </Fragment>
     )
   );
 };
@@ -138,10 +159,19 @@ Navbar.propTypes = {
   auth: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired,
   setActiveTab: PropTypes.func.isRequired,
+  ui: PropTypes.object.isRequired,
+  setMenuOpen: PropTypes.func.isRequired,
+  closeMenu: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
+  ui: state.ui,
 });
 
-export default connect(mapStateToProps, { logout, setActiveTab })(Navbar);
+export default connect(mapStateToProps, {
+  logout,
+  setActiveTab,
+  setMenuOpen,
+  closeMenu,
+})(Navbar);

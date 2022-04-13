@@ -13,7 +13,7 @@ export const getAllJobs = () => async (dispatch) => {
   dispatch({
     type: SET_LOADING,
     payload: {
-      searchParams: {},
+      params: {},
       type: "jobs",
     },
   });

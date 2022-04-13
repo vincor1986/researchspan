@@ -2,7 +2,6 @@ import React, { Fragment, useState, useEffect } from "react";
 import JobResult from "./JobResult";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { jobSearch } from "../../actions/search";
 import commaSeperateNumber from "../../utils/commaSeperateNumber";
 import ResultsLoading from "../layout/ResultsLoading";
 import { getAllJobs } from "../../actions/jobs";
@@ -18,8 +17,6 @@ const JobResults = ({
   };
 
   const noSearch = Object.keys(jobSearchParams).length === 0;
-
-  console.log("noSearch", noSearch);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });

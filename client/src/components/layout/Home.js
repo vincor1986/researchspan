@@ -3,10 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { pubSearch } from "../../actions/search";
+import { jobSearch } from "../../actions/search";
+import { discussionSearch } from "../../actions/discussion";
 import { setActiveTab } from "../../actions/auth";
 
-const Home = ({ pubSearch, setActiveTab }) => {
+const Home = ({ pubSearch, setActiveTab, jobSearch, discussionSearch }) => {
   const [pubKeywords, setPubKeywords] = useState("");
+  const [jobKeywords, setJobKeywords] = useState("");
+  const [discussKeywords, setDiscussKeywords] = useState("");
   const navigate = useNavigate();
 
   const sendPubSearch = () => {
@@ -18,6 +22,30 @@ const Home = ({ pubSearch, setActiveTab }) => {
     });
     setActiveTab("publications");
     navigate("/publications", { replace: false });
+  };
+
+  const sendJobSearch = () => {
+    jobSearch({
+      keywords: jobKeywords,
+      location: "",
+      subject_area: "",
+      field: "",
+      currency: "Any",
+    });
+    setActiveTab("jobs");
+    navigate("/jobs", { replace: false });
+  };
+
+  const sendDiscussSearch = () => {
+    discussionSearch({
+      discusssion: true,
+      question: true,
+      keywords: discussKeywords,
+      subject_area: "",
+      field: "",
+    });
+    setActiveTab("discuss");
+    navigate("/discuss", { replace: false });
   };
 
   return (
@@ -57,7 +85,7 @@ const Home = ({ pubSearch, setActiveTab }) => {
         </div>
         <div class="vacancies-search search-box">
           <h3 class="search-box-title subheading">Find vacancies</h3>
-          <form class="vacancies-form form">
+          <form class="vacancies-form form" onSubmit={sendJobSearch}>
             <div class="form-item">
               <label class="search-label" for="search-input">
                 Keywords:
@@ -66,6 +94,8 @@ const Home = ({ pubSearch, setActiveTab }) => {
                 type="text"
                 name="search-input"
                 class="search-input"
+                value={jobKeywords}
+                onChange={(e) => setJobKeywords(e.target.value)}
                 placeholder="field, location, job title or reference"
               />
             </div>
@@ -76,7 +106,7 @@ const Home = ({ pubSearch, setActiveTab }) => {
         </div>
         <div class="discussion-search search-box">
           <h3 class="search-box-title subheading">Engage in discussions</h3>
-          <form class="discussion-form form">
+          <form class="discussion-form form" onSubmit={sendDiscussSearch}>
             <div class="form-item">
               <label class="search-label" for="search-input">
                 Keywords:
@@ -86,6 +116,8 @@ const Home = ({ pubSearch, setActiveTab }) => {
                 name="search-input"
                 class="search-input"
                 placeholder="field or topic"
+                value={discussKeywords}
+                onChange={(e) => setDiscussKeywords(e.target.value)}
               />
             </div>
             <button class="search-btn discussion-search-btn" type="submit">
@@ -101,6 +133,13 @@ const Home = ({ pubSearch, setActiveTab }) => {
 Home.propTypes = {
   pubSearch: PropTypes.func.isRequired,
   setActiveTab: PropTypes.func.isRequired,
+  jobSearch: PropTypes.func.isRequired,
+  discussionSearch: PropTypes.func.isRequired,
 };
 
-export default connect(null, { pubSearch, setActiveTab })(Home);
+export default connect(null, {
+  pubSearch,
+  setActiveTab,
+  jobSearch,
+  discussionSearch,
+})(Home);

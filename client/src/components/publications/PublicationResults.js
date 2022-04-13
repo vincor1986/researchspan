@@ -22,8 +22,6 @@ const PublicationResults = ({
 
   const noSearch = Object.keys(pubSearchParams).length === 0;
 
-  let resultsNumber = [];
-
   useEffect(() => {
     window.scrollTo({ top: 0 });
 

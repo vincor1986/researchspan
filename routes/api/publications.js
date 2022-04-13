@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
       searchKeys = ["keywords", "field", "subcategories"];
 
     for (let i = 0; i < query.length; i++) {
-      const keyword = query[i];
+      const keyword = new RegExp(query[i], "gi");
 
       for (let j = 0; j < searchKeys.length; j++) {
         const key = searchKeys[j];
