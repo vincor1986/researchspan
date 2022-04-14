@@ -12,13 +12,14 @@ const VacancySchema = new mongoose.Schema({
   contact_name: {
     type: String,
   },
-  contact_details: {
-    type: [
-      {
-        form: String,
-        detail: String,
-      },
-    ],
+  contact_phone: {
+    type: String,
+  },
+  contact_email: {
+    type: String,
+  },
+  logo: {
+    type: Buffer,
   },
   title: {
     type: String,
@@ -39,6 +40,9 @@ const VacancySchema = new mongoose.Schema({
     type: String,
   },
   salary_period: {
+    type: String,
+  },
+  fixed_term_length: {
     type: String,
   },
   ref: {
@@ -64,6 +68,10 @@ const VacancySchema = new mongoose.Schema({
         link: String,
       },
     ],
+  },
+  closing_date: {
+    type: Date,
+    required: true,
   },
   date: {
     type: Date,

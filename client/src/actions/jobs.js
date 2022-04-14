@@ -7,6 +7,7 @@ import {
   SET_ITEM_LOADING,
   ITEM_ERROR,
   UPDATE_ITEM,
+  UPDATE_SEARCH_ITEM,
 } from "./types";
 
 export const getAllJobs = () => async (dispatch) => {
@@ -56,6 +57,78 @@ export const getVacancy = (vacancyId) => async (dispatch) => {
     const res = await axios.get(`/api/jobs/vacancies/${vacancyId}`);
 
     dispatch({
+      type: UPDATE_SEARCH_ITEM,
+      payload: {
+        data: res.data,
+        type: "job",
+      },
+    });
+
+    dispatch({
+      type: UPDATE_ITEM,
+      payload: {
+        type: "job",
+        item: res.data,
+      },
+    });
+  } catch (err) {
+    if (err.response) {
+      const errors = err.response.data.errors;
+
+      errors.forEach((error) => {
+        setAlert(error.msg, "warning");
+      });
+    }
+
+    dispatch({
+      type: ITEM_ERROR,
+    });
+  }
+};
+
+export const editVacancy = (formData, vacancyId) => async (dispatch) => {
+  dispatch({
+    type: SET_ITEM_LOADING,
+  });
+
+  if (!vacancyId) {
+    dispatch({
+      type: ITEM_ERROR,
+    });
+    setAlert("Please provide a valid vacancy id", "warning");
+  }
+
+  let {} = formData;
+
+  const params = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  formData.closing_date = Date(formData.closing_date);
+  formData.keywords = formData.keywords
+    .split(",")
+    .map((el) => el.trim().toLowerCase());
+
+  const body = JSON.stringify(formData);
+
+  try {
+    const res = await axios.put(
+      `/api/jobs/vacancies/${vacancyId}`,
+      body,
+      params
+    );
+
+    dispatch({
+      type: UPDATE_SEARCH_ITEM,
+      payload: {
+        data: res.data,
+        type: "job",
+      },
+    });
+
+    dispatch({
       type: UPDATE_ITEM,
       payload: {
         item: res.data,
@@ -63,11 +136,12 @@ export const getVacancy = (vacancyId) => async (dispatch) => {
       },
     });
   } catch (err) {
+    if (err.response) {
+      errors.forEach((error) => {
+        setAlert(error.msg, "warning");
+      });
+    }
     const errors = err.response.data.errors;
-
-    errors.forEach((error) => {
-      setAlert(error.msg, "warning");
-    });
 
     dispatch({
       type: ITEM_ERROR,

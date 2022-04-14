@@ -1284,6 +1284,20 @@ button:hover {
   height: 50rem;
 }
 
+.file-input {
+  padding-top: 0.7rem;
+}
+
+.add-attachment-btn {
+  width: 20rem;
+  margin-left: 0rem;
+  background:rgb(53, 172, 142)
+}
+
+.remove-attachment-btn {
+  margin-left: 0rem;
+}
+
 /* Publications */
 
 .no-results-msg {

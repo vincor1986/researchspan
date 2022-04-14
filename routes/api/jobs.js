@@ -104,18 +104,22 @@ router.post("/vacancies", auth, async (req, res) => {
     const {
       organisation,
       contact_name,
-      contact_details,
+      contact_phone,
+      contact_email,
+      logo,
       title,
       field,
       location,
       salary,
       salary_currency,
       salary_period,
+      fixed_term_length,
       ref,
       keywords,
       jd,
       apply_link,
       attachment_links,
+      closing_date,
     } = req.body;
 
     const existing = await Vacancy.findOne({ ref });
@@ -130,18 +134,22 @@ router.post("/vacancies", auth, async (req, res) => {
       user,
       organisation,
       contact_name,
-      contact_details,
+      contact_phone,
+      contact_email,
+      logo,
       title,
       field,
       location,
       salary,
       salary_currency,
       salary_period,
+      fixed_term_length,
       ref,
       keywords,
       jd,
       apply_link,
       attachment_links,
+      closing_date,
     });
 
     await vacancy.save();
@@ -180,18 +188,22 @@ router.put("/vacancies/:id", auth, async (req, res) => {
     const {
       organisation,
       contact_name,
-      contact_details,
+      contact_phone,
+      contact_email,
+      logo,
       title,
       field,
       location,
       salary,
       salary_currency,
       salary_period,
+      fixed_term_length,
       ref,
       keywords,
       jd,
       apply_link,
       attachment_links,
+      closing_date,
     } = req.body;
 
     if (organisation && organisation !== vacancy.organisation) {
@@ -202,11 +214,15 @@ router.put("/vacancies/:id", auth, async (req, res) => {
       vacancy.contact_name = contact_name;
     }
 
-    if (
-      contact_details &&
-      contact_details.toString() !== vacancy.contact_details.toString()
-    ) {
-      vacancy.contact_details = contact_details;
+    if (contact_phone && contact_phone !== vacancy.contact_phone) {
+      vacancy.contact_phone = contact_phone;
+    }
+    if (contact_email && contact_email !== vacancy.contact_email) {
+      vacancy.contact_email = contact_email;
+    }
+
+    if (logo && logo !== vacancy.logo) {
+      vacancy.logo = logo;
     }
 
     if (title && title !== vacancy.title) {
@@ -233,6 +249,10 @@ router.put("/vacancies/:id", auth, async (req, res) => {
       vacancy.salary_period = salary_period;
     }
 
+    if (fixed_term_length && fixed_term_length !== vacancy.fixed_term_length) {
+      vacancy.fixed_term_length = fixed_term_length;
+    }
+
     if (ref && ref !== vacancy.ref) {
       vacancy.ref = ref;
     }
@@ -254,6 +274,10 @@ router.put("/vacancies/:id", auth, async (req, res) => {
       attachment_links.toString() !== vacancy.attachment_links.toString()
     ) {
       vacancy.attachment_links = attachment_links;
+    }
+
+    if (closing_date && closing_date !== vacancy.closing_date) {
+      vacancy.closing_date = closing_date;
     }
 
     await vacancy.save();

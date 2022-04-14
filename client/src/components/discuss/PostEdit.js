@@ -39,8 +39,6 @@ const PostEdit = ({
 
   const [sentData, setSentData] = useState(false);
 
-  const { postId } = useParams();
-
   const navigate = useNavigate();
 
   const onChange = (e) => {

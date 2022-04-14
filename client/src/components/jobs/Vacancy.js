@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import commaSeperateNumber from "../../utils/commaSeperateNumber";
+import { useNavigate } from "react-router-dom";
 
 const Vacancy = ({
   vacancy: {
@@ -24,6 +25,8 @@ const Vacancy = ({
   },
   authUserJob,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <div class="main-body-container">
       <div class="user-detail-section">
@@ -42,7 +45,12 @@ const Vacancy = ({
             <button class="create-new-btn" id="create-new-btn">
               New vacancy
             </button>
-            <button class="edit-btn discuss-edit-btn">Edit vacancy</button>
+            <button
+              class="edit-btn discuss-edit-btn"
+              onClick={() => navigate(`edit`, { replace: false })}
+            >
+              Edit vacancy
+            </button>
             <button class="delete-btn discuss-delete-btn">Delete</button>
           </div>
         )}

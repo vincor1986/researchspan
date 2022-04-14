@@ -128,6 +128,14 @@ export const sendReply =
       console.log(res.data);
 
       dispatch({
+        type: UPDATE_SEARCH_ITEM,
+        payload: {
+          data: res.data,
+          type: "discuss",
+        },
+      });
+
+      dispatch({
         type: UPDATE_DISCUSSION,
         payload: res.data,
       });

@@ -51,6 +51,7 @@ const App = () => {
               <Route path="/jobs/*" element={<JobSearch />}>
                 <Route exact path="" element={<JobResults />} />
                 <Route exact path=":jobId" element={<ViewVacancy />} />
+                <Route exact path=":jobId/*" element={<ViewVacancy />} />
               </Route>
               <Route path="/discuss/*" element={<DiscussionSearch />}>
                 <Route exact path="" element={<DiscussionResults />} />

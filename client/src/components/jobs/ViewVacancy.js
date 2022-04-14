@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Vacancy from "./Vacancy";
+import EditVacancy from "./EditVacancy";
+import AuthRoute from "../routing/AuthRoute";
 import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getVacancy } from "../../actions/jobs";
@@ -12,10 +14,13 @@ const ViewVacancy = ({
   auth,
   getVacancy,
 }) => {
-  const { jobId } = useParams();
+  const params = useParams();
+  const { jobId } = params;
 
   const [vacancy, setVacancy] = useState(undefined);
   const [loading, setLoading] = useState(true);
+
+  const editMode = params["*"] === "edit";
 
   const vacancyInState = jobSearchResults.find((obj) => obj._id === jobId);
 
@@ -46,12 +51,29 @@ const ViewVacancy = ({
     vacancy &&
     vacancy.user.toString() === auth.user._id.toString();
 
-  return loading ? (
+  const redirect = loading ? (
     <ResultsLoading firstLoad={true} />
   ) : vacancy ? (
-    <Vacancy vacancy={vacancy} authUserJob={authUserJob} />
+    <AuthRoute
+      item={vacancy}
+      element={<EditVacancy vacancy={vacancy} authUserJob={authUserJob} />}
+    />
   ) : (
     <h4>No vacancy here</h4>
+  );
+
+  return (
+    <Fragment>
+      {editMode ? (
+        redirect
+      ) : loading ? (
+        <ResultsLoading firstLoad={true} />
+      ) : vacancy ? (
+        <Vacancy vacancy={vacancy} authUserJob={authUserJob} />
+      ) : (
+        <h4>No vacancy here</h4>
+      )}
+    </Fragment>
   );
 };
 
