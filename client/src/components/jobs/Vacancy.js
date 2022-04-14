@@ -10,7 +10,8 @@ const Vacancy = ({
     logo,
     organisation,
     contact_name,
-    contact_details,
+    contact_phone,
+    contact_email,
     location,
     title,
     salary,
@@ -78,12 +79,14 @@ const Vacancy = ({
               <p class="detail-summary-label">Contact Name:</p>
               <p class="detail-summary">{contact_name}</p>
             </div>
-            {contact_details.map((detail) => (
-              <div class="detail-summary-wrapper">
-                <p class="detail-summary-label">{`Contact ${detail.form}:`}</p>
-                <p class="detail-summary">{detail.detail}</p>
-              </div>
-            ))}
+            <div class="detail-summary-wrapper">
+              <p class="detail-summary-label">Contact phone:</p>
+              <p class="detail-summary">{contact_phone}</p>
+            </div>
+            <div class="detail-summary-wrapper">
+              <p class="detail-summary-label">Contact email:</p>
+              <p class="detail-summary">{contact_email}</p>
+            </div>
           </div>
           <div class="job-desc-container">
             <div class="comments-title-wrapper">

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import chevron from "../../img/icons/chevron.png";
 import NotifcationsBox from "./NotifcationsBox";
+import { useNavigate } from "react-router-dom";
 
 const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
   const [showAccounts, setShowAccounts] = useState(false);
@@ -10,6 +11,8 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
   const [showDiscuss, setShowDiscuss] = useState(false);
 
   const hasNotifications = user.notifications && user.notifications.length > 0;
+
+  const navigate = useNavigate();
 
   return (
     <div class="burger-menu-container">
@@ -157,7 +160,14 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
       </div>
 
       {isAuthenticated && (
-        <button class="create-new-btn" id="logout-btn" onClick={logout}>
+        <button
+          class="create-new-btn"
+          id="logout-btn"
+          onClick={() => {
+            logout();
+            navigate("/loggedout", { replace: false });
+          }}
+        >
           Logout
         </button>
       )}

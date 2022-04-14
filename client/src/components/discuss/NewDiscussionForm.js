@@ -37,7 +37,7 @@ const NewDiscussionForm = ({ toggle }) => {
           <div class="keywords-editor-wrapper">
             <label class="create-new-label">
               Keywords:
-              <span class="keywords-note">comma-seperated</span>
+              <span class="keywords-note">{"  "}comma-seperated</span>
             </label>
             <input
               class="edit edit-keywords"

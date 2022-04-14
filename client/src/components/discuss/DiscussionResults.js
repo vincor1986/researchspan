@@ -5,10 +5,12 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import ResultsLoading from "../layout/ResultsLoading";
 import { discussionSearch } from "../../actions/discussion";
+import { Link } from "react-router-dom";
 
 const DiscussionResults = ({
   search: { loading, discussSearchParams, discussSearchResults },
   discussionSearch,
+  isAuthenticated,
 }) => {
   const [displayNewPostForm, setDisplayNewPostForm] = useState(false);
   const [view, setView] = useState("all");
@@ -68,13 +70,22 @@ const DiscussionResults = ({
         broaden your understanding of key concepts and theories.
       </h4>
       <section class="create-new-section">
-        {!displayNewPostForm && (
-          <button class="create-new-btn" onClick={toggleNewPostDisplay}>
-            New post
-          </button>
-        )}
-        {displayNewPostForm && (
-          <NewDiscussionForm toggle={toggleNewPostDisplay} />
+        {!isAuthenticated ? (
+          <h4 className="user-msg">
+            <Link to="/login">Sign in</Link> or{" "}
+            <Link to="/register">register</Link> to post a discussion
+          </h4>
+        ) : (
+          <Fragment>
+            {!displayNewPostForm && (
+              <button class="create-new-btn" onClick={toggleNewPostDisplay}>
+                New post
+              </button>
+            )}
+            {displayNewPostForm && (
+              <NewDiscussionForm toggle={toggleNewPostDisplay} />
+            )}
+          </Fragment>
         )}
       </section>
       <div class="main-content-container discuss-main-content">
@@ -186,6 +197,7 @@ DiscussionResults.propTypes = {
 
 const mapStateToProps = (state) => ({
   search: state.search,
+  isAuthenticated: state.auth.isAuthenticated,
 });
 
 export default connect(mapStateToProps, { discussionSearch })(

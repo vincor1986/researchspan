@@ -2,57 +2,39 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { editVacancy } from "../../actions/jobs";
+import { postVacancy } from "../../actions/jobs";
 
-const EditVacancy = ({
-  vacancy: {
-    _id,
-    user,
-    logo,
-    organisation,
-    contact_name,
-    location,
-    title,
-    salary,
-    salary_currency,
-    salary_period,
-    ref,
-    keywords,
-    jd,
-    apply_link,
-    attachment_links,
-    date,
-    fixed_term_length,
-    contact_phone,
-    contact_email,
-    closing_date,
-  },
-  items: { loading, lastActionSuccess },
-  editVacancy,
+const PostVacancy = ({
+  items: { loading, lastActionSuccess, job },
+  user: { account_type, organisation },
+  postVacancy,
 }) => {
   const [formData, setFormData] = useState({
-    location,
-    ref,
-    salary,
-    salary_period,
-    salary_currency,
-    fixed_term_length,
+    location: "",
+    ref: "",
+    salary: "",
+    salary_period: "",
+    salary_currency: "",
+    fixed_term_length: "",
     organisation,
-    contact_name,
-    contact_phone,
-    contact_email,
-    closing_date,
-    jd,
-    title,
-    fixed_term_length: fixed_term_length || "",
-    attachment_links,
-    keywords: keywords.join(", ").toLowerCase(),
-    apply_link,
+    contact_name: "",
+    contact_phone: "",
+    contact_email: "",
+    closing_date: "",
+    jd: "",
+    title: "",
+    fixed_term_length: "",
+    attachment_links: [],
+    keywords: "",
+    apply_link: "",
   });
+  const navigate = useNavigate();
+
+  if (account_type !== "recruiter") {
+    navigate("/jobs", { replace: true });
+  }
 
   const [sentData, setSentData] = useState(false);
-
-  const navigate = useNavigate();
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -86,13 +68,13 @@ const EditVacancy = ({
 
   const onSubmit = (e) => {
     e.preventDefault();
-    editVacancy(formData, _id);
+    postVacancy(formData);
     setSentData(true);
   };
 
   useEffect(() => {
-    if (sentData && !loading && lastActionSuccess) {
-      navigate(`/jobs/${_id}`, { replace: false });
+    if (sentData && !loading && lastActionSuccess && job._id) {
+      navigate(`/jobs/${job._id}`, { replace: false });
     }
   }, [loading]);
 
@@ -129,25 +111,16 @@ const EditVacancy = ({
 
   return (
     <div class="main-body-container">
+      <div class="main-title-wrapper">
+        <h3 class="main-title">Post a new vacancy</h3>
+      </div>
+      <h4 class="main-title-subheading">
+        List your vacancy for free, to reach researchers around the world
+        looking for great opportunities like yours.
+      </h4>
       <form onSubmit={(e) => onSubmit(e)}>
-        <div class="user-detail-section">
-          <div class="user-detail-wrapper">
-            <div class="user-avatar-section">
-              <div class="recruiter-avatar-wrapper">
-                <img src={logo} alt="avatar" class="recruiter-avatar" />
-              </div>
-            </div>
-            <div class="user-info-section">
-              <h2 class="user-info-name" id="edit-job-recruiter-info-name">
-                {formData.organisation}
-              </h2>
-            </div>
-          </div>
-          <div class="user-controls-wrapper">
-            <button class="delete-btn discuss-delete-btn">Delete</button>
-          </div>
-        </div>
         <div class="main-content">
+          <h4 class="keywords-label">Job title</h4>
           <div class="job-title-wrapper">
             <input
               class="job-title edit job-title-edit"
@@ -360,11 +333,11 @@ const EditVacancy = ({
         </div>
         <div class="post-actions-section">
           <button class="save-changes-btn" type="submit">
-            Save changes
+            Post vacancy
           </button>
           <button
             class="save-changes-btn cancel-btn"
-            onClick={() => navigate(`/jobs/${_id}`, { replace: false })}
+            onClick={() => navigate(`/jobs`, { replace: false })}
           >
             Cancel
           </button>
@@ -374,13 +347,14 @@ const EditVacancy = ({
   );
 };
 
-EditVacancy.propTypes = {
+PostVacancy.propTypes = {
   items: PropTypes.object.isRequired,
-  editVacancy: PropTypes.func.isRequired,
+  postVacancy: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   items: state.items,
+  user: state.auth.user,
 });
 
-export default connect(mapStateToProps, { editVacancy })(EditVacancy);
+export default connect(mapStateToProps, { postVacancy })(PostVacancy);

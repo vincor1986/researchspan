@@ -17,6 +17,7 @@ import DiscussionResults from "./components/discuss/DiscussionResults";
 import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import ViewPost from "./components/discuss/ViewPost";
+import PostVacancy from "./components/jobs/PostVacancy";
 import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
 
@@ -24,6 +25,7 @@ import { useLocation } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
 import ViewVacancy from "./components/jobs/ViewVacancy";
+import LoggedOut from "./components/auth/LoggedOut";
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -44,6 +46,7 @@ const App = () => {
             <Routes>
               <Route exact path="/" element={<Home />} />
               <Route exact path="/login" element={<Login />} />
+              <Route exact path="/loggedout" element={<LoggedOut />} />
               <Route exact path="/register" element={<Register />} />
               <Route path="/publications/*" element={<PubSearch />}>
                 <Route exact path="" element={<PublicationResults />} />
@@ -51,6 +54,7 @@ const App = () => {
               <Route path="/jobs/*" element={<JobSearch />}>
                 <Route exact path="" element={<JobResults />} />
                 <Route exact path=":jobId" element={<ViewVacancy />} />
+                <Route exact path="new" element={<PostVacancy />} />
                 <Route exact path=":jobId/*" element={<ViewVacancy />} />
               </Route>
               <Route path="/discuss/*" element={<DiscussionSearch />}>

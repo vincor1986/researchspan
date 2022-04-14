@@ -74,6 +74,15 @@ const Navbar = ({
 
   const authLinks = (
     <div className="auth-links">
+      {user.account_type === "recruiter" && (
+        <Link
+          to="/jobs/new"
+          className="authlink login"
+          style={{ marginRight: "5rem" }}
+        >
+          post a job
+        </Link>
+      )}
       <div class="navbar-avatar-wrapper">
         <div
           class="avatar-wrapper"
@@ -82,7 +91,7 @@ const Navbar = ({
         >
           <img src={avatar} alt="avatar" class="avatar noselect" id="navatar" />
         </div>
-        <div class="new-notifications"></div>
+        {newNotifications && <div class="new-notifications"></div>}
       </div>
     </div>
   );

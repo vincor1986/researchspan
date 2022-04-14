@@ -167,6 +167,12 @@ body {
 
 }
 
+.user-msg {
+  margin-top: 3rem;
+  font-size: 1.7rem;
+  color:rgb(78, 112, 151);
+}
+
 .flex-split {
   display: flex;
   flex-direction: row;
@@ -909,6 +915,7 @@ input:checked {
   font-size: 4rem;
   color:rgb(64, 83, 112);
   font-weight: bold;
+  font-family: "Crete Round", serif;
   margin-bottom: 2rem;
 }
 
@@ -1244,7 +1251,7 @@ input:checked {
 
 a {
   text-decoration: none;
-  color:rgb(61, 110, 184);
+  color:rgb(57, 121, 194);
 }
 
 button:hover {
@@ -1453,6 +1460,7 @@ button:hover {
   position: relative;
   width: 60%;
   margin-bottom: 16rem;
+  margin-top: 3rem;
 }
 
 .create-new-container {

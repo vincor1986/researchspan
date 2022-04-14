@@ -148,3 +148,45 @@ export const editVacancy = (formData, vacancyId) => async (dispatch) => {
     });
   }
 };
+
+export const postVacancy = (formData) => async (dispatch) => {
+  dispatch({
+    type: SET_ITEM_LOADING,
+  });
+
+  const params = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  console.log(formData.keywords);
+  formData.keywords = formData.keywords
+    .map((el) => el.trim().toLowerCase())
+    .filter((el) => el !== "");
+
+  const body = JSON.stringify(formData);
+
+  try {
+    const res = await axios.post(`/api/jobs/vacancies`, body, params);
+
+    dispatch({
+      type: UPDATE_ITEM,
+      payload: {
+        item: res.data,
+        type: "job",
+      },
+    });
+  } catch (err) {
+    if (err.response) {
+      errors.forEach((error) => {
+        setAlert(error.msg, "warning");
+      });
+    }
+    const errors = err.response.data.errors;
+
+    dispatch({
+      type: ITEM_ERROR,
+    });
+  }
+};
