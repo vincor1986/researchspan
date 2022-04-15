@@ -1,7 +1,9 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import commaSeperateNumber from "../../utils/commaSeperateNumber";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import defaultLogo from "../../img/default-logo.png";
 
 const Vacancy = ({
   vacancy: {
@@ -10,8 +12,6 @@ const Vacancy = ({
     logo,
     organisation,
     contact_name,
-    contact_phone,
-    contact_email,
     location,
     title,
     salary,
@@ -23,6 +23,10 @@ const Vacancy = ({
     apply_link,
     attachment_links,
     date,
+    fixed_term_length,
+    contact_phone,
+    contact_email,
+    closing_date,
   },
   authUserJob,
 }) => {
@@ -36,23 +40,29 @@ const Vacancy = ({
         <div class="user-detail-wrapper">
           <div class="user-avatar-section">
             <div class="recruiter-avatar-wrapper">
-              <img src={logo} alt="avatar" class="recruiter-avatar" />
+              <img
+                src={logo || defaultLogo}
+                alt="avatar"
+                class="recruiter-avatar"
+              />
             </div>
           </div>
           <div class="user-info-section">
-            <h2 class="user-info-name">{organisation}</h2>
+            <h2 class="user-info-name" id="recruiter-org">
+              {organisation}
+            </h2>
           </div>
         </div>
         {authUserJob && (
           <div class="user-controls-wrapper">
             <button class="create-new-btn" id="create-new-btn">
-              New vacancy
+              Post new
             </button>
             <button
               class="edit-btn discuss-edit-btn"
               onClick={() => navigate(`edit`, { replace: false })}
             >
-              Edit vacancy
+              Edit
             </button>
             <button class="delete-btn discuss-delete-btn">Delete</button>
           </div>
@@ -71,23 +81,51 @@ const Vacancy = ({
               <p class="detail-summary-label">Reference:</p>
               <p class="detail-summary">{ref}</p>
             </div>
+            {salary && salary_currency && salary_period && (
+              <div class="detail-summary-wrapper">
+                <p class="detail-summary-label">Salary:</p>
+                <p class="detail-summary">{`${salary_currency}${commaSeperateNumber(
+                  salary
+                )} ${salary_period}`}</p>
+              </div>
+            )}
+            {salary_currency && (!salary || !salary_period) && (
+              <div class="detail-summary-wrapper">
+                <p class="detail-summary-label">Salary currency:</p>
+                <p class="detail-summary">{salary_currency}</p>
+              </div>
+            )}
+            {fixed_term_length && (
+              <div class="detail-summary-wrapper">
+                <p class="detail-summary-label">Fixed-term length:</p>
+                <p class="detail-summary">{fixed_term_length}</p>
+              </div>
+            )}
+            {contact_name && (
+              <div class="detail-summary-wrapper">
+                <p class="detail-summary-label">Contact Name:</p>
+                <p class="detail-summary">{contact_name}</p>
+              </div>
+            )}
+            {contact_phone && (
+              <div class="detail-summary-wrapper">
+                <p class="detail-summary-label">Contact phone:</p>
+                <p class="detail-summary">{contact_phone}</p>
+              </div>
+            )}
+            {contact_email && (
+              <div class="detail-summary-wrapper">
+                <p class="detail-summary-label">Contact email:</p>
+                <p class="detail-summary">
+                  <a href={`mailto:${contact_email}`}>{contact_email}</a>
+                </p>
+              </div>
+            )}
             <div class="detail-summary-wrapper">
-              <p class="detail-summary-label">Salary:</p>
-              <p class="detail-summary">{`${salary_currency}${commaSeperateNumber(
-                salary
-              )} ${salary_period}`}</p>
-            </div>
-            <div class="detail-summary-wrapper">
-              <p class="detail-summary-label">Contact Name:</p>
-              <p class="detail-summary">{contact_name}</p>
-            </div>
-            <div class="detail-summary-wrapper">
-              <p class="detail-summary-label">Contact phone:</p>
-              <p class="detail-summary">{contact_phone}</p>
-            </div>
-            <div class="detail-summary-wrapper">
-              <p class="detail-summary-label">Contact email:</p>
-              <p class="detail-summary">{contact_email}</p>
+              <p class="detail-summary-label">Closing date:</p>
+              <p class="detail-summary">
+                {moment(closing_date).format("Do MMMM YYYY")}
+              </p>
             </div>
           </div>
           <div class="job-desc-container">
@@ -99,19 +137,24 @@ const Vacancy = ({
             </div>
           </div>
         </div>
-        <div class="comments-title-wrapper">
-          <p class="comments-title">Attachments</p>
-        </div>
-        <div class="vacancy-details-summary-container">
-          {attachment_links.map((attachment) => (
-            <div class="detail-summary-wrapper attachment-wrapper">
-              <p class="detail-summary-label">{`${attachment.form}:`}</p>
-              <p class="detail-summary">
-                <a href={attachment.link}>{attachment.link}</a>
-              </p>
+
+        {attachment_links.lenght > 0 && (
+          <Fragment>
+            <div class="comments-title-wrapper">
+              <p class="comments-title">Attachments</p>
             </div>
-          ))}
-        </div>
+            <div class="vacancy-details-summary-container">
+              {attachment_links.map((attachment) => (
+                <div class="detail-summary-wrapper attachment-wrapper">
+                  <p class="detail-summary-label">{`${attachment.form}:`}</p>
+                  <p class="detail-summary">
+                    <a href={attachment.link}>{attachment.link}</a>
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Fragment>
+        )}
         <a href={apply_link} class="apply-btn vacancy-apply">
           Apply
         </a>

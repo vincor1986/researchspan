@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { editVacancy } from "../../actions/jobs";
+import defaultLogo from "../../img/default-logo.png";
 
 const EditVacancy = ({
   vacancy: {
@@ -149,7 +150,11 @@ const EditVacancy = ({
           <div class="user-detail-wrapper">
             <div class="user-avatar-section">
               <div class="recruiter-avatar-wrapper">
-                <img src={logo} alt="avatar" class="recruiter-avatar" />
+                <img
+                  src={logo || defaultLogo}
+                  alt="avatar"
+                  class="recruiter-avatar"
+                />
               </div>
             </div>
             <div class="user-info-section">

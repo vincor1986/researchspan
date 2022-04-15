@@ -7,7 +7,7 @@ const deleteReplyHelper = (head, indexArray) => {
   const userId = eval("head" + idMiddle.join("") + ".user.toString()");
 
   const commandString =
-    "head" + delMiddle.join("") + `.responses.splice(${targetIndex}, 1);`;
+    "head" + delMiddle.join("") + `.responses.splice(${targetIndex}, 1, null);`;
 
   return [userId, commandString];
 };

@@ -61,7 +61,7 @@ export const discussionSearch =
         const errors = err.response.data.errors;
 
         if (errors) {
-          errors.forEach((error) => setAlert(error.msg, "warning"));
+          errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
         }
         dispatch({
           type: DISCUSS_SEARCH_ERROR,
@@ -70,40 +70,59 @@ export const discussionSearch =
     }
   };
 
-export const getPost = (postId) => async (dispatch) => {
-  dispatch({
-    type: SET_ITEM_LOADING,
-  });
-
-  if (!postId) {
+export const getPost =
+  (postId, replace = false) =>
+  async (dispatch) => {
     dispatch({
-      type: ITEM_ERROR,
-    });
-    setAlert("Please provide a valid post id", "warning");
-  }
-
-  try {
-    const res = await axios.get(`/api/discuss/${postId}`);
-
-    dispatch({
-      type: UPDATE_ITEM,
-      payload: {
-        item: res.data,
-        type: "discussion",
-      },
-    });
-  } catch (err) {
-    const errors = err.response.data.errors;
-
-    errors.forEach((error) => {
-      setAlert(error.msg, "warning");
+      type: SET_ITEM_LOADING,
     });
 
-    dispatch({
-      type: ITEM_ERROR,
-    });
-  }
-};
+    if (!postId) {
+      dispatch({
+        type: ITEM_ERROR,
+      });
+      dispatch(setAlert("Please provide a valid post id", "warning"));
+    }
+
+    try {
+      const res = await axios.get(`/api/discuss/${postId}`);
+
+      if (replace) {
+        dispatch({
+          type: UPDATE_SEARCH_ITEM,
+          payload: {
+            data: res.data,
+            type: "discuss",
+          },
+        });
+
+        dispatch({
+          type: UPDATE_DISCUSSION,
+          payload: res.data,
+        });
+      } else {
+        dispatch({
+          type: UPDATE_ITEM,
+          payload: {
+            item: res.data,
+            type: "discussion",
+          },
+        });
+      }
+    } catch (err) {
+      if (err.response) {
+        const errors = err.response.data.errors;
+
+        errors.forEach((error) => {
+          dispatch(setAlert(error.msg, "warning"));
+        });
+      }
+
+      dispatch({
+        type: ITEM_ERROR,
+      });
+    }
+  };
 
 export const sendReply =
   ({ main, format }, headId, postId) =>
@@ -146,7 +165,7 @@ export const sendReply =
         const errors = err.response.data.errors;
 
         errors.forEach((error) => {
-          setAlert(error.msg, "warning");
+          dispatch(setAlert(error.msg, "warning"));
         });
 
         dispatch({
@@ -197,7 +216,7 @@ export const editDiscussion = (formData, postId) => async (dispatch) => {
     if (err.response) {
       const errors = err.response.data.errors;
 
-      errors.forEach((error) => setAlert(error.msg, "warning"));
+      errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
     }
 
     dispatch({
@@ -205,3 +224,54 @@ export const editDiscussion = (formData, postId) => async (dispatch) => {
     });
   }
 };
+
+export const deleteDiscussionItem = (headId, postId) => async (dispatch) => {
+  dispatch({
+    type: SET_ITEM_LOADING,
+  });
+
+  try {
+    const res = await axios.delete(`/api/discuss/${headId}/${postId}`);
+
+    dispatch(setAlert(res.data.msg, "success"));
+
+    dispatch(getPost(headId, true));
+  } catch (err) {
+    if (err.response) {
+      const errors = err.response.data.errors;
+
+      errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
+    }
+
+    dispatch({
+      type: SEND_ERROR,
+    });
+  }
+};
+
+export const toggleConsensus =
+  (headId, postId, response) => async (dispatch) => {
+    dispatch({
+      type: SET_ITEM_LOADING,
+    });
+
+    try {
+      const res = await axios.put(
+        `/api/discuss/consensus/${headId}/${postId}/?response=${response}`
+      );
+
+      dispatch(setAlert(res.data.msg, "success"));
+
+      dispatch(getPost(headId, true));
+    } catch (err) {
+      if (err.response) {
+        const errors = err.response.data.errors;
+
+        errors.forEach((error) => setAlert(error.msg, "warning"));
+      }
+
+      dispatch({
+        type: SEND_ERROR,
+      });
+    }
+  };

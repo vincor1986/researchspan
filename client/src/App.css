@@ -225,7 +225,7 @@ input::placeholder{
 button, .link-btn {
   margin-top: 3rem;
   width: 15rem;
-  height: 5rem;
+  height: 4rem;
   border-radius: 1rem;
   outline: none;
   border: none;
@@ -396,6 +396,10 @@ input:checked {
   background: linear-gradient(to right, #963343, #c03d53);
 }
 
+.alert-success {
+  background: linear-gradient(to right, #1c7c64, #3dc0af);
+}
+
 .main-title {
   color: white;
   font-size: 2.3rem;
@@ -541,9 +545,8 @@ input:checked {
 }
 
 .avatar {
-  height: 100%;
   width: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .result-info {
@@ -561,12 +564,14 @@ input:checked {
 .info-name-wrapper {
   width: 100%;
   border-bottom: 2px solid rgb(184, 224, 207);
+
 }
 
 .info-name {
   font-size: 2.1rem;
   letter-spacing: 0.1rem;
-  font-weight: bold;
+  font-weight: bold;  
+  color: white;
 }
 
 .info-subsection {
@@ -734,15 +739,13 @@ input:checked {
 .btn-text {
   display: inline-block;
   position: relative;
-  top: -0.2rem;
   margin-right: 0.6rem;
-  font-size: 1.7rem;
+  font-size: 1.6rem;
 }
 
 .btn-icon {
   display: inline-block;
   position: relative;
-  top: -0.3rem;
 }
 
 /* User detail section */
@@ -835,12 +838,10 @@ input:checked {
   background: rgb(148, 56, 71);
 }
 
-.discuss-edit-btn {
-  margin-left: 2rem;
+.discuss-edit-btn, .discuss-delete-btn {
+  margin-left: 1.5rem;
 }
-.discuss-delete-btn {
-  margin-left: 2rem;
-}
+
 .main-content {
   margin: 2rem;
   margin-top: 4rem;
@@ -1016,6 +1017,38 @@ input:checked {
   margin-top: 0rem;
   box-shadow: 0rem 0rem 0.2rem rgba(0,0,0,0.05);
   border-radius: 0.3rem;
+  opacity: 0.5;
+}
+
+.consensus-btn-selected {
+  opacity: 1;
+}
+
+.delete-reply-msg {
+  margin-left: 3rem;
+  color: rgb(184, 63, 89);
+  cursor: pointer;
+}
+
+.delete-reply-msg:hover {
+  color: rgb(216, 38, 92);
+}
+
+.delete-reply-wrapper {
+  margin-left: 2rem;
+}
+
+.delete-reply-btn {
+  height: 3rem;
+  width: 10rem;
+  font-size: 1.4rem;
+  margin-top: 0rem;
+  border-radius: 0.7rem;
+}
+
+.delete-reply {
+  background: rgb(177, 47, 86);
+  margin-left: 1rem;
 }
 
 .agree {
@@ -1172,6 +1205,12 @@ input:checked {
 .reply {
   margin-left: 5rem;
   margin-top: 2rem;
+}
+
+/* job vacancy */
+
+#recruiter-org {
+  margin-left: 3rem;
 }
 
 .job-title-wrapper {

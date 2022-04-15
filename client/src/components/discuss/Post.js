@@ -4,6 +4,8 @@ import PostReply from "./PostReply";
 import { connect } from "react-redux";
 import ReplyForm from "./ReplyForm";
 import { Navigate, useNavigate } from "react-router-dom";
+import moment from "moment";
+import { toggleConsensus } from "../../actions/discussion";
 
 const Post = ({
   post: {
@@ -27,13 +29,16 @@ const Post = ({
     last_edited,
     organisation,
   },
+  toggleConsensus,
   authUserPost,
   items: { send_error, loading },
-  isAuthenticated,
+  auth,
 }) => {
   const consScore =
     Math.round(
-      (+consensus_agree / (+consensus_agree + +consensus_disagree)) * 100
+      (consensus_agree.length /
+        (consensus_agree.length + consensus_disagree.length)) *
+        100
     ) || "- ";
 
   const [replySent, setReplySent] = useState(false);
@@ -41,10 +46,24 @@ const Post = ({
 
   const navigate = useNavigate();
 
+  const userAgrees = consensus_agree.includes(auth.user._id);
+  const userDisagrees = consensus_disagree.includes(auth.user._id);
+
+  const toggleConsensusList = (res) => {
+    if (
+      (userAgrees && res === "disagree") ||
+      (userDisagrees && res === "agree")
+    ) {
+      return;
+    }
+    toggleConsensus(head, _id, res);
+  };
+
   useEffect(() => {
     if (replySent) {
       if (!send_error && !loading) {
-        window.location.reload();
+        setShowReplyForm(false);
+        setReplySent(false);
       } else if (send_error) {
         setReplySent(false);
       }
@@ -91,9 +110,11 @@ const Post = ({
       </div>
       <div class="main-content">
         <div class="date-posted-msg">
-          <p class="date-posted-label">Posted on:</p>
-          <p class="date-posted">{date}</p>
-          <p class="discussion-tag tag">
+          <p class="date-posted-label">Posted:</p>
+          <p class="date-posted">
+            {moment(date).format("Do MMMM YYYY - HH:MM a")}
+          </p>
+          <p class="discussion-tag tag" style={{ marginRight: "1rem" }}>
             {format && `${format[0].toUpperCase()}${format.substring(1)}`}
           </p>
           {edited && <p class="edited tag">Edited</p>}
@@ -121,10 +142,24 @@ const Post = ({
           <p class="consensus">
             consensus <span class="consensus-score">{`${consScore}%`}</span>
           </p>
-          <button class="agree consensus-btn">✓</button>
-          <button class="disagree consensus-btn">✘</button>
+          <button
+            class={`agree consensus-btn ${
+              userAgrees && "consensus-btn-selected"
+            }`}
+            onClick={() => toggleConsensusList("agree")}
+          >
+            ✓
+          </button>
+          <button
+            class={`disagree consensus-btn ${
+              userDisagrees && "consensus-btn-selected"
+            }`}
+            onClick={() => toggleConsensusList("disagree")}
+          >
+            ✘
+          </button>
         </div>
-        {showReplyForm && isAuthenticated && (
+        {showReplyForm && auth.isAuthenticated && (
           <ReplyForm
             headId={head}
             postId={head}
@@ -133,7 +168,7 @@ const Post = ({
             setReplySent={setReplySent}
           />
         )}
-        {showReplyForm && !isAuthenticated && (
+        {showReplyForm && !auth.isAuthenticated && (
           <div className="login-msg">Please log in to reply</div>
         )}
       </div>
@@ -153,25 +188,18 @@ const Post = ({
               </option>
             </select>
           </div>
-          {[...responses].reverse().map((reply, index) => (
-            <PostReply
-              key={index}
-              postId={reply._id}
-              headId={head}
-              date={reply.date}
-              title={reply.title}
-              avatar={reply.avatar}
-              first_name={reply.first_name}
-              last_name={reply.last_name}
-              main={reply.main}
-              responses={reply.responses}
-              consensus_agree={reply.consensus_agree}
-              consensus_disagree={reply.consensus_disagree}
-              organisation={reply.organisation}
-              reply={false}
-              setReplySent={setReplySent}
-            />
-          ))}
+          {[...responses]
+            .reverse()
+            .filter((el) => el !== null)
+            .map((reply, index) => (
+              <PostReply
+                key={index}
+                postReply={reply}
+                headId={head}
+                reply={false}
+                setReplySent={setReplySent}
+              />
+            ))}
         </div>
       </section>
     </div>
@@ -180,12 +208,13 @@ const Post = ({
 
 Post.propTypes = {
   items: PropTypes.object.isRequired,
-  isAuthenticated: PropTypes.bool.isRequired,
+  auth: PropTypes.object.isRequired,
+  toggleConsensus: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   items: state.items,
-  isAuthenticated: state.auth.isAuthenticated,
+  auth: state.auth,
 });
 
-export default connect(mapStateToProps)(Post);
+export default connect(mapStateToProps, { toggleConsensus })(Post);

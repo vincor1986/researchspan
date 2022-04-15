@@ -67,7 +67,7 @@ export const pubSearch =
         const errors = err.response.data.errors;
 
         if (errors) {
-          errors.forEach((error) => setAlert(error.msg, "warning"));
+          errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
 
           dispatch({
             type: PUB_SEARCH_ERROR,
@@ -111,7 +111,7 @@ export const jobSearch = (searchParams) => async (dispatch) => {
       const errors = err.response.data.errors;
 
       if (errors) {
-        errors.forEach((error) => setAlert(error.msg, "warning"));
+        errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
 
         dispatch({
           type: JOB_SEARCH_ERROR,

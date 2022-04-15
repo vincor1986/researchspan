@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import commaSeperateNumber from "../../utils/commaSeperateNumber";
 import ResultsLoading from "../layout/ResultsLoading";
 import { getAllJobs } from "../../actions/jobs";
+import defaultLogo from "../../img/default-logo.png";
 
 const JobResults = ({
   search: { loading, jobSearchParams, jobTotalResults, jobSearchResults },
@@ -78,9 +79,10 @@ const JobResults = ({
                   user={result.user}
                   organisation={result.organisation}
                   contact_name={result.contact_name}
-                  contact_details={result.contact_details}
+                  contact_email={result.contact_email}
+                  contact_phone={result.contact_phone}
                   title={result.title}
-                  salary_amount={result.salary}
+                  salary={result.salary}
                   salary_currency={result.salary_currency}
                   salary_period={result.salary_period}
                   reference={result.ref}
@@ -89,6 +91,8 @@ const JobResults = ({
                   apply_link={result.apply_link}
                   attachment_links={result.attachment_links}
                   date_posted={result.date}
+                  closing_date={result.closing_date}
+                  logo={result.logo || defaultLogo}
                 />
               );
             })}

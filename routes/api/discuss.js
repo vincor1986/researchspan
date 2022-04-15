@@ -319,6 +319,7 @@ router.put("/consensus/:headId/:postId", auth, async (req, res) => {
     }
 
     const head = await Post.findById(headId);
+
     let currentAgree, currentDisagree, path;
     if (headId === postId) {
       currentAgree = head.consensus_agree.map((id) => id.toString());
@@ -353,7 +354,7 @@ router.put("/consensus/:headId/:postId", auth, async (req, res) => {
           return res.json({ msg: "Agree removed" });
         }
       } else {
-        if (head === postId) {
+        if (headId === postId) {
           head.consensus_agree.push(userId);
           head.markModified("responses");
           await head.save();
@@ -385,7 +386,7 @@ router.put("/consensus/:headId/:postId", auth, async (req, res) => {
           return res.json({ msg: "Disagree removed" });
         }
       } else {
-        if (head === postId) {
+        if (headId === postId) {
           head.consensus_disagree.push(userId);
           head.markModified("responses");
           await head.save();

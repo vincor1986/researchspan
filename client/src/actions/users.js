@@ -29,7 +29,7 @@ export const getUsers = (idArray) => async (dispatch) => {
         errors = err.response.data.errors;
 
         errors.forEach((error) => {
-          setAlert(error.msg, "warning");
+          dispatch(setAlert(error.msg, "warning"));
         });
       }
     }

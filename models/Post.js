@@ -11,7 +11,7 @@ const PostSchema = new mongoose.Schema({
   last_name: {
     type: String,
   },
-  organistion: {
+  organisation: {
     type: String,
   },
   position: {

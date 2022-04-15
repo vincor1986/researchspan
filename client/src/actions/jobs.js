@@ -32,7 +32,7 @@ export const getAllJobs = () => async (dispatch) => {
       const errors = err.response.data.errors;
 
       errors.forEach((error) => {
-        setAlert(error.msg, "warning");
+        dispatch(setAlert(error.msg, "warning"));
       });
 
       dispatch({
@@ -51,7 +51,7 @@ export const getVacancy = (vacancyId) => async (dispatch) => {
     dispatch({
       type: ITEM_ERROR,
     });
-    setAlert("Please provide a valid vacancy id", "warning");
+    dispatch(setAlert("Please provide a valid vacancy id", "warning"));
   }
 
   try {
@@ -77,7 +77,7 @@ export const getVacancy = (vacancyId) => async (dispatch) => {
       const errors = err.response.data.errors;
 
       errors.forEach((error) => {
-        setAlert(error.msg, "warning");
+        dispatch(setAlert(error.msg, "warning"));
       });
     }
 
@@ -96,7 +96,7 @@ export const editVacancy = (formData, vacancyId) => async (dispatch) => {
     dispatch({
       type: ITEM_ERROR,
     });
-    setAlert("Please provide a valid vacancy id", "warning");
+    dispatch(setAlert("Please provide a valid vacancy id", "warning"));
   }
 
   const params = {
@@ -138,7 +138,7 @@ export const editVacancy = (formData, vacancyId) => async (dispatch) => {
   } catch (err) {
     if (err.response) {
       errors.forEach((error) => {
-        setAlert(error.msg, "warning");
+        dispatch(setAlert(error.msg, "warning"));
       });
     }
     const errors = err.response.data.errors;
