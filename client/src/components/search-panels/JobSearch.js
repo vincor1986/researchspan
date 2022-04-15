@@ -29,7 +29,11 @@ export const JobSearch = ({ search: { jobSearchParams }, jobSearch }) => {
     if (jobSearchParams.keywords) {
       setFormData({ ...formData, keywords: jobSearchParams.keywords });
     }
-  }, [jobSearchParams]);
+
+    if (subject_area === "" && field !== "") {
+      setFormData({ ...formData, field: "" });
+    }
+  }, [jobSearchParams, formData, subject_area]);
 
   return (
     <Fragment>
@@ -80,7 +84,9 @@ export const JobSearch = ({ search: { jobSearchParams }, jobSearch }) => {
                 value={subject_area}
                 onChange={(e) => onChange(e)}
               >
-                <option class="search-panel-select-option">Select...</option>
+                <option class="search-panel-select-option" value="">
+                  Select...
+                </option>
                 <option class="search-panel-select-option">Biology</option>
                 <option class="search-panel-select-option">
                   Computer Science

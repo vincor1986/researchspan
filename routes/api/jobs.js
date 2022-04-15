@@ -161,6 +161,13 @@ router.post("/vacancies", auth, async (req, res) => {
   }
 });
 
+// @route   POST api/jobs/vacancies/logo
+// @desc    Upload logo
+// @access  Private
+router.post("/vacancies/logo/upload", auth, async (req, res) => {
+  console.log(req);
+});
+
 // @route   PUT api/jobs/vacancies/:id
 // @desc    Edit existing job vacancy
 // @access  Private
@@ -221,7 +228,7 @@ router.put("/vacancies/:id", auth, async (req, res) => {
       vacancy.contact_email = contact_email;
     }
 
-    if (logo && logo !== vacancy.logo) {
+    if (logo !== "" && logo !== vacancy.logo) {
       vacancy.logo = logo;
     }
 
@@ -279,6 +286,10 @@ router.put("/vacancies/:id", auth, async (req, res) => {
     if (closing_date && closing_date !== vacancy.closing_date) {
       vacancy.closing_date = closing_date;
     }
+
+    console.log("logo:", logo);
+
+    logo && vacancy.markModified("logo");
 
     await vacancy.save();
 

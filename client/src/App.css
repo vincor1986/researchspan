@@ -1265,6 +1265,11 @@ button:hover {
   border-radius: 0.6rem;
 }
 
+.edit:focus {
+  outline: none;
+  border: 2px solid rgb(39, 119, 211)
+}
+
 .job-title-edit {
   height: 7rem;
 }
@@ -2047,6 +2052,11 @@ button:hover {
   margin-top: 0.7rem;
 }
 
+.logo-preview {
+  height: 10rem;
+  margin-top: 1rem;
+}
+
 /* end of loading modal */
 
 .noselect {
@@ -2080,6 +2090,12 @@ button:hover {
 @media screen and (max-width: 1550px) {
   .search-panel {
       left: -40rem;
+  }
+
+  .loading-modal {
+    margin-left: 0rem;
+    left: 0rem;
+    width: 100%;
   }
 
   .main-body-container {
@@ -2414,6 +2430,16 @@ button:hover {
   #edit-keywords {
       height: 3.5rem;
       font-size: 1.4rem;
+  }
+
+  .edit-keywords {
+    outline: none;
+    border: 2px solid rgb(30, 127, 238);
+  }
+
+  textarea:focus {
+    outline: none;
+    border: 2px solid rgb(30, 127, 238);
   }
 
   .new-context {

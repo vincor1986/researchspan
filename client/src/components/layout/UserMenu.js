@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import chevron from "../../img/icons/chevron.png";
 import NotifcationsBox from "./NotifcationsBox";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
   const [showAccounts, setShowAccounts] = useState(false);
@@ -11,6 +12,8 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
   const [showDiscuss, setShowDiscuss] = useState(false);
 
   const hasNotifications = user.notifications && user.notifications.length > 0;
+
+  const isRecruiter = user.account_type === "recruiter";
 
   const navigate = useNavigate();
 
@@ -78,15 +81,21 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
         <div class="bm-section-wrapper">
           <div class="burger-menu-item" id="bm-pub">
             <div class="burger-menu-marker"></div>
-            <h4 class="burger-menu-link">Search publications</h4>
+            <Link to="/publications" class="burger-menu-link">
+              Search publications
+            </Link>
           </div>
           <div class="burger-menu-item" id="pub-links">
             <div class="burger-menu-marker"></div>
-            <h4 class="burger-menu-link">Post new publication</h4>
+            <Link to="/publications/new" class="burger-menu-link">
+              Post new publication
+            </Link>
           </div>
           <div class="burger-menu-item" id="pub-links">
             <div class="burger-menu-marker"></div>
-            <h4 class="burger-menu-link">My publications</h4>
+            <Link to="/publications/mypublications" class="burger-menu-link">
+              My publications
+            </Link>
           </div>
         </div>
       </div>
@@ -114,12 +123,34 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
         <div class="bm-section-wrapper">
           <div class="burger-menu-item" id="bm-jobs">
             <div class="burger-menu-marker"></div>
-            <h4 class="burger-menu-link">Search jobs</h4>
+            <Link to="/jobs" class="burger-menu-link">
+              Search jobs
+            </Link>
           </div>
-          <div class="burger-menu-item" id="jobs-links">
-            <div class="burger-menu-marker"></div>
-            <h4 class="burger-menu-link">Shortlisted jobs</h4>
-          </div>
+          {isRecruiter && (
+            <div class="burger-menu-item" id="jobs-links">
+              <div class="burger-menu-marker"></div>
+              <Link to="/jobs/new" class="burger-menu-link">
+                Post a job
+              </Link>
+            </div>
+          )}
+          {isRecruiter && (
+            <div class="burger-menu-item" id="jobs-links">
+              <div class="burger-menu-marker"></div>
+              <Link to="/jobs/myjobs" class="burger-menu-link">
+                My jobs
+              </Link>
+            </div>
+          )}
+          {!isRecruiter && (
+            <div class="burger-menu-item" id="jobs-links">
+              <div class="burger-menu-marker"></div>
+              <Link to="/jobs/shortlist" class="burger-menu-link">
+                Shortlisted jobs
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
@@ -146,15 +177,21 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
         <div class="bm-section-wrapper">
           <div class="burger-menu-item" id="bm-discuss">
             <div class="burger-menu-marker"></div>
-            <h4 class="burger-menu-link">Search discussions</h4>
+            <Link to="/discuss" class="burger-menu-link">
+              Search discussions
+            </Link>
           </div>
           <div class="burger-menu-item" id="discuss-links">
             <div class="burger-menu-marker"></div>
-            <h4 class="burger-menu-link">Post new discussion</h4>
+            <Link to="discuss/posts/new" class="burger-menu-link">
+              Post new discussion
+            </Link>
           </div>
           <div class="burger-menu-item" id="discuss-links">
             <div class="burger-menu-marker"></div>
-            <h4 class="burger-menu-link">My discussions</h4>
+            <Link to="/discuss/mydiscussions" class="burger-menu-link">
+              My discussions
+            </Link>
           </div>
         </div>
       </div>

@@ -37,3 +37,5 @@ export const SET_USERS = "SET_USERS";
 export const LOADING_USERS = "LOADING_USERS";
 
 export const UPDATE_SEARCH_ITEM = "UPDATE_SEARCH_ITEM";
+
+export const SET_LOGO_SENDING = "SET_LOGO_SENDING";

@@ -8,6 +8,7 @@ import {
   ITEM_ERROR,
   UPDATE_ITEM,
   UPDATE_SEARCH_ITEM,
+  SET_LOGO_SENDING,
 } from "./types";
 
 export const getAllJobs = () => async (dispatch) => {
@@ -98,8 +99,6 @@ export const editVacancy = (formData, vacancyId) => async (dispatch) => {
     setAlert("Please provide a valid vacancy id", "warning");
   }
 
-  let {} = formData;
-
   const params = {
     headers: {
       "Content-Type": "application/json",
@@ -109,7 +108,8 @@ export const editVacancy = (formData, vacancyId) => async (dispatch) => {
   formData.closing_date = Date(formData.closing_date);
   formData.keywords = formData.keywords
     .split(",")
-    .map((el) => el.trim().toLowerCase());
+    .map((el) => el.trim().toLowerCase())
+    .filter((el) => el !== "");
 
   const body = JSON.stringify(formData);
 
@@ -160,8 +160,8 @@ export const postVacancy = (formData) => async (dispatch) => {
     },
   };
 
-  console.log(formData.keywords);
   formData.keywords = formData.keywords
+    .split(",")
     .map((el) => el.trim().toLowerCase())
     .filter((el) => el !== "");
 

@@ -8,11 +8,13 @@ const PostVacancy = ({
   items: { loading, lastActionSuccess, job },
   user: { account_type, organisation },
   postVacancy,
+  uploadLogo,
 }) => {
   const [formData, setFormData] = useState({
     location: "",
     ref: "",
     salary: "",
+    logo: "",
     salary_period: "",
     salary_currency: "",
     fixed_term_length: "",
@@ -35,9 +37,19 @@ const PostVacancy = ({
   }
 
   const [sentData, setSentData] = useState(false);
+  const [logoState, setLogoState] = useState("");
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileUpload = (e) => {
+    const reader = new FileReader();
+    const file = e.target.files[0];
+    reader.onloadend = () => {
+      setLogoState(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const setAttachmentLinks = (index, property, e) => {
@@ -68,6 +80,7 @@ const PostVacancy = ({
 
   const onSubmit = (e) => {
     e.preventDefault();
+    logoState !== "" && setFormData({ ...formData, logo: logoState });
     postVacancy(formData);
     setSentData(true);
   };
@@ -171,8 +184,23 @@ const PostVacancy = ({
                   type="file"
                   class="detail-summary edit job-detail-edit file-input"
                   name="logo"
-                  onChange={(e) => onChange(e)}
+                  onChange={(e) =>
+                    e.target.value === ""
+                      ? setLogoState("")
+                      : handleFileUpload(e)
+                  }
                 ></input>
+                {logoState && (
+                  <div className="logo-preview-wrapper">
+                    <br />
+                    <p className="preview-msg">Preview:</p>
+                    <img
+                      src={logoState}
+                      alt="logo-to-upload"
+                      className="logo-preview"
+                    />{" "}
+                  </div>
+                )}
               </div>
               <div class="detail-summary-wrapper">
                 <p class="detail-summary-label">Reference:</p>

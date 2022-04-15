@@ -28,6 +28,8 @@ const Vacancy = ({
 }) => {
   const navigate = useNavigate();
 
+  console.log(logo);
+
   return (
     <div class="main-body-container">
       <div class="user-detail-section">

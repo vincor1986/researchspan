@@ -33,6 +33,7 @@ const EditVacancy = ({
   const [formData, setFormData] = useState({
     location,
     ref,
+    logo: "",
     salary,
     salary_period,
     salary_currency,
@@ -51,11 +52,21 @@ const EditVacancy = ({
   });
 
   const [sentData, setSentData] = useState(false);
+  const [logoState, setLogoState] = useState("");
 
   const navigate = useNavigate();
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileUpload = (e) => {
+    const reader = new FileReader();
+    const file = e.target.files[0];
+    reader.onloadend = () => {
+      setLogoState(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const setAttachmentLinks = (index, property, e) => {
@@ -86,7 +97,11 @@ const EditVacancy = ({
 
   const onSubmit = (e) => {
     e.preventDefault();
-    editVacancy(formData, _id);
+    if (logoState !== "") {
+      editVacancy({ ...formData, logo: logoState }, _id);
+    } else {
+      editVacancy(formData, _id);
+    }
     setSentData(true);
   };
 
@@ -198,8 +213,23 @@ const EditVacancy = ({
                   type="file"
                   class="detail-summary edit job-detail-edit file-input"
                   name="logo"
-                  onChange={(e) => onChange(e)}
+                  onChange={(e) =>
+                    e.target.value === ""
+                      ? setLogoState("")
+                      : handleFileUpload(e)
+                  }
                 ></input>
+                {logoState && (
+                  <div className="logo-preview-wrapper">
+                    <br />
+                    <p className="preview-msg">Preview:</p>
+                    <img
+                      src={logoState}
+                      alt="logo-to-upload"
+                      className="logo-preview"
+                    />{" "}
+                  </div>
+                )}
               </div>
               <div class="detail-summary-wrapper">
                 <p class="detail-summary-label">Reference:</p>

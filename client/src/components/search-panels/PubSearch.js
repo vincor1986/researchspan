@@ -28,13 +28,10 @@ const PubSearch = ({
   };
 
   useEffect(() => {
-    if (field === "Select...") {
+    if (subject_area === "" && field !== "") {
       setSearchData({ ...searchData, field: "" });
     }
-    if (format === "Select...") {
-      setSearchData({ ...searchData, field: "" });
-    }
-  }, [field]);
+  }, [searchData, subject_area, field]);
 
   return (
     <Fragment>
@@ -71,7 +68,7 @@ const PubSearch = ({
                 value={format}
                 onChange={(e) => onChange(e)}
               >
-                <option class="search-panel-select-option" value="Select...">
+                <option class="search-panel-select-option" value="">
                   Select...
                 </option>
                 <option class="search-panel-select-option" value="article">
@@ -103,7 +100,9 @@ const PubSearch = ({
                 value={subject_area}
                 onChange={(e) => onChange(e)}
               >
-                <option class="search-panel-select-option">Select...</option>
+                <option class="search-panel-select-option" value="">
+                  Select...
+                </option>
                 <option class="search-panel-select-option">Biology</option>
                 <option class="search-panel-select-option">
                   Computer Science

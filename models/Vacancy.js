@@ -19,7 +19,7 @@ const VacancySchema = new mongoose.Schema({
     type: String,
   },
   logo: {
-    type: Buffer,
+    type: mongoose.Mixed,
   },
   title: {
     type: String,
