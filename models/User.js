@@ -29,6 +29,22 @@ const UserSchema = new mongoose.Schema({
     ],
     default: [],
   },
+  discuss_id_array: {
+    type: [
+      {
+        type: String,
+      },
+    ],
+    default: [],
+  },
+  job_id_array: {
+    type: [
+      {
+        type: String,
+      },
+    ],
+    default: [],
+  },
   account_type: {
     type: String,
     required: true,

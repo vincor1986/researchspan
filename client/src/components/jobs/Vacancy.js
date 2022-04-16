@@ -133,7 +133,12 @@ const Vacancy = ({
               <p class="comments-title">Job Description</p>
             </div>
             <div class="full-content-wrapper">
-              <p class="text-content">{jd}</p>
+              {jd.split("\n").map((content) => (
+                <Fragment>
+                  <p class="text-content">{content}</p>
+                  <br />
+                </Fragment>
+              ))}
             </div>
           </div>
         </div>

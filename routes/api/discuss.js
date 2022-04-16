@@ -121,6 +121,8 @@ router.post("/", auth, async (req, res) => {
     const { first_name, last_name, avatar, organisation, position, location } =
       await User.findById(user);
 
+    const userObj = await User.findById(user);
+
     if (!first_name) {
       return res.status(404).json({
         errors: [
@@ -151,7 +153,10 @@ router.post("/", auth, async (req, res) => {
 
     newPost.head = newPost._id;
 
+    userObj.discussion_id_array.push(newPost._id);
+
     await newPost.save();
+    await userObj.save();
 
     return res.json(newPost);
   } catch (err) {

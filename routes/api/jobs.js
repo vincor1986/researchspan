@@ -152,20 +152,17 @@ router.post("/vacancies", auth, async (req, res) => {
       closing_date,
     });
 
+    const userObj = await User.findById(user);
+    userObj.job_id_array.push(vacancy._id);
+
     await vacancy.save();
+    await userObj.save();
 
     return res.json(vacancy);
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server error");
   }
-});
-
-// @route   POST api/jobs/vacancies/logo
-// @desc    Upload logo
-// @access  Private
-router.post("/vacancies/logo/upload", auth, async (req, res) => {
-  console.log(req);
 });
 
 // @route   PUT api/jobs/vacancies/:id

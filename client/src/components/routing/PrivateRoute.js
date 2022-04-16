@@ -7,7 +7,7 @@ const PrivateRoute = ({ element, auth: { isAuthenticated, loading } }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!loading && !isAuthenticated) {
       navigate("/login", { replace: true });
     }
   }, [isAuthenticated]);

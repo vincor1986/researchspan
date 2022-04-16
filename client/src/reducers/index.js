@@ -5,6 +5,7 @@ import search from "./search";
 import items from "./items";
 import ui from "./ui";
 import users from "./users";
+import collection from "./collection";
 
 export default combineReducers({
   alert,
@@ -13,4 +14,5 @@ export default combineReducers({
   items,
   ui,
   users,
+  collection,
 });
