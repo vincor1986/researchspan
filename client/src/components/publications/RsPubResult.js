@@ -8,6 +8,7 @@ import { getUsers } from "../../actions/users";
 import spinnerIcon from "../../img/icons/spinnerIcon.gif";
 
 const RsPubResult = ({
+  _id,
   title,
   date_published,
   authors,
@@ -123,7 +124,9 @@ const RsPubResult = ({
           class="result-job-apply-section"
           id="publications-apply-controls-wrapper"
         >
-          {/* <button class="more-info-btn apply-btn">More info</button> */}
+          <Link to={`/publications/${_id}`} class="more-info-btn apply-btn">
+            View
+          </Link>
           <a
             href={link}
             target="_blank"

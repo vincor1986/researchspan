@@ -1479,6 +1479,12 @@ button:hover {
   margin-left: 0.5rem;
 }
 
+.more-info-btn {
+  position: relative;
+  top: 1.5rem;
+  font-size: 1.6rem;
+}
+
 .abstract-text {
   color:rgb(36, 60, 87);
   font-size: 1.7rem;

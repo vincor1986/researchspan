@@ -83,6 +83,7 @@ const PublicationResults = ({
                 return (
                   <RsPubResult
                     key={index}
+                    _id={result._id}
                     title={result.title}
                     link={result.link}
                     coauthors={result.coauthors}

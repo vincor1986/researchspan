@@ -11,7 +11,6 @@ const PublicationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    required: true,
   },
   field: {
     type: String,
@@ -25,6 +24,13 @@ const PublicationSchema = new mongoose.Schema({
   },
   coauthors: {
     type: [String],
+  },
+  date_published: {
+    type: Date,
+    required: true,
+  },
+  abstract: {
+    type: String,
   },
   connectedUsers: {
     type: [
@@ -59,7 +65,7 @@ const PublicationSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    required: true,
+    default: Date.now,
   },
 });
 

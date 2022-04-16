@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getPost } from "../../actions/discussion";
 import ResultsLoading from "../layout/ResultsLoading";
-import { Routes, Route } from "react-router-dom";
 import AuthRoute from "../routing/AuthRoute";
 
 const ViewPost = ({
@@ -77,7 +76,7 @@ const ViewPost = ({
 
 ViewPost.propTypes = {
   search: PropTypes.object.isRequired,
-  getPost: PropTypes.func.isRequired,
+  getPublication: PropTypes.func.isRequired,
   items: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
 };

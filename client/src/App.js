@@ -20,6 +20,7 @@ import DiscussionSearch from "./components/search-panels/DiscussionSearch";
 
 // Publications
 import PublicationResults from "./components/publications/PublicationResults";
+import ViewPublication from "./components/publications/ViewPublication";
 
 // Jobs
 import JobResults from "./components/jobs/JobResults";
@@ -28,7 +29,7 @@ import ViewVacancy from "./components/jobs/ViewVacancy";
 
 // Discuss
 import DiscussionResults from "./components/discuss/DiscussionResults";
-import ViewPost from "./components/discuss/ViewPost";
+import ViewPost from "./components/publications/ViewPublication";
 import PostNewDiscussion from "./components/discuss/PostNewDiscussion";
 
 // Collections
@@ -68,6 +69,8 @@ const App = () => {
               <Route exact path="/register" element={<Register />} />
               <Route path="/publications/*" element={<PubSearch />}>
                 <Route exact path="" element={<PublicationResults />} />
+                <Route exact path=":pubId" element={<ViewPublication />} />
+                <Route exact path=":pubId/*" element={<ViewPublication />} />
                 <Route
                   exact
                   path="mypublications"

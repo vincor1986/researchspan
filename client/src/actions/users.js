@@ -1,4 +1,9 @@
-import { SET_USERS, LOADING_USERS } from "./types";
+import {
+  SET_USERS,
+  LOADING_USERS,
+  UPDATE_USER_SEARCH,
+  USERS_ERROR,
+} from "./types";
 import axios from "axios";
 import { setAlert } from "./alert";
 
@@ -33,5 +38,32 @@ export const getUsers = (idArray) => async (dispatch) => {
         });
       }
     }
+  }
+};
+
+export const findUserBySearch = (searchterm) => async (dispatch) => {
+  dispatch({
+    type: LOADING_USERS,
+  });
+
+  searchterm = searchterm.trim();
+
+  try {
+    const res = await axios.get(`/api/users/?search=${searchterm}`);
+
+    dispatch({
+      type: UPDATE_USER_SEARCH,
+      payload: res.data,
+    });
+  } catch (err) {
+    if (err.response) {
+      const errors = err.response.data.errors;
+
+      errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
+    }
+
+    dispatch({
+      type: USERS_ERROR,
+    });
   }
 };

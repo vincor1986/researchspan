@@ -4,6 +4,7 @@ import {
   ITEM_DELETED,
   ITEM_ERROR,
   DELETE_SEARCH_ITEM,
+  UPDATE_ITEM,
 } from "./types";
 import { setAlert } from "./alert";
 import axios from "axios";
@@ -17,6 +18,63 @@ export const updateSearchItem = (payload, type) => (dispatch) => {
     },
   });
 };
+
+export const getPublication =
+  (pubId, replace = false) =>
+  async (dispatch) => {
+    dispatch({
+      type: SET_ITEM_LOADING,
+    });
+
+    if (!pubId) {
+      dispatch({
+        type: ITEM_ERROR,
+      });
+      dispatch(setAlert("Please provide a valid publication id", "warning"));
+    }
+
+    try {
+      const res = await axios.get(`/api/publications/${pubId}`);
+
+      if (replace) {
+        dispatch({
+          type: UPDATE_SEARCH_ITEM,
+          payload: {
+            data: res.data,
+            type: "pub",
+          },
+        });
+
+        dispatch({
+          type: UPDATE_ITEM,
+          payload: {
+            item: res.data,
+            type: "publication",
+          },
+        });
+      } else {
+        dispatch({
+          type: UPDATE_ITEM,
+          payload: {
+            item: res.data,
+            type: "publication",
+          },
+        });
+      }
+    } catch (err) {
+      if (err.response) {
+        const errors = err.response.data.errors;
+
+        errors.forEach((error) => {
+          dispatch(setAlert(error.msg, "warning"));
+        });
+      }
+
+      dispatch({
+        type: ITEM_ERROR,
+      });
+    }
+  };
 
 export const deleteItem = (itemId, itemType) => async (dispatch) => {
   dispatch({

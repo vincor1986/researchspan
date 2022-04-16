@@ -1,8 +1,14 @@
-import { SET_USERS, LOADING_USERS } from "../actions/types";
+import {
+  SET_USERS,
+  LOADING_USERS,
+  UPDATE_USER_SEARCH,
+  USERS_ERROR,
+} from "../actions/types";
 
 const initialState = {
   loading: false,
   userArray: [],
+  userSearch: [],
 };
 
 const users = (state = initialState, action) => {
@@ -18,6 +24,17 @@ const users = (state = initialState, action) => {
       return {
         ...state,
         userArray: [...state.userArray, ...payload],
+        loading: false,
+      };
+    case UPDATE_USER_SEARCH:
+      return {
+        ...state,
+        userSearch: payload,
+        loading: false,
+      };
+    case USERS_ERROR:
+      return {
+        ...state,
         loading: false,
       };
     default:
