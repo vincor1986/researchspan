@@ -42,11 +42,13 @@ const EditPublication = ({
     PMID,
   });
 
-  const [usersReady, setUsersReady] = useState(false);
+  const [usersReady, setUsersReady] = useState(connectedUsers.length === 0);
   const [searchingUsers, setSearchingUsers] = useState(false);
   const [allUserData, setAllUserData] = useState([]);
   const [currentUserSearch, setCurrentUserSearch] = useState("");
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+
+  const [lastSearch, setLastSearch] = useState("");
 
   const navigate = useNavigate();
 
@@ -67,10 +69,33 @@ const EditPublication = ({
 
   const addConnectedUser = (index) => {
     setFormData((prev) => {
-      const connected = prev.connectedUsers;
-      connected.push(userSearch[index]);
+      const connected = [...prev.connectedUsers, userSearch[index]._id];
       return { ...prev, connectedUsers: connected };
     });
+  };
+
+  const updateSearch = (e) => {
+    const str = e.target.value;
+    if (str[str.length - 1] === ",") {
+      setCurrentUserSearch("");
+      setFormData((prev) => {
+        const brokenName = str.split(" ");
+        const capitalised = brokenName.map((name) =>
+          name
+            .split("")
+            .map((char, i) =>
+              i === 0 ? char.toUpperCase() : char.toLowerCase()
+            )
+            .join("")
+        );
+        const trimmed = capitalised.map((el) => el.trim());
+        const final = trimmed.join(" ").replace(",", "");
+        let co_authors = [...prev.coauthors, final];
+        return { ...prev, coauthors: co_authors };
+      });
+    } else {
+      setCurrentUserSearch(str);
+    }
   };
 
   const onChange = (e) => {
@@ -86,12 +111,48 @@ const EditPublication = ({
     console.log("formData", formData);
   };
 
+  const isInArray = (id, arr) => arr.map((obj) => obj._id).includes(id);
+
+  useEffect(() => {
+    if (!usersReady) {
+      getUsers(connectedUsers);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      !usersReady &&
+      userArray &&
+      connectedUsers.every((userId) => isInArray(userId, userArray))
+    ) {
+      setAllUserData([...userArray]);
+      setUsersReady(true);
+    }
+  }, [usersReady, connectedUsers, loading, userArray]);
+
+  useEffect(() => {
+    if (searchingUsers && !loading) {
+      setSearchingUsers(false);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    setAllUserData([...allUserData, ...userSearch]);
+  }, [userSearch]);
+
+  useEffect(() => {
+    if (!loading && !searchingUsers && currentUserSearch !== lastSearch) {
+      findUserBySearch(currentUserSearch);
+      setLastSearch(currentUserSearch);
+    }
+  }, [loading, searchingUsers, currentUserSearch]);
+
   const existingUsers = [
     ...formData.connectedUsers.map((author, i) =>
-      loading || !usersReady ? (
+      !usersReady || allUserData.length === 0 ? (
         <img src={spinnerIcon} alt="spinner" className="tiny-spinner" />
       ) : (
-        <div class="result-author-wrapper" key={i}>
+        <div class="result-author-wrapper edit-pub-user" key={i}>
           <div class="result-author-avatar-wrapper">
             <img
               class="result-author-avatar"
@@ -109,33 +170,29 @@ const EditPublication = ({
               allUserData.find((obj) => obj._id.toString() === author).last_name
             }`}
           </p>
-          <p
-            style={{ marginLeft: "1rem", fontWeight: "bold" }}
-            onClick={() => removeExistingConnectedUser(i)}
-          >
-            X
-          </p>
+          {author !== user && (
+            <p
+              style={{
+                fontSize: "1.5rem",
+                color: "#258faa",
+                marginLeft: "1rem",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+              onClick={() => removeExistingConnectedUser(i)}
+            >
+              X
+            </p>
+          )}
         </div>
       )
     ),
     formData.coauthors.map((name, i) => (
-      <div class="result-author-wrapper" key={i}>
+      <div class="result-author-wrapper  edit-pub-user" key={i}>
         <div class="result-author-avatar-wrapper">
           <img class="result-author-avatar" src={defaultAvatar} alt="avatar" />
         </div>
-        <p class="result-author">
-          {name
-            .split(" ")
-            .map((el) =>
-              el
-                .split("")
-                .map((char, index) =>
-                  index !== 0 ? char : char.toUpperCase().join("")
-                )
-                .trim()
-            )
-            .join(" ")}
-        </p>
+        <p class="result-author">{name}</p>
         <p
           style={{ marginLeft: "1rem", fontWeight: "bold" }}
           onClick={() => removeExistingUser(i)}
@@ -145,41 +202,6 @@ const EditPublication = ({
       </div>
     )),
   ];
-
-  const isInArray = (id, arr) => arr.map((obj) => obj._id).includes(id);
-
-  useEffect(() => {
-    if (!usersReady) {
-      getUsers(connectedUsers);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (
-      !loading &&
-      !usersReady &&
-      connectedUsers.length > 0 &&
-      connectedUsers.every((userId) => isInArray(userId, userArray))
-    ) {
-      setUsersReady(true);
-      setAllUserData([...userArray]);
-    }
-  }, [connectedUsers, loading, getUsers, userArray]);
-
-  useEffect(() => {
-    if (searchingUsers && !loading) {
-      setSearchingUsers(false);
-    }
-  }, [searchingUsers]);
-
-  useEffect(() => {
-    setAllUserData([...allUserData, ...userSearch]);
-  }, [userSearch]);
-
-  const findUserByName = () => {
-    findUserBySearch(currentUserSearch);
-    setSearchingUsers(true);
-  };
 
   return (
     <div class="main-body-container">
@@ -208,9 +230,9 @@ const EditPublication = ({
         </div>
       )}
       <div class="main-content">
-        <form class="edit-discussion-form">
+        <form class="edit-discussion-form" style={{ paddingTop: "12rem" }}>
           <div class="job-title-wrapper">
-            <p class="detail-summary-label">Title:</p>
+            <p class="detail-summary-label pub-label">Title:</p>
             <textarea
               class="title edit edit-main"
               name="title"
@@ -219,58 +241,65 @@ const EditPublication = ({
             ></textarea>
           </div>
           <div class="result-publication-details">
-            <br />
-            <p class="detail-summary-label">Date published:</p>
-            <input
-              type="date"
-              class="location edit job-detail-edit"
-              name="date_published"
-              onChange={(e) => onChange(e)}
-              value={formData.date_published}
-            ></input>
-            <br />
-            <p class="detail-summary-label">Type of publication:</p>
-            <input
-              type="text"
-              class="edit job-detail-edit"
-              name="type"
-              onChange={(e) => onChange(e)}
-              value={formData.type}
-            ></input>
-            <br />
-            <p class="detail-summary-label">Co-authors:</p>
-            {/* <input
-              type="text"
-              class="edit job-detail-edit"
-              value={currentUserSearch}
-              onChange={(e) => setCurrentUserSearch(e.target.value)}
-            >
-              {existingUsers}
-            </input> */}
-            <div class="current-user-search-results">
-              {userSearch.map((obj, i) => {
-                return (
-                  <div className="user-match">
-                    <div
-                      class="result-author-wrapper"
-                      key={i}
-                      onClick={() => addConnectedUser}
-                    >
-                      <div class="result-author-avatar-wrapper">
-                        <img
-                          class="result-author-avatar"
-                          src={obj.avatar}
-                          alt="avatar"
-                        />
-                      </div>
-                      <p class="result-author">
-                        {`${obj.first_name} ${obj.last_name}`}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+            <div style={{ width: "60%" }}>
+              <br />
+              <p class="detail-summary-label pub-label">Date published:</p>
+              <input
+                type="date"
+                class="location edit job-detail-edit date-input"
+                name="date_published"
+                onChange={(e) => onChange(e)}
+                value={formData.date_published}
+              ></input>
+              <br />
+              <p class="detail-summary-label pub-label">Type of publication:</p>
+              <input
+                type="text"
+                class="edit job-detail-edit"
+                name="type"
+                onChange={(e) => onChange(e)}
+                value={formData.type}
+              ></input>
+              <br />
+              <p class="detail-summary-label pub-label">Author / Co-authors:</p>
+              <div className="edit-pub-users">{existingUsers}</div>
+              <input
+                type="text"
+                class="edit job-detail-edit"
+                value={currentUserSearch}
+                onChange={(e) => updateSearch(e)}
+              ></input>
             </div>
+            {currentUserSearch !== "" && (
+              <div class="current-user-search-results">
+                {userSearch &&
+                  userSearch
+                    .filter((obj) => !formData.connectedUsers.includes(obj._id))
+                    .map((obj, i) => {
+                      return (
+                        <div className="user-match">
+                          <div
+                            class="result-author-wrapper  edit-pub-user"
+                            key={i}
+                            onClick={() => addConnectedUser(i)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <div class="result-author-avatar-wrapper">
+                              <img
+                                class="result-author-avatar"
+                                src={obj.avatar}
+                                alt="avatar"
+                              />
+                            </div>
+                            <p class="result-author">
+                              {`${obj.first_name} ${obj.last_name}`}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+              </div>
+            )}
           </div>
           <div class="job-detail-container">
             <div class="vacancy-details-summary-container">
@@ -280,10 +309,9 @@ const EditPublication = ({
                   name="field"
                   onChange={(e) => onChange(e)}
                   type="text"
-                  class="detail-summary"
-                >
-                  {field}
-                </input>
+                  class="edit job-detail-edit"
+                  value={formData.field}
+                ></input>
               </div>
               <div class="detail-summary-wrapper">
                 <p class="detail-summary-label">Journal:</p>
@@ -292,10 +320,8 @@ const EditPublication = ({
                   value={formData.journal}
                   name="journal"
                   onChange={(e) => onChange(e)}
-                  class="detail-summary"
-                >
-                  {journal}
-                </input>
+                  class="edit job-detail-edit"
+                ></input>
               </div>
               <div class="detail-summary-wrapper">
                 <p class="detail-summary-label">Issue:</p>
@@ -304,10 +330,8 @@ const EditPublication = ({
                   name="issue"
                   value={formData.issue}
                   onChange={(e) => onChange(e)}
-                  class="detail-summary"
-                >
-                  {issue}
-                </input>
+                  class="edit job-detail-edit"
+                ></input>
               </div>
               <div class="detail-summary-wrapper">
                 <p class="detail-summary-label">DOI:</p>
@@ -316,10 +340,8 @@ const EditPublication = ({
                   name="DOI"
                   value={formData.DOI}
                   onChange={(e) => onChange(e)}
-                  class="detail-summary"
-                >
-                  {DOI}
-                </input>
+                  class="edit job-detail-edit"
+                ></input>
               </div>
               <div class="detail-summary-wrapper">
                 <p class="detail-summary-label">PMID:</p>
@@ -328,14 +350,14 @@ const EditPublication = ({
                   name="PMID"
                   value={formData.PMID}
                   onChange={(e) => onChange(e)}
-                  class="detail-summary"
+                  class="edit job-detail-edit"
                 ></input>
               </div>
               <div class="detail-summary-wrapper">
                 <p class="detail-summary-label">Source:</p>
                 <input
                   type="text"
-                  class="detail-summary"
+                  class="edit job-detail-edit"
                   value={formData.source}
                   onChange={(e) => onChange(e)}
                   name="source"

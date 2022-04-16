@@ -64,6 +64,7 @@ export const findUserBySearch = (searchterm) => async (dispatch) => {
 
     dispatch({
       type: USERS_ERROR,
+      payload: err,
     });
   }
 };

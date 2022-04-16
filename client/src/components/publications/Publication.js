@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { deleteItem } from "../../actions/items";
 import defaultAvatar from "../../img/default-avatar.png";
+import newWindowIcon from "../../img/icons/new-window.png";
 import { Link } from "react-router-dom";
 import { getUsers } from "../../actions/users";
 import spinnerIcon from "../../img/icons/spinnerIcon.gif";
@@ -82,7 +83,7 @@ const Publication = ({
           <button
             class="edit-btn discuss-edit-btn"
             onClick={() =>
-              navigate(`/discuss/post/${_id}/edit`, { replace: true })
+              navigate(`/publications/${_id}/edit`, { replace: true })
             }
           >
             Edit
@@ -111,7 +112,7 @@ const Publication = ({
           </div>
         </div>
       )}
-      <div class="main-content">
+      <div class="main-content" style={{ paddingTop: "12rem" }}>
         <div class="job-title-wrapper">
           <h3 class="title">{title}</h3>
         </div>
@@ -229,7 +230,7 @@ const Publication = ({
               <p class="comments-title">Abstract</p>
             </div>
             <div class="full-content-wrapper">
-              {abstract &&
+              {abstract ? (
                 abstract.split("\n").map((content) => {
                   return (
                     <Fragment>
@@ -237,13 +238,24 @@ const Publication = ({
                       <br />
                     </Fragment>
                   );
-                })}
+                })
+              ) : (
+                <p
+                  style={{
+                    textAlign: "center",
+                    fontSize: "1.6rem",
+                    marginTop: "3rem",
+                  }}
+                >
+                  No text to display
+                </p>
+              )}
             </div>
           </div>
         </div>
         <Link to={link ? link : URL} class="apply-btn vacancy-apply">
           <p class="btn-text">Access in full</p>
-          <img class="btn-icon" src="./img/icons/new-window.png" />
+          <img class="btn-icon" src={newWindowIcon} />
         </Link>
       </div>
     </div>

@@ -29,7 +29,7 @@ import ViewVacancy from "./components/jobs/ViewVacancy";
 
 // Discuss
 import DiscussionResults from "./components/discuss/DiscussionResults";
-import ViewPost from "./components/publications/ViewPublication";
+import ViewPost from "./components/discuss/ViewPost";
 import PostNewDiscussion from "./components/discuss/PostNewDiscussion";
 
 // Collections

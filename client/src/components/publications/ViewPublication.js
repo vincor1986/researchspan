@@ -9,7 +9,7 @@ import EditPublication from "./EditPublication";
 import Publication from "./Publication";
 
 const ViewPublication = ({
-  search: { discussSearchResults },
+  search: { pubSearchResults },
   items: { publication, item_error },
   auth,
   getPublication,
@@ -21,7 +21,7 @@ const ViewPublication = ({
   const [pub, setPub] = useState(undefined);
   const [loading, setLoading] = useState(true);
 
-  const pubInState = discussSearchResults.find((obj) => obj._id === pubId);
+  const pubInState = pubSearchResults.find((obj) => obj._id === pubId);
 
   useEffect(() => {
     if (!pubInState) {

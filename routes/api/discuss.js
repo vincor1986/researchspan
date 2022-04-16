@@ -435,6 +435,13 @@ router.delete("/:head/:id", async (req, res) => {
         });
       }
 
+      const user = await User.findById(authUserId);
+
+      const indexOfHead = user.indexOf(postId);
+      user.discuss_id_array.splice(indexOfHead, 1);
+
+      await user.save();
+
       await Post.findByIdAndDelete(headId);
 
       return res.json({ msg: "Post deleted" });

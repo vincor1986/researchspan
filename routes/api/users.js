@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
           ],
         });
       }
-      return res.json({ data: allUsers });
+      return res.json(allUsers);
     }
 
     const query = req.query.search.split(" ").map((val) => val.toLowerCase());
@@ -79,7 +79,11 @@ router.get("/", async (req, res) => {
         for (let k = 0; k < entryArray.length; k++) {
           const pub = entryArray[k];
           for (let l = 0; l < pub.connectedUsers.length; l++) {
-            users.push(await User.findById(pub.connectedUsers[l].toString()));
+            users.push(
+              await User.findById(pub.connectedUsers[l].toString()).select(
+                "-password -notifications -email -shortlist"
+              )
+            );
           }
         }
 
