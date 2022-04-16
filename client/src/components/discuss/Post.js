@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 import PostReply from "./PostReply";
 import { connect } from "react-redux";
 import ReplyForm from "./ReplyForm";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { toggleConsensus } from "../../actions/discussion";
+import { deleteItem } from "../../actions/items";
 
 const Post = ({
   post: {
@@ -31,8 +32,9 @@ const Post = ({
   },
   toggleConsensus,
   authUserPost,
-  items: { send_error, loading },
+  items: { send_error, loading, lastActionSuccess },
   auth,
+  deleteItem,
 }) => {
   const consScore =
     Math.round(
@@ -43,6 +45,8 @@ const Post = ({
 
   const [replySent, setReplySent] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [sentDeleteReq, setSentDeleteReq] = useState(false);
 
   const navigate = useNavigate();
 
@@ -59,6 +63,11 @@ const Post = ({
     toggleConsensus(head, _id, res);
   };
 
+  const onDelete = () => {
+    deleteItem(_id, "discussion");
+    setSentDeleteReq(true);
+  };
+
   useEffect(() => {
     if (replySent) {
       if (!send_error && !loading) {
@@ -69,6 +78,12 @@ const Post = ({
       }
     }
   }, [send_error, loading, replySent]);
+
+  useEffect(() => {
+    if (sentDeleteReq && !loading && lastActionSuccess) {
+      navigate("/discuss");
+    }
+  }, [sentDeleteReq, loading, lastActionSuccess]);
 
   return (
     <div className="main-body-container">
@@ -104,7 +119,28 @@ const Post = ({
             >
               Edit post
             </button>
-            <button class="delete-btn discuss-delete-btn">Delete post</button>
+            <button
+              class="delete-btn discuss-delete-btn"
+              onClick={() => setShowConfirmDelete(true)}
+            >
+              Delete post
+            </button>
+          </div>
+        )}
+        {showConfirmDelete && (
+          <div className="confirm-delete-wrapper">
+            <h3 className="confirm-delete-msg">Confirm delete</h3>
+            <div className="confirm-delete-btns-wrapper">
+              <button
+                class="edit-btn discuss-edit-btn"
+                onClick={() => setShowConfirmDelete(false)}
+              >
+                Cancel
+              </button>
+              <button class="delete-btn discuss-delete-btn" onClick={onDelete}>
+                Delete
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -188,6 +224,13 @@ const Post = ({
               </option>
             </select>
           </div>
+          {[...responses].filter((el) => el !== null).length === 0 && (
+            <div className="no-comments-wrapper">
+              <h4 className="no-comments-msg">
+                Be the first to leave a comment or reply
+              </h4>
+            </div>
+          )}
           {[...responses]
             .reverse()
             .filter((el) => el !== null)
@@ -210,6 +253,7 @@ Post.propTypes = {
   items: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
   toggleConsensus: PropTypes.func.isRequired,
+  deleteItem: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -217,4 +261,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { toggleConsensus })(Post);
+export default connect(mapStateToProps, {
+  toggleConsensus,
+  deleteItem,
+})(Post);

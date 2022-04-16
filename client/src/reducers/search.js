@@ -8,6 +8,7 @@ import {
   UPDATE_JOB_SEARCH,
   JOB_SEARCH_ERROR,
   UPDATE_SEARCH_ITEM,
+  DELETE_SEARCH_ITEM,
 } from "../actions/types";
 
 const initialState = {
@@ -109,6 +110,24 @@ const search = (state = initialState, action) => {
         default:
           return state;
       }
+    case DELETE_SEARCH_ITEM: {
+      const itemType = payload.type;
+      const itemId = payload.id;
+      const itemIndex = state[`${itemType}SearchResults`]
+        .map((obj) => obj._id)
+        .indexOf(itemId);
+
+      if (itemIndex === -1) {
+        return state;
+      } else {
+        return {
+          ...state,
+          [`${itemType}SearchResults`]: state[
+            `${itemType}SearchResults`
+          ].filter((_, i) => i !== itemIndex),
+        };
+      }
+    }
     case UPDATE_SEARCH_ITEM:
       const format = payload.type;
       const property = `${format}SearchResults`;

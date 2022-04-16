@@ -1,15 +1,56 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { createPost } from "../../actions/discussion";
+import { useNavigate } from "react-router-dom";
 
-const NewDiscussionForm = ({ toggle }) => {
+const NewDiscussionForm = ({
+  toggle,
+  items: { loading, lastActionSuccess, discussion },
+  createPost,
+}) => {
+  const [formData, setFormData] = useState({
+    format: "discussion",
+    main: "",
+    context: "",
+    keywords: "",
+  });
+  const [sentData, setSentData] = useState(false);
+
+  const navigate = useNavigate();
+
+  const { format, main, context, keywords } = formData;
+
+  const onChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    createPost(formData);
+    setSentData(true);
+  };
+
+  useEffect(() => {
+    if (
+      sentData &&
+      !loading &&
+      lastActionSuccess &&
+      discussion &&
+      discussion._id
+    ) {
+      navigate(`/discuss/post/${discussion._id}`);
+    }
+  }, [loading, lastActionSuccess, sentData, discussion._id]);
+
   return (
-    <form class="create-new-form">
+    <form class="create-new-form" onSubmit={(e) => onSubmit(e)}>
       <div class="create-new-container">
         <div class="new-title-wrapper">
           <label class="create-new-label" for="new-type">
             Type:
           </label>
-          <select class="new-type">
+          <select class="new-type" name="format" onChange={(e) => onChange(e)}>
             <option class="new-type-option" value="discussion">
               Discussion
             </option>
@@ -21,17 +62,21 @@ const NewDiscussionForm = ({ toggle }) => {
             Title:
           </label>
           <textarea
-            name="new-title"
             class="edit new-title"
             maxlength="250"
+            name="main"
+            value={main}
+            onChange={(e) => onChange(e)}
           ></textarea>
           <label class="create-new-label" for="new-context">
             Context:
           </label>
           <textarea
-            name="new-context"
             class="edit new-context"
             maxlength="750"
+            name="context"
+            value={context}
+            onChange={(e) => onChange(e)}
           ></textarea>
           <br />
           <div class="keywords-editor-wrapper">
@@ -44,13 +89,24 @@ const NewDiscussionForm = ({ toggle }) => {
               id="edit-keywords"
               maxlength="120"
               type="text"
+              name="keywords"
+              value={keywords}
+              onChange={(e) => onChange(e)}
             />
           </div>
           <div class="create-new-controls">
-            <button class="cancel-btn" onClick={toggle}>
+            <button
+              class="cancel-btn"
+              onClick={toggle}
+              style={{ marginLeft: "2rem", height: "4rem" }}
+            >
               Cancel
             </button>
-            <button type="submit" class="create-new-btn">
+            <button
+              type="submit"
+              class="create-new-btn"
+              style={{ marginLeft: "2rem", height: "4rem" }}
+            >
               Post
             </button>
           </div>
@@ -60,6 +116,13 @@ const NewDiscussionForm = ({ toggle }) => {
   );
 };
 
-NewDiscussionForm.propTypes = {};
+NewDiscussionForm.propTypes = {
+  items: PropTypes.object.isRequired,
+  createPost: PropTypes.func.isRequired,
+};
 
-export default NewDiscussionForm;
+const mapStateToProps = (state) => ({
+  items: state.items,
+});
+
+export default connect(mapStateToProps, { createPost })(NewDiscussionForm);

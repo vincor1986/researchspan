@@ -153,7 +153,7 @@ router.post("/", auth, async (req, res) => {
 
     newPost.head = newPost._id;
 
-    userObj.discussion_id_array.push(newPost._id);
+    userObj.discuss_id_array.push(newPost._id);
 
     await newPost.save();
     await userObj.save();

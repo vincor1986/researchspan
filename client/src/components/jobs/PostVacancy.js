@@ -8,7 +8,6 @@ const PostVacancy = ({
   items: { loading, lastActionSuccess, job },
   user: { account_type, organisation },
   postVacancy,
-  uploadLogo,
 }) => {
   const [formData, setFormData] = useState({
     location: "",

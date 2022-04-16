@@ -124,6 +124,53 @@ export const getPost =
     }
   };
 
+export const createPost = (formData) => async (dispatch) => {
+  dispatch({
+    type: SET_ITEM_LOADING,
+  });
+
+  const params = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  if (typeof formData.keywords !== "array") {
+    formData.keywords = formData.keywords
+      .split(",")
+      .map((el) => el.trim().toLowerCase())
+      .filter((el) => el !== "");
+  } else {
+    formData.keywords = formData.keywords
+      .map((el) => el.trim().toLowerCase())
+      .filter((el) => el !== "");
+  }
+
+  const body = JSON.stringify(formData);
+
+  try {
+    const res = await axios.post("/api/discuss/", body, params);
+
+    dispatch({
+      type: UPDATE_ITEM,
+      payload: {
+        type: "discussion",
+        item: res.data,
+      },
+    });
+  } catch (err) {
+    if (err.response) {
+      const errors = err.response.data.errors;
+
+      errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
+    }
+
+    dispatch({
+      type: ITEM_ERROR,
+    });
+  }
+};
+
 export const sendReply =
   ({ main, format }, headId, postId) =>
   async (dispatch) => {

@@ -4,13 +4,13 @@ import {
   UPDATE_ITEM,
   UPDATE_DISCUSSION,
   SEND_ERROR,
+  ITEM_DELETED,
 } from "../actions/types";
-
-import { updateSearchItem } from "../actions/items";
 
 const initialState = {
   discussion: {},
   job: {},
+  publication: {},
   loading: false,
   item_error: false,
   send_error: false,
@@ -54,6 +54,15 @@ const items = (state = initialState, action) => {
         send_error: true,
         loading: false,
         lastActionSuccess: false,
+      };
+    case ITEM_DELETED:
+      return {
+        ...state,
+        discussion: {},
+        job: {},
+        publication: {},
+        lastActionSuccess: true,
+        loading: false,
       };
     default:
       return state;

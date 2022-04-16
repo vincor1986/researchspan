@@ -1,9 +1,11 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import commaSeperateNumber from "../../utils/commaSeperateNumber";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import defaultLogo from "../../img/default-logo.png";
+import { deleteItem } from "../../actions/items";
+import { connect } from "react-redux";
 
 const Vacancy = ({
   vacancy: {
@@ -29,10 +31,24 @@ const Vacancy = ({
     closing_date,
   },
   authUserJob,
+  deleteItem,
+  items: { loading, lastActionSuccess },
 }) => {
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [sentDeleteReq, setSentDeleteReq] = useState(false);
+
   const navigate = useNavigate();
 
-  console.log(logo);
+  const onDelete = () => {
+    deleteItem(_id, "job");
+    setSentDeleteReq(true);
+  };
+
+  useEffect(() => {
+    if (!loading && sentDeleteReq && lastActionSuccess) {
+      navigate("/jobs/myjobs", { replace: true });
+    }
+  }, [loading, lastActionSuccess, sentDeleteReq]);
 
   return (
     <div class="main-body-container">
@@ -64,7 +80,28 @@ const Vacancy = ({
             >
               Edit
             </button>
-            <button class="delete-btn discuss-delete-btn">Delete</button>
+            <button
+              class="delete-btn discuss-delete-btn"
+              onClick={() => setShowConfirmDelete(true)}
+            >
+              Delete
+            </button>
+          </div>
+        )}
+        {showConfirmDelete && (
+          <div className="confirm-delete-wrapper">
+            <h3 className="confirm-delete-msg">Confirm delete</h3>
+            <div className="confirm-delete-btns-wrapper">
+              <button
+                class="edit-btn discuss-edit-btn"
+                onClick={() => setShowConfirmDelete(false)}
+              >
+                Cancel
+              </button>
+              <button class="delete-btn discuss-delete-btn" onClick={onDelete}>
+                Delete
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -168,6 +205,13 @@ const Vacancy = ({
   );
 };
 
-Vacancy.propTypes = {};
+Vacancy.propTypes = {
+  items: PropTypes.object.isRequired,
+  deleteItem: PropTypes.func.isRequired,
+};
 
-export default Vacancy;
+const mapStateToProps = (state) => ({
+  items: state.items,
+});
+
+export default connect(mapStateToProps, { deleteItem })(Vacancy);

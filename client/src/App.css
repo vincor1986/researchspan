@@ -843,6 +843,28 @@ input:checked {
   margin-left: 1.5rem;
 }
 
+.confirm-delete-wrapper {
+  position:fixed;
+  right: 12rem;
+  top: 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgb(204, 225, 236);
+  padding: 2rem;
+  border-radius: 0.7rem;
+}
+
+.confirm-delete-msg {
+  font-size: 1.6rem;
+  color:rgb(46, 79, 116);
+}
+
+.confirm-delete-btns-wrapper>button {
+  margin-top: 1rem;
+}
+
 .main-content {
   margin: 2rem;
   margin-top: 4rem;
@@ -1130,6 +1152,19 @@ input:checked {
 
 .comments-sort {
   top: -8rem;
+}
+
+.no-comments-wrapper {
+  height: 12rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-comments-msg {
+  font-size: 1.9rem;
+  color:rgb(67, 98, 134);
 }
 
 .comment:not(.comment:last-of-type) {
