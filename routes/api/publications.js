@@ -145,6 +145,8 @@ router.post("/new", auth, async (req, res) => {
       connectedUsers,
       DOI,
       PMID,
+      date_published,
+      abstract,
       link,
       date,
     } = req.body;
@@ -162,6 +164,8 @@ router.post("/new", auth, async (req, res) => {
       pendingUsers: connectedUsers,
       DOI,
       PMID,
+      abstract,
+      date_published,
       link,
       date,
     });
@@ -221,6 +225,8 @@ router.put("/:pubId", auth, async (req, res) => {
       DOI,
       PMID,
       link,
+      date_published,
+      abstract,
       date,
     } = req.body;
 
@@ -260,6 +266,12 @@ router.put("/:pubId", auth, async (req, res) => {
     }
     if (issue && issue !== publication.issue) {
       publication.issue = issue;
+    }
+    if (abstract && abstract !== publication.abstract) {
+      publication.abstract = abstract;
+    }
+    if (date_published && date_published !== publication.date_published) {
+      publication.date_published = date_published;
     }
     if (
       coauthors &&

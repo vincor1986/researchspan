@@ -21,6 +21,7 @@ import DiscussionSearch from "./components/search-panels/DiscussionSearch";
 // Publications
 import PublicationResults from "./components/publications/PublicationResults";
 import ViewPublication from "./components/publications/ViewPublication";
+import NewPublication from "./components/publications/NewPublication";
 
 // Jobs
 import JobResults from "./components/jobs/JobResults";
@@ -75,6 +76,11 @@ const App = () => {
                   exact
                   path="mypublications"
                   element={<PrivateRoute element={<MyPublications />} />}
+                />
+                <Route
+                  exact
+                  path="new"
+                  element={<PrivateRoute element={<NewPublication />} />}
                 />
               </Route>
               <Route path="/jobs/*" element={<JobSearch />}>

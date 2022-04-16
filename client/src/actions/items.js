@@ -5,6 +5,7 @@ import {
   ITEM_ERROR,
   DELETE_SEARCH_ITEM,
   UPDATE_ITEM,
+  SEND_ERROR,
 } from "./types";
 import { setAlert } from "./alert";
 import axios from "axios";
@@ -75,6 +76,94 @@ export const getPublication =
       });
     }
   };
+
+export const createPublication = (formData) => async (dispatch) => {
+  console.log("edit publication running");
+
+  dispatch({
+    type: SET_ITEM_LOADING,
+  });
+
+  const params = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify(formData);
+
+  try {
+    const res = await axios.post(`/api/publications/new`, body, params);
+
+    dispatch({
+      type: UPDATE_ITEM,
+      payload: {
+        item: res.data,
+        type: "publication",
+      },
+    });
+  } catch (err) {
+    console.log(err);
+
+    if (err.response) {
+      const errors = err.response.data.errors;
+
+      errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
+    }
+
+    dispatch({
+      type: SEND_ERROR,
+    });
+  }
+};
+
+export const editPublication = (formData, pubId) => async (dispatch) => {
+  console.log("edit publication running");
+
+  dispatch({
+    type: SET_ITEM_LOADING,
+  });
+
+  const params = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify(formData);
+
+  try {
+    const res = await axios.put(`/api/publications/${pubId}`, body, params);
+
+    dispatch({
+      type: UPDATE_SEARCH_ITEM,
+      payload: {
+        data: res.data,
+        type: "pub",
+      },
+    });
+
+    dispatch({
+      type: UPDATE_ITEM,
+      payload: {
+        item: res.data,
+        type: "publication",
+      },
+    });
+  } catch (err) {
+    console.log(err);
+
+    if (err.response) {
+      const errors = err.response.data.errors;
+
+      errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
+    }
+
+    dispatch({
+      type: SEND_ERROR,
+    });
+  }
+};
 
 export const deleteItem = (itemId, itemType) => async (dispatch) => {
   dispatch({

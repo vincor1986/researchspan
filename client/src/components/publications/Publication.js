@@ -77,13 +77,17 @@ const Publication = ({
     <div class="main-body-container">
       {authUserPost && (
         <div class="user-controls-wrapper">
-          <button class="create-new-btn" id="create-new-btn">
+          <button
+            class="create-new-btn"
+            id="create-new-btn"
+            onClick={() => navigate("/publications/new", { replace: false })}
+          >
             New
           </button>
           <button
             class="edit-btn discuss-edit-btn"
             onClick={() =>
-              navigate(`/publications/${_id}/edit`, { replace: true })
+              navigate(`/publications/${_id}/edit`, { replace: false })
             }
           >
             Edit

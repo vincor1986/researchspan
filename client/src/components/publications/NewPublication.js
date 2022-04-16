@@ -5,54 +5,35 @@ import { getUsers, findUserBySearch } from "../../actions/users";
 import defaultAvatar from "../../img/default-avatar.png";
 import spinnerIcon from "../../img/icons/spinnerIcon.gif";
 import { useNavigate } from "react-router-dom";
-import { editPublication } from "../../actions/items";
+import { createPublication } from "../../actions/items";
 
-const EditPublication = ({
-  pub: {
-    _id,
-    user,
-    title,
-    link,
-    coauthors,
-    connectedUsers,
-    date_published,
-    type,
-    field,
-    journal,
-    issue,
-    DOI,
-    PMID,
-    abstract,
-  },
+const NewPublication = ({
   users: { loading, userArray, userSearch },
-  items: { loading: itemLoading, lastActionSuccess },
-  getUsers,
+  items: { loading: itemLoading, lastActionSuccess, publication },
+  auth: { user },
   findUserBySearch,
-  editPublication,
+  createPublication,
 }) => {
   const [formData, setFormData] = useState({
-    title,
-    link,
-    coauthors,
-    connectedUsers,
-    date_published,
-    type,
-    field,
-    abstract,
-    journal,
-    issue,
-    DOI,
-    PMID,
+    title: "",
+    link: "",
+    coauthors: [],
+    connectedUsers: [user._id],
+    date_published: "",
+    type: "",
+    field: "",
+    abstract: "",
+    journal: "",
+    issue: "",
+    DOI: "",
+    PMID: "",
   });
 
-  const [usersReady, setUsersReady] = useState(connectedUsers.length === 0);
   const [searchingUsers, setSearchingUsers] = useState(false);
   const [allUserData, setAllUserData] = useState([]);
   const [currentUserSearch, setCurrentUserSearch] = useState("");
-  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-
   const [lastSearch, setLastSearch] = useState("");
-  const [sentUpdateReq, setSentUpdateReq] = useState(false);
+  const [sentPostReq, setSentPostReq] = useState(false);
 
   const navigate = useNavigate();
 
@@ -102,44 +83,34 @@ const EditPublication = ({
     }
   };
 
+  getUsers([user._id]);
+
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const onDelete = () => {
-    console.log("delete");
-  };
-
   const onSubmit = (e) => {
     e.preventDefault();
-    editPublication(formData, _id);
-    setSentUpdateReq(true);
+    createPublication(formData);
+    setSentPostReq(true);
   };
 
   const isInArray = (id, arr) => arr.map((obj) => obj._id).includes(id);
 
   useEffect(() => {
-    if (!usersReady) {
-      getUsers(connectedUsers);
-    }
-  }, []);
-
-  useEffect(() => {
     if (
-      !usersReady &&
-      userArray &&
-      connectedUsers.every((userId) => isInArray(userId, userArray))
+      userArray.length > 0 &&
+      formData.connectedUsers.every((userId) => isInArray(userId, userArray))
     ) {
       setAllUserData([...userArray]);
-      setUsersReady(true);
     }
-  }, [usersReady, connectedUsers, loading, userArray]);
+  }, [formData.connectedUsers, loading, userArray]);
 
   useEffect(() => {
     if (searchingUsers && !loading) {
       setSearchingUsers(false);
     }
-  }, [loading]);
+  }, [loading, searchingUsers]);
 
   useEffect(() => {
     setAllUserData([...allUserData, ...userSearch]);
@@ -150,17 +121,17 @@ const EditPublication = ({
       findUserBySearch(currentUserSearch);
       setLastSearch(currentUserSearch);
     }
-  }, [loading, searchingUsers, currentUserSearch]);
+  }, [loading, searchingUsers, currentUserSearch, lastSearch]);
 
   useEffect(() => {
-    if (sentUpdateReq && !itemLoading && lastActionSuccess) {
-      navigate(`/publications/${_id}`, { replace: false });
+    if (sentPostReq && !itemLoading && lastActionSuccess && publication._id) {
+      navigate(`/publications/${publication._id}`, { replace: false });
     }
-  }, [sentUpdateReq, itemLoading, lastActionSuccess]);
+  }, [sentPostReq, itemLoading, lastActionSuccess, publication._id]);
 
   const existingUsers = [
     ...formData.connectedUsers.map((author, i) =>
-      !usersReady || allUserData.length === 0 ? (
+      allUserData.length === 0 ? (
         <img src={spinnerIcon} alt="spinner" className="tiny-spinner" />
       ) : (
         <div class="result-author-wrapper edit-pub-user" key={i}>
@@ -216,32 +187,8 @@ const EditPublication = ({
 
   return (
     <div class="main-body-container">
-      <div class="user-controls-wrapper">
-        <button
-          class="delete-btn discuss-delete-btn"
-          onClick={() => setShowConfirmDelete(true)}
-        >
-          Delete
-        </button>
-      </div>
-      {showConfirmDelete && (
-        <div className="confirm-delete-wrapper">
-          <h3 className="confirm-delete-msg">Confirm delete</h3>
-          <div className="confirm-delete-btns-wrapper">
-            <button
-              class="edit-btn discuss-edit-btn"
-              onClick={() => setShowConfirmDelete(false)}
-            >
-              Cancel
-            </button>
-            <button class="delete-btn discuss-delete-btn" onClick={onDelete}>
-              Delete
-            </button>
-          </div>
-        </div>
-      )}
       <div class="main-content">
-        <form class="edit-discussion-form" style={{ paddingTop: "12rem" }}>
+        <form class="edit-discussion-form" style={{ paddingTop: "8rem" }}>
           <div class="job-title-wrapper">
             <p class="detail-summary-label pub-label">Title:</p>
             <textarea
@@ -396,7 +343,7 @@ const EditPublication = ({
             <button
               class="save-changes-btn cancel-btn"
               onClick={() =>
-                navigate(`/publications/${_id}`, { replace: false })
+                navigate(`/publications/mypublications`, { replace: false })
               }
             >
               Cancel
@@ -408,20 +355,22 @@ const EditPublication = ({
   );
 };
 
-EditPublication.propTypes = {
+NewPublication.propTypes = {
   getUsers: PropTypes.func.isRequired,
   users: PropTypes.object.isRequired,
   findUserBySearch: PropTypes.func.isRequired,
-  editPublication: PropTypes.func.isRequired,
+  createPublication: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   users: state.users,
   items: state.items,
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps, {
   getUsers,
   findUserBySearch,
-  editPublication,
-})(EditPublication);
+  createPublication,
+})(NewPublication);
