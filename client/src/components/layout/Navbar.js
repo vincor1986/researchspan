@@ -69,6 +69,11 @@ const Navbar = ({
       <Link to="/register" className="authlink register">
         register
       </Link>
+      <div class="burger-menu" onClick={() => setShowUserMenu(!showUserMenu)}>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
     </div>
   );
 
@@ -80,7 +85,7 @@ const Navbar = ({
           className="authlink login"
           style={{ marginRight: "5rem" }}
         >
-          post a job
+          Post a vacancy
         </Link>
       )}
       <div class="navbar-avatar-wrapper">

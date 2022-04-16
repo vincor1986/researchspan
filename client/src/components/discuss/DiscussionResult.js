@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 const DiscussionResult = ({
   id,
@@ -51,7 +52,9 @@ const DiscussionResult = ({
             )}
             <div class="info-subsection">
               <p class="info-label">Date posted:</p>
-              <p class="info-date">{Date(date).toString()}</p>
+              <p class="info-date">
+                {moment(date).format("Do MMMM YYYY - hh:mm a")}
+              </p>
             </div>
           </div>
         </div>

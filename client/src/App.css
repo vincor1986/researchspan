@@ -1609,9 +1609,7 @@ button:hover {
 /* burger */
 
 .burger-menu {
-  display: none;
-  position: absolute;
-  right: 5rem;
+  margin-left: 2rem;
   height: 5rem;
   align-content: center;
   justify-content: center;
@@ -1723,6 +1721,11 @@ button:hover {
   height: 0rem;
   text-align: right;
   margin-right: 1rem;
+}
+
+.view-only {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .burger-menu-item {

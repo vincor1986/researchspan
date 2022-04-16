@@ -49,11 +49,15 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
           <div class="bm-section-wrapper">
             <div class="burger-menu-item" id="bm-account">
               <div class="burger-menu-marker"></div>
-              <h4 class="burger-menu-link">Login</h4>
+              <Link to="/login" class="burger-menu-link">
+                Login
+              </Link>
             </div>
             <div class="burger-menu-item" id="account-links">
               <div class="burger-menu-marker"></div>
-              <h4 class="burger-menu-link">Register</h4>
+              <Link to="/register" class="burger-menu-link">
+                Register
+              </Link>
             </div>
           </div>
         </div>
@@ -85,13 +89,19 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
               Search publications
             </Link>
           </div>
-          <div class="burger-menu-item" id="pub-links">
+          <div
+            class={`burger-menu-item ${!isAuthenticated && "view-only"}`}
+            id="pub-links"
+          >
             <div class="burger-menu-marker"></div>
             <Link to="/publications/new" class="burger-menu-link">
               Post new publication
             </Link>
           </div>
-          <div class="burger-menu-item" id="pub-links">
+          <div
+            class={`burger-menu-item ${!isAuthenticated && "view-only"}`}
+            id="pub-links"
+          >
             <div class="burger-menu-marker"></div>
             <Link to="/publications/mypublications" class="burger-menu-link">
               My publications
@@ -144,7 +154,10 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
             </div>
           )}
           {!isRecruiter && (
-            <div class="burger-menu-item" id="jobs-links">
+            <div
+              class={`burger-menu-item ${!isAuthenticated && "view-only"}`}
+              id="jobs-links"
+            >
               <div class="burger-menu-marker"></div>
               <Link to="/jobs/shortlist" class="burger-menu-link">
                 Shortlisted jobs
@@ -181,13 +194,19 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
               Search discussions
             </Link>
           </div>
-          <div class="burger-menu-item" id="discuss-links">
+          <div
+            class={`burger-menu-item ${!isAuthenticated && "view-only"}`}
+            id="discuss-links"
+          >
             <div class="burger-menu-marker"></div>
-            <Link to="discuss/posts/new" class="burger-menu-link">
+            <Link to="discuss/post/new" class="burger-menu-link">
               Post new discussion
             </Link>
           </div>
-          <div class="burger-menu-item" id="discuss-links">
+          <div
+            class={`burger-menu-item ${!isAuthenticated && "view-only"}`}
+            id="discuss-links"
+          >
             <div class="burger-menu-marker"></div>
             <Link to="/discuss/mydiscussions" class="burger-menu-link">
               My discussions
