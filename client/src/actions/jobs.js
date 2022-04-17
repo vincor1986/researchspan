@@ -1,5 +1,6 @@
 import axios from "axios";
 import { setAlert } from "./alert";
+import { loadUser } from "./auth";
 import {
   UPDATE_JOB_SEARCH,
   SET_LOADING,
@@ -188,5 +189,21 @@ export const postVacancy = (formData) => async (dispatch) => {
     dispatch({
       type: ITEM_ERROR,
     });
+  }
+};
+
+export const toggleShortlistJob = (jobId) => async (dispatch) => {
+  try {
+    const res = await axios.put(`/api/jobs/vacancies/shortlist/${jobId}`);
+
+    dispatch(loadUser());
+
+    dispatch(setAlert(res.data.msg, "success"));
+  } catch (err) {
+    if (err.response) {
+      const errors = err.response.data.errors;
+
+      errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
+    }
   }
 };

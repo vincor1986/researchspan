@@ -1483,8 +1483,11 @@ button:hover {
 
 .more-info-btn {
   position: relative;
-  top: 1.5rem;
   font-size: 1.6rem;
+}
+
+.rs-view-btn {
+  top: 1.5rem;
 }
 
 .abstract-text {
@@ -1580,6 +1583,12 @@ button:hover {
   width: 20rem;
   font-weight: bold;
   margin-bottom: 2rem;
+}
+
+.shortlist-btn {
+  margin-right: 6rem;
+  background: rgb(211, 179, 0);
+  width: 13rem;
 }
 
 .create-new-form {

@@ -6,6 +6,7 @@ import moment from "moment";
 import defaultLogo from "../../img/default-logo.png";
 import { deleteItem } from "../../actions/items";
 import { connect } from "react-redux";
+import { toggleShortlistJob } from "../../actions/jobs";
 
 const Vacancy = ({
   vacancy: {
@@ -32,7 +33,9 @@ const Vacancy = ({
   },
   authUserJob,
   deleteItem,
+  toggleShortlistJob,
   items: { loading, lastActionSuccess },
+  auth,
 }) => {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [sentDeleteReq, setSentDeleteReq] = useState(false);
@@ -69,25 +72,37 @@ const Vacancy = ({
             </h2>
           </div>
         </div>
-        {authUserJob && (
-          <div class="user-controls-wrapper">
-            <button class="create-new-btn" id="create-new-btn">
-              Post new
-            </button>
+        <div class="user-controls-wrapper">
+          {!authUserJob && auth.user.account_type !== "recruiter" && (
             <button
-              class="edit-btn discuss-edit-btn"
-              onClick={() => navigate(`edit`, { replace: false })}
+              class="edit-btn discuss-edit-btn shortlist-btn"
+              onClick={() => toggleShortlistJob(_id)}
             >
-              Edit
+              {!auth.user.shortlist.vacancies.includes(_id)
+                ? "Shortlist ★"
+                : "Unshortlist -★"}
             </button>
-            <button
-              class="delete-btn discuss-delete-btn"
-              onClick={() => setShowConfirmDelete(true)}
-            >
-              Delete
-            </button>
-          </div>
-        )}
+          )}
+          {authUserJob && (
+            <Fragment>
+              <button class="create-new-btn" id="create-new-btn">
+                Post new
+              </button>
+              <button
+                class="edit-btn discuss-edit-btn"
+                onClick={() => navigate(`edit`, { replace: false })}
+              >
+                Edit
+              </button>
+              <button
+                class="delete-btn discuss-delete-btn"
+                onClick={() => setShowConfirmDelete(true)}
+              >
+                Delete
+              </button>
+            </Fragment>
+          )}
+        </div>
         {showConfirmDelete && (
           <div className="confirm-delete-wrapper">
             <h3 className="confirm-delete-msg">Confirm delete</h3>
@@ -208,10 +223,14 @@ const Vacancy = ({
 Vacancy.propTypes = {
   items: PropTypes.object.isRequired,
   deleteItem: PropTypes.func.isRequired,
+  toggleShortlistJob: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   items: state.items,
+  auth: state.auth,
 });
 
-export default connect(mapStateToProps, { deleteItem })(Vacancy);
+export default connect(mapStateToProps, { deleteItem, toggleShortlistJob })(
+  Vacancy
+);

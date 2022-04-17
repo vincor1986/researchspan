@@ -37,6 +37,7 @@ import PostNewDiscussion from "./components/discuss/PostNewDiscussion";
 import MyJobs from "./components/collection/MyJobs";
 import MyPublications from "./components/collection/MyPublications";
 import MyDiscussions from "./components/collection/MyDiscussions";
+import MyShortlist from "./components/collection/MyShortlist";
 
 // Routing
 import PrivateRoute from "./components/routing/PrivateRoute";
@@ -96,6 +97,11 @@ const App = () => {
                   exact
                   path="myjobs"
                   element={<PrivateRoute element={<MyJobs />} />}
+                />
+                <Route
+                  exact
+                  path="myshortlist"
+                  element={<PrivateRoute element={<MyShortlist />} />}
                 />
               </Route>
               <Route path="/discuss/*" element={<DiscussionSearch />}>

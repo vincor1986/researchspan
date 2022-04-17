@@ -124,7 +124,10 @@ const RsPubResult = ({
           class="result-job-apply-section"
           id="publications-apply-controls-wrapper"
         >
-          <Link to={`/publications/${_id}`} class="more-info-btn apply-btn">
+          <Link
+            to={`/publications/${_id}`}
+            class="more-info-btn apply-btn rs-view-btn"
+          >
             View
           </Link>
           <a
