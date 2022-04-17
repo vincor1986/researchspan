@@ -7,24 +7,26 @@ import JobResult from "../jobs/JobResult";
 import defaultLogo from "../../img/default-logo.png";
 import commaSeperateNumber from "../../utils/commaSeperateNumber";
 import { useNavigate } from "react-router-dom";
+import { toggleShortlistJob } from "../../actions/jobs";
 
 const MyShortlist = ({
   collection: { loading, jobs, lastActionSuccess },
   getCollection,
   user: { shortlist },
   userLoading,
+  toggleShortlistJob,
 }) => {
   const [sentRequest, setSentRequest] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!sentRequest && shortlist.vacancies) {
+    if (!userLoading && !sentRequest && shortlist.vacancies) {
       getCollection(shortlist.vacancies, "jobs");
       setSentRequest(true);
       console.log("shortlist", shortlist);
     }
-  }, [sentRequest, shortlist, shortlist.vacancies, userLoading, loading]);
+  }, [sentRequest, shortlist, userLoading, loading]);
 
   const showResults = (
     <div class="main-body-container">
@@ -80,10 +82,10 @@ const MyShortlist = ({
                         view
                       </button>
                       <button
-                        className="collection-btn edit-btn"
-                        onClick={() => navigate(`/jobs/${result._id}/edit`)}
+                        className="collection-btn edit-btn remove-shortlist-btn"
+                        onClick={() => toggleShortlistJob(result._id)}
                       >
-                        Remove
+                        remove
                       </button>
                     </div>
                     <JobResult
@@ -122,6 +124,7 @@ MyShortlist.propTypes = {
   collection: PropTypes.object.isRequired,
   getCollection: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
+  toggleShortlistJob: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -130,4 +133,6 @@ const mapStateToProps = (state) => ({
   userLoading: state.auth.loading,
 });
 
-export default connect(mapStateToProps, { getCollection })(MyShortlist);
+export default connect(mapStateToProps, { getCollection, toggleShortlistJob })(
+  MyShortlist
+);
