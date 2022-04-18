@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { discussionSearch } from "../../actions/discussion";
 import getFields from "../../utils/getFields";
+import magGlass from "../../img/icons/mag_glass.png";
 
 const DiscussionSearch = ({
   discussionSearch,
@@ -18,6 +19,7 @@ const DiscussionSearch = ({
   });
 
   const { keywords, discussion, question, subject_area, field } = searchData;
+  const [showSearch, setShowSearch] = useState(false);
 
   const onChange = (e) => {
     setSearchData({ ...searchData, [e.target.name]: e.target.value });
@@ -30,12 +32,24 @@ const DiscussionSearch = ({
   const onSubmit = (e) => {
     e.preventDefault();
     discussionSearch({ keywords, discussion, question, subject_area, field });
+    setShowSearch(false);
   };
 
   return (
     <Fragment>
       {" "}
-      <div class="search-panel discuss-search-panel">
+      <div class={`search-panel discuss-search-panel ${showSearch && "slide"}`}>
+        <div class="show-search-tab" onClick={() => setShowSearch(!showSearch)}>
+          {showSearch ? (
+            <Fragment>
+              <img class="mag-glass-icon" src={magGlass} alt="mag glass icon" />
+            </Fragment>
+          ) : (
+            <Fragment>
+              <img class="mag-glass-icon" src={magGlass} alt="mag glass icon" />
+            </Fragment>
+          )}
+        </div>
         <div class="search-panel-title">
           <p>Configure your search</p>
         </div>
