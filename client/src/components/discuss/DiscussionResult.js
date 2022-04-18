@@ -12,6 +12,7 @@ const DiscussionResult = ({
   avatar,
   format,
   keywords,
+  position,
   main,
   context,
   date,
@@ -26,10 +27,10 @@ const DiscussionResult = ({
 }) => {
   const consScore =
     Math.round(
-      (+consensus_agree / (+consensus_agree + +consensus_disagree)) * 100
+      (consensus_agree.length /
+        (consensus_agree.length + consensus_disagree.length)) *
+        100
     ) || "- ";
-
-  const navigate = useNavigate();
 
   return (
     <div class="result">
@@ -46,8 +47,9 @@ const DiscussionResult = ({
             </div>
             {organisation && (
               <div class="info-subsection">
-                <p class="info-label">Organisation:</p>
-                <p class="info-organisation">{organisation}</p>
+                <p class="info-organisation">{`${
+                  position ? `${position} at ` : ""
+                }${organisation}`}</p>
               </div>
             )}
             <div class="info-subsection">

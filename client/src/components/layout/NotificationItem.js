@@ -1,6 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import moment from "moment";
+import { toggleNotificationReadStatus } from "../../actions/items";
+import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const NotificationItem = ({
   reference,
@@ -10,8 +14,11 @@ const NotificationItem = ({
   type,
   userDetails,
   date,
+  toggleNotificationReadStatus,
 }) => {
   const allUsers = Array.from(new Set(userDetails.map((obj) => obj.name)));
+
+  const navigate = useNavigate();
 
   const name =
     allUsers.length === 1
@@ -43,23 +50,39 @@ const NotificationItem = ({
       : `/publications/${reference}`;
 
   return (
-    <Link to={url} className={`notif-item-wrapper ${unread && "unread"}`}>
+    <div className={`notif-item-wrapper ${unread && "unread"}`}>
       <div className="notif-avatar-section">
         <div className="notif-avatar-wrapper">
           <img src={avatar} className="notif-avatar" />
         </div>
       </div>
-      <div className="notif-info-section">
+      <div
+        className="notif-info-section"
+        onClick={() => {
+          toggleNotificationReadStatus(notificationId, false);
+          navigate(url, { replace: false });
+        }}
+      >
         <div className="notif-info-msg">
           {<strong>{name}</strong>}
           {` ${action}`}
         </div>
-        <div className="notif-info-date">{date}</div>
+        <div className="notif-info-date">{moment(date).fromNow()}</div>
       </div>
-    </Link>
+      <p
+        className="mark-as-read-btn noselect"
+        onClick={() => toggleNotificationReadStatus(notificationId)}
+      >
+        {unread ? "Mark as read" : "Mark as unread"}
+      </p>
+    </div>
   );
 };
 
-NotificationItem.propTypes = {};
+NotificationItem.propTypes = {
+  toggleNotificationReadStatus: PropTypes.func.isRequired,
+};
 
-export default NotificationItem;
+export default connect(null, { toggleNotificationReadStatus })(
+  NotificationItem
+);

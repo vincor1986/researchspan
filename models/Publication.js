@@ -62,6 +62,7 @@ const PublicationSchema = new mongoose.Schema({
   },
   link: {
     type: String,
+    required: true,
   },
   date: {
     type: Date,

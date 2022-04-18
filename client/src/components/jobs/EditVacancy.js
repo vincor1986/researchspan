@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { editVacancy } from "../../actions/jobs";
 import defaultLogo from "../../img/default-logo.png";
+import { setAlert } from "../../actions/alert";
 
 const EditVacancy = ({
   vacancy: {
@@ -30,6 +31,7 @@ const EditVacancy = ({
   },
   items: { loading, lastActionSuccess },
   editVacancy,
+  setAlert,
 }) => {
   const [formData, setFormData] = useState({
     location,
@@ -96,7 +98,26 @@ const EditVacancy = ({
     });
   };
 
+  const required = [
+    "title",
+    "organisation",
+    "location",
+    "ref",
+    "closing_date",
+    "apply_link",
+    "jd",
+  ];
+
+  const checkInput = () => {
+    return required.filter((el) => formData[`${el}`] === "");
+  };
+
   const onSubmit = (e) => {
+    const missing = checkInput();
+    if (missing.length > 0) {
+      missing.forEach((el) => setAlert(`${el} is a required field`, "warning"));
+      return;
+    }
     e.preventDefault();
     if (logoState !== "") {
       editVacancy({ ...formData, logo: logoState }, _id);
@@ -145,7 +166,7 @@ const EditVacancy = ({
 
   return (
     <div class="main-body-container">
-      <form onSubmit={(e) => onSubmit(e)}>
+      <form>
         <div class="user-detail-section">
           <div class="user-detail-wrapper">
             <div class="user-avatar-section">
@@ -193,23 +214,29 @@ const EditVacancy = ({
           <div class="job-detail-container">
             <div class="vacancy-details-summary-container">
               <div class="detail-summary-wrapper">
-                <p class="detail-summary-label">Organisation:</p>
+                <p class="detail-summary-label">
+                  Organisation: <span class="required-msg">*</span>
+                </p>
                 <input
                   type="text"
                   class="detail-summary edit job-detail-edit"
                   name="organisation"
                   value={formData.organisation}
                   onChange={(e) => onChange(e)}
+                  required={true}
                 />
               </div>
               <div class="detail-summary-wrapper">
-                <p class="detail-summary-label">Location:</p>
+                <p class="detail-summary-label">
+                  Location: <span class="required-msg">*</span>
+                </p>
                 <input
                   type="text"
                   class="detail-summary edit job-detail-edit"
                   name="location"
                   value={formData.location}
                   onChange={(e) => onChange(e)}
+                  required={true}
                 />
               </div>
               <div class="detail-summary-wrapper">
@@ -237,19 +264,22 @@ const EditVacancy = ({
                 )}
               </div>
               <div class="detail-summary-wrapper">
-                <p class="detail-summary-label">Reference:</p>
+                <p class="detail-summary-label">
+                  Reference: <span class="required-msg">*</span>
+                </p>
                 <input
                   type="text"
                   class="detail-summary edit job-detail-edit"
                   value={formData.ref}
                   name="ref"
                   onChange={(e) => onChange(e)}
+                  required={true}
                 />
               </div>
               <div class="detail-summary-wrapper">
                 <p class="detail-summary-label">Salary amount:</p>
                 <input
-                  type="text"
+                  type="number"
                   class="detail-summary edit job-detail-edit"
                   value={formData.salary}
                   name="salary"
@@ -346,29 +376,37 @@ const EditVacancy = ({
                 ></input>
               </div>
               <div class="detail-summary-wrapper">
-                <p class="detail-summary-label">Closing date:</p>
+                <p class="detail-summary-label">
+                  Closing date: <span class="required-msg">*</span>
+                </p>
                 <input
                   type="date"
                   class="detail-summary edit job-detail-edit"
                   value={formData.closing_date}
                   name="closing_date"
                   onChange={(e) => onChange(e)}
+                  required={true}
                 ></input>
               </div>
               <div class="detail-summary-wrapper">
-                <p class="detail-summary-label">Apply link:</p>
+                <p class="detail-summary-label">
+                  Apply link: <span class="required-msg">*</span>
+                </p>
                 <input
                   type="text"
                   class="detail-summary edit job-detail-edit"
                   value={formData.apply_link}
                   name="apply_link"
                   onChange={(e) => onChange(e)}
+                  required={true}
                 ></input>
               </div>
             </div>
             <div class="job-desc-container edit-job-desc-section">
               <div class="comments-title-wrapper">
-                <p class="comments-title">Job description</p>
+                <p class="comments-title">
+                  Job description <span class="required-msg">*</span>
+                </p>
               </div>
               <div class="full-content-wrapper edit-content-wrapper">
                 <textarea
@@ -376,6 +414,7 @@ const EditVacancy = ({
                   value={formData.jd}
                   name="jd"
                   onChange={(e) => onChange(e)}
+                  required={true}
                 ></textarea>
               </div>
             </div>
@@ -394,7 +433,11 @@ const EditVacancy = ({
           </button>
         </div>
         <div class="post-actions-section">
-          <button class="save-changes-btn" type="submit">
+          <button
+            class="save-changes-btn"
+            type="submit"
+            onClick={(e) => onSubmit(e)}
+          >
             Save changes
           </button>
           <button
@@ -412,10 +455,11 @@ const EditVacancy = ({
 EditVacancy.propTypes = {
   items: PropTypes.object.isRequired,
   editVacancy: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   items: state.items,
 });
 
-export default connect(mapStateToProps, { editVacancy })(EditVacancy);
+export default connect(mapStateToProps, { editVacancy, setAlert })(EditVacancy);

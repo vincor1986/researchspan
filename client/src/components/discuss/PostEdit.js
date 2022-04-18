@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { editDiscussion } from "../../actions/discussion";
+import { setAlert } from "../../actions/alert";
 
 const PostEdit = ({
   post: {
@@ -15,6 +16,7 @@ const PostEdit = ({
     avatar,
     format,
     keywords,
+    position,
     main,
     context,
     edited,
@@ -29,6 +31,7 @@ const PostEdit = ({
   },
   items: { loading, lastActionSuccess },
   editDiscussion,
+  setAlert,
 }) => {
   const [formData, setFormData] = useState({
     keywords: keywords.join(", "),
@@ -38,8 +41,13 @@ const PostEdit = ({
   });
 
   const [sentData, setSentData] = useState(false);
-
   const navigate = useNavigate();
+
+  const required = ["main"];
+
+  const checkInput = () => {
+    return required.filter((el) => formData[`${el}`] === "");
+  };
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -52,6 +60,13 @@ const PostEdit = ({
   };
 
   const onSubmit = (e) => {
+    const missing = checkInput();
+    if (missing.length > 0) {
+      missing.forEach((input) =>
+        setAlert(`Title is a required field`, "warning")
+      );
+      return;
+    }
     e.preventDefault();
     setSentData(true);
     editDiscussion(formData, _id);
@@ -69,17 +84,21 @@ const PostEdit = ({
         <div class="user-detail-wrapper">
           <div class="user-avatar-section">
             <div class="user-avatar-wrapper">
-              <img src="./img/default-avatar.png" alt="avatar" class="avatar" />
+              <img src={avatar} alt="avatar" class="avatar" />
             </div>
           </div>
           <div class="user-info-section">
             <h2 class="user-info-name">
-              Vincent Coraldean
-              <a href="#" class="user-view-profile-link">
+              {`${first_name}, ${last_name}`}
+              {/* <a href="#" class="user-view-profile-link">
                 view profile
-              </a>
+              </a> */}
             </h2>
-            <p class="user-organisation">Lead Developer at Research Span</p>
+            {organisation && (
+              <p class="user-organisation">{`${
+                position ? `${position} at ` : ""
+              }${organisation}`}</p>
+            )}
           </div>
         </div>
         <div class="user-controls-wrapper">
@@ -127,12 +146,16 @@ const PostEdit = ({
             ></textarea>
           </div>
           <div class="main-msg-container">
+            <h4 class="keywords-label">
+              Title: <span className="required-msg">*</span>
+            </h4>
             <textarea
               class="main-msg edit-main"
               value={formData.main}
               name="main"
               maxlength={250}
               onChange={(e) => onChange(e)}
+              required={true}
             ></textarea>
             <p class="chars-remaining">{`${
               250 - formData.main.length
@@ -153,7 +176,11 @@ const PostEdit = ({
             } characters remaining`}</p>
           </div>
           <div class="post-actions-section">
-            <button class="save-changes-btn" onClick={(e) => onSubmit(e)}>
+            <button
+              type="submit"
+              class="save-changes-btn"
+              onClick={(e) => onSubmit(e)}
+            >
               Save changes
             </button>
             <button
@@ -174,10 +201,11 @@ const PostEdit = ({
 PostEdit.propTypes = {
   editDiscussion: PropTypes.func.isRequired,
   items: PropTypes.object.isRequired,
+  setAlert: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   items: state.items,
 });
 
-export default connect(mapStateToProps, { editDiscussion })(PostEdit);
+export default connect(mapStateToProps, { editDiscussion, setAlert })(PostEdit);

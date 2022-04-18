@@ -12,6 +12,7 @@ import Footer from "./components/layout/Footer";
 import Home from "./components/layout/Home";
 import Navbar from "./components/layout/Navbar";
 import Alert from "./components/layout/Alert";
+import bg from "./img/researchspan-background.png";
 
 // Search panels
 import JobSearch from "./components/search-panels/JobSearch";
@@ -47,6 +48,7 @@ import setAuthToken from "./utils/setAuthToken";
 import { Provider } from "react-redux";
 import store from "./store";
 import { loadUser } from "./actions/auth";
+import AllNotifications from "./components/collection/AllNotifications";
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -61,6 +63,9 @@ const App = () => {
     <Provider store={store}>
       <Router>
         <Fragment>
+          <div className="bg-layer">
+            <img class="bg" src={bg} alt="background" />
+          </div>
           <Navbar />
           <Alert />
           <main>
@@ -69,6 +74,11 @@ const App = () => {
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/loggedout" element={<LoggedOut />} />
               <Route exact path="/register" element={<Register />} />
+              <Route
+                exact
+                path="notifications"
+                element={<PrivateRoute element={<AllNotifications />} />}
+              />
               <Route path="/publications/*" element={<PubSearch />}>
                 <Route exact path="" element={<PublicationResults />} />
                 <Route exact path=":pubId" element={<ViewPublication />} />

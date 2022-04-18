@@ -159,7 +159,7 @@ const UserMenu = ({ isAuthenticated, setShowUserMenu, logout, user }) => {
               id="jobs-links"
             >
               <div class="burger-menu-marker"></div>
-              <Link to="/jobs/shortlist" class="burger-menu-link">
+              <Link to="/jobs/myshortlist" class="burger-menu-link">
                 Shortlisted jobs
               </Link>
             </div>

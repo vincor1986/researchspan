@@ -286,7 +286,7 @@ router.put("/:id", auth, async (req, res) => {
     if (main && main !== post.main) {
       post.main = main;
     }
-    if (context && context !== post.context) {
+    if (context !== post.context) {
       post.context = context;
     }
 

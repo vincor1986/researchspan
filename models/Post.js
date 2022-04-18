@@ -7,9 +7,11 @@ const PostSchema = new mongoose.Schema({
   },
   first_name: {
     type: String,
+    required: true,
   },
   last_name: {
     type: String,
+    required: true,
   },
   organisation: {
     type: String,
@@ -22,9 +24,11 @@ const PostSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
+    required: true,
   },
   head: {
     type: String,
+    required: true,
   },
   format: {
     type: String,
@@ -39,7 +43,6 @@ const PostSchema = new mongoose.Schema({
   },
   context: {
     type: String,
-    required: true,
   },
   edited: {
     type: Boolean,

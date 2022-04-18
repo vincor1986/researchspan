@@ -19,10 +19,17 @@ const sendNotification = async (params) => {
 
   // types
 
+  if (sendingUserId === recipientUserId) {
+    return;
+  }
+
   try {
     switch (type) {
       case "answer": {
         const { user } = await Post.findById(referenceId);
+        if (sendingUserId === user.toString()) {
+          return;
+        }
         const recipient = await User.findById(user.toString());
         const existingNotificationIndex = recipient.notifications
           .map((obj) => obj.reference)
@@ -62,6 +69,9 @@ const sendNotification = async (params) => {
       }
       case "reply": {
         const user = getPostUser(head, postId);
+        if (sendingUserId === user.toString()) {
+          return;
+        }
         const recipient = await User.findById(user);
         const existingNotificationIndex = recipient.notifications
           .map((obj) => obj.reply_reference)

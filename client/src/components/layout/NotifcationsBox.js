@@ -7,7 +7,7 @@ const NotifcationsBox = ({ notifications }) => {
   return (
     <div className="notifications-container">
       <div className="notifications-wrapper">
-        {[...notifications].reverse().map((notif) => (
+        {[...notifications].map((notif) => (
           <NotificationItem
             key={notif.notificationId}
             reference={notif.reference}

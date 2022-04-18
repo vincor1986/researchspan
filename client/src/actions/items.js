@@ -8,6 +8,7 @@ import {
   SEND_ERROR,
 } from "./types";
 import { setAlert } from "./alert";
+import { loadUser } from "./auth";
 import axios from "axios";
 
 export const updateSearchItem = (payload, type) => (dispatch) => {
@@ -215,3 +216,18 @@ export const deleteItem = (itemId, itemType) => async (dispatch) => {
     });
   }
 };
+
+export const toggleNotificationReadStatus =
+  (notifId, announce = true) =>
+  async (dispatch) => {
+    try {
+      const res = await axios.put(`/api/notifications/toggle/?id=${notifId}`);
+
+      dispatch(loadUser());
+
+      announce && dispatch(setAlert(res.data.msg, "success"));
+    } catch (err) {
+      const errors = err.response.data.errors;
+      errors.forEach((error) => dispatch(setAlert(error.msg, "warning")));
+    }
+  };

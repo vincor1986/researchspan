@@ -18,6 +18,7 @@ const Post = ({
     avatar,
     format,
     keywords,
+    position,
     main,
     context,
     edited,
@@ -98,23 +99,31 @@ const Post = ({
           <div class="user-info-section">
             <h2 class="user-info-name">
               {`${first_name} ${last_name}`}
-              <a href="#" class="user-view-profile-link">
+              {/* <a href="#" class="user-view-profile-link">
                 view profile
-              </a>
+              </a> */}
             </h2>
 
-            <p class="user-organisation">{organisation}</p>
+            {organisation && (
+              <p class="user-organisation">{`${
+                position ? `${position} at ` : ""
+              }${organisation}`}</p>
+            )}
           </div>
         </div>
         {authUserPost && (
           <div class="user-controls-wrapper">
-            <button class="create-new-btn" id="create-new-btn">
+            <button
+              class="create-new-btn"
+              id="create-new-btn"
+              onClick={() => navigate("/discuss/post/new", { replace: false })}
+            >
               New post
             </button>
             <button
               class="edit-btn discuss-edit-btn"
               onClick={() =>
-                navigate(`/discuss/post/${_id}/edit`, { replace: true })
+                navigate(`/discuss/post/${_id}/edit`, { replace: false })
               }
             >
               Edit post
@@ -159,15 +168,17 @@ const Post = ({
           <p class="main-msg">{main}</p>
         </div>
 
-        <div class="context-msg-wrapper">
-          <p class="context-label">Context:</p>
-          {context.split("\n").map((para) => (
-            <Fragment>
-              <p class="context">{para}</p>
-              <br />
-            </Fragment>
-          ))}
-        </div>
+        {context && (
+          <div class="context-msg-wrapper">
+            <p class="context-label">Context:</p>
+            {context.split("\n").map((para) => (
+              <Fragment>
+                <p class="context">{para}</p>
+                <br />
+              </Fragment>
+            ))}
+          </div>
+        )}
         <div class="post-actions-section">
           <p
             class="main-post-reply"
@@ -226,9 +237,7 @@ const Post = ({
           </div>
           {[...responses].filter((el) => el !== null).length === 0 && (
             <div className="no-comments-wrapper">
-              <h4 className="no-comments-msg">
-                Be the first to leave a comment or reply
-              </h4>
+              <h4 className="no-comments-msg">Be the first to leave a reply</h4>
             </div>
           )}
           {[...responses]

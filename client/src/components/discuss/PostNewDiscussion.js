@@ -26,9 +26,9 @@ const PostNewDiscussion = ({
           <div class="user-info-section">
             <h2 class="user-info-name">
               {`${first_name} ${last_name}`}
-              <a href="#" class="user-view-profile-link">
+              {/* <a href="#" class="user-view-profile-link">
                 view profile
-              </a>
+              </a> */}
             </h2>
             <p class="user-organisation">{organisation}</p>
           </div>

@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getUsers, findUserBySearch } from "../../actions/users";
+import { findUserBySearch } from "../../actions/users";
 import defaultAvatar from "../../img/default-avatar.png";
 import spinnerIcon from "../../img/icons/spinnerIcon.gif";
 import { useNavigate } from "react-router-dom";
 import { createPublication } from "../../actions/items";
+import { setAlert } from "../../actions/alert";
 
 const NewPublication = ({
-  users: { loading, userArray, userSearch },
+  users: { loading, userSearch },
   items: { loading: itemLoading, lastActionSuccess, publication },
-  auth: { user },
+  auth: { user, loading: authLoading },
   findUserBySearch,
   createPublication,
+  setAlert,
 }) => {
   const [formData, setFormData] = useState({
     title: "",
     link: "",
     coauthors: [],
-    connectedUsers: [user._id],
+    connectedUsers: [],
     date_published: "",
     type: "",
     field: "",
@@ -83,13 +85,22 @@ const NewPublication = ({
     }
   };
 
-  getUsers([user._id]);
-
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const required = ["title", "date_published", "field", "link"];
+
+  const checkInput = () => {
+    return required.filter((el) => formData[`${el}`] === "");
+  };
+
   const onSubmit = (e) => {
+    const missing = checkInput();
+    if (missing.length > 0) {
+      missing.forEach((el) => setAlert(`${el} is a required field`, "warning"));
+      return;
+    }
     e.preventDefault();
     createPublication(formData);
     setSentPostReq(true);
@@ -98,13 +109,11 @@ const NewPublication = ({
   const isInArray = (id, arr) => arr.map((obj) => obj._id).includes(id);
 
   useEffect(() => {
-    if (
-      userArray.length > 0 &&
-      formData.connectedUsers.every((userId) => isInArray(userId, userArray))
-    ) {
-      setAllUserData([...userArray]);
+    if (!authLoading && Object.keys(user).length > 0) {
+      setAllUserData([user]);
+      setFormData({ ...formData, connectedUsers: [user._id] });
     }
-  }, [formData.connectedUsers, loading, userArray]);
+  }, [authLoading, user, setFormData]);
 
   useEffect(() => {
     if (searchingUsers && !loading) {
@@ -114,7 +123,7 @@ const NewPublication = ({
 
   useEffect(() => {
     setAllUserData([...allUserData, ...userSearch]);
-  }, [userSearch]);
+  }, [userSearch, loading]);
 
   useEffect(() => {
     if (!loading && !searchingUsers && currentUserSearch !== lastSearch) {
@@ -131,7 +140,7 @@ const NewPublication = ({
 
   const existingUsers = [
     ...formData.connectedUsers.map((author, i) =>
-      allUserData.length === 0 ? (
+      !isInArray(author, allUserData) ? (
         <img src={spinnerIcon} alt="spinner" className="tiny-spinner" />
       ) : (
         <div class="result-author-wrapper edit-pub-user" key={i}>
@@ -152,7 +161,7 @@ const NewPublication = ({
               allUserData.find((obj) => obj._id.toString() === author).last_name
             }`}
           </p>
-          {author !== user && (
+          {author !== user._id && (
             <p
               style={{
                 fontSize: "1.5rem",
@@ -190,24 +199,30 @@ const NewPublication = ({
       <div class="main-content">
         <form class="edit-discussion-form" style={{ paddingTop: "8rem" }}>
           <div class="job-title-wrapper">
-            <p class="detail-summary-label pub-label">Title:</p>
+            <p class="detail-summary-label pub-label">
+              Title: <span class="required-msg">*</span>
+            </p>
             <textarea
               class="title edit edit-main"
               name="title"
               value={formData.title}
               onChange={(e) => onChange(e)}
+              required={true}
             ></textarea>
           </div>
           <div class="result-publication-details">
             <div style={{ width: "60%" }}>
               <br />
-              <p class="detail-summary-label pub-label">Date published:</p>
+              <p class="detail-summary-label pub-label">
+                Date published: <span class="required-msg">*</span>
+              </p>
               <input
                 type="date"
                 class="location edit job-detail-edit date-input"
                 name="date_published"
                 onChange={(e) => onChange(e)}
                 value={formData.date_published.substring(0, 10)}
+                required={true}
               ></input>
               <br />
               <p class="detail-summary-label pub-label">Type of publication:</p>
@@ -231,9 +246,8 @@ const NewPublication = ({
             {currentUserSearch !== "" && (
               <div class="current-user-search-results">
                 {userSearch &&
-                  userSearch
-                    .filter((obj) => !formData.connectedUsers.includes(obj._id))
-                    .map((obj, i) => {
+                  userSearch.map((obj, i) => {
+                    if (!formData.connectedUsers.includes(obj._id))
                       return (
                         <div className="user-match">
                           <div
@@ -255,20 +269,23 @@ const NewPublication = ({
                           </div>
                         </div>
                       );
-                    })}
+                  })}
               </div>
             )}
           </div>
           <div class="job-detail-container">
             <div class="vacancy-details-summary-container">
               <div class="detail-summary-wrapper">
-                <p class="detail-summary-label">Field:</p>
+                <p class="detail-summary-label">
+                  Field: <span class="required-msg">*</span>
+                </p>
                 <input
                   name="field"
                   onChange={(e) => onChange(e)}
                   type="text"
                   class="edit job-detail-edit"
                   value={formData.field}
+                  required={true}
                 ></input>
               </div>
               <div class="detail-summary-wrapper">
@@ -312,13 +329,16 @@ const NewPublication = ({
                 ></input>
               </div>
               <div class="detail-summary-wrapper">
-                <p class="detail-summary-label">Link:</p>
+                <p class="detail-summary-label">
+                  Link: <span class="required-msg">*</span>
+                </p>
                 <input
                   type="text"
                   name="link"
                   value={formData.link}
                   onChange={(e) => onChange(e)}
                   class="edit job-detail-edit"
+                  required={true}
                 ></input>
               </div>
             </div>
@@ -356,11 +376,11 @@ const NewPublication = ({
 };
 
 NewPublication.propTypes = {
-  getUsers: PropTypes.func.isRequired,
   users: PropTypes.object.isRequired,
   findUserBySearch: PropTypes.func.isRequired,
   createPublication: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
+  setAlert: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -370,7 +390,7 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-  getUsers,
   findUserBySearch,
   createPublication,
+  setAlert,
 })(NewPublication);

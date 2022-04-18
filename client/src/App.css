@@ -1730,6 +1730,7 @@ button:hover {
   margin-bottom: 0.5rem;
   padding: 0rem 1rem 0rem 1rem;
   border-radius: 0.5rem;
+  position: relative;
 
 }
 
@@ -1757,6 +1758,8 @@ button:hover {
 
 .notif-info-section {
   padding: 2rem;
+  color:rgb(76, 114, 158);
+  cursor: pointer;
 }
 
 .unread {
@@ -1769,6 +1772,16 @@ button:hover {
 
 .notif-info-date {
   font-size: 1rem;
+}
+
+.mark-as-read-btn {
+  position: absolute;
+  bottom: 0rem;
+  right: 1rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color:rgb(105, 162, 226);
+  z-index: 950;
 }
 
 .go-to-notif-btn {
@@ -2213,6 +2226,11 @@ button:hover {
 .logo-preview {
   height: 10rem;
   margin-top: 1rem;
+}
+
+.required-msg {
+  color: rgb(236, 81, 120);
+  font-weight: lighter;
 }
 
 /* end of loading modal */

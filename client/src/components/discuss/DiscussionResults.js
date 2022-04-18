@@ -171,6 +171,7 @@ const DiscussionResults = ({
                 date={result.date}
                 last_edited={result.last_edited}
                 organisation={result.organisation || false}
+                position={result.position}
               />
             ))}
         </div>

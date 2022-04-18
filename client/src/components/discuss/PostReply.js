@@ -6,6 +6,7 @@ import {
   deleteDiscussionItem,
   toggleConsensus,
 } from "../../actions/discussion";
+import moment from "moment";
 
 const PostReply = ({
   postReply: {
@@ -65,7 +66,7 @@ const PostReply = ({
 
   return (
     <div class={`comment ${reply && "reply"}`}>
-      <div class="comment-date">{date}</div>
+      <div class="comment-date">{moment(date).fromNow()}</div>
       <div class="comment-user">
         <div class="comment-avatar-wrapper">
           <img class="comment-avatar" src={avatar} alt="avatar" />
@@ -73,7 +74,7 @@ const PostReply = ({
         <p class="comment-user-name">{`${first_name} ${last_name}`}</p>
         {organisation && (
           <p class="comment-user-desc">{`${
-            position && `${position} at `
+            position ? `${position} at ` : ""
           }${organisation}`}</p>
         )}
       </div>
